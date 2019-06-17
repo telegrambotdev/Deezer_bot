@@ -14,7 +14,7 @@ import inline_keyboards
 from bot import bot
 from logger import file_download_logger, format_name, sent_message_logger
 from userbot import post_large_track
-from utils import already_downloading, calling_queue, get_file, upload_track
+from utils import already_downloading, calling_queue, get_file
 from var import var
 
 
@@ -28,17 +28,14 @@ async def finish_download(track, inline_message_id, user):
                 performer=track.artist.name,
                 duration=track.duration),
             inline_message_id=inline_message_id)
-    path = await track.download()
-    if (os.path.getsize(path) >> 20) > 50:
-        await bot.edit_message_reply_markup(
+    try:
+        path = await track.download()
+    except ValueError:
+        return await bot.edit_message_reply_markup(
             inline_message_id=inline_message_id,
-            reply_markup=inline_keyboards.large_file_keyboard)
-        await post_large_track(path, track)
-        file_id = await db_utils.get_track(track.id)
-    else:
-        msg = await upload_track(bot, path, track.title, track.artist.name, track.duration)
-        await db_utils.add_track(track.id, msg.audio.file_id)
-        file_id = msg.audio.file_id
+            reply_markup=inline_keyboards.download_error_keyboard)
+    await post_large_track(path, track)
+    file_id = await db_utils.get_track(track.id)
 
     try:
         await bot.edit_message_media(

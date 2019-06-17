@@ -47,7 +47,7 @@ def artist_keyboard(artist):
     kb.insert(InlineKeyboardButton('Top 5 Tracks', callback_data=new_callback('artist', artist.id, 'top5')))
     kb.insert(InlineKeyboardButton('Albums', callback_data=new_callback('artist', artist.id, 'albums')))
     kb.insert(InlineKeyboardButton('Related artists', callback_data=new_callback('artist', artist.id, 'related')))
-    kb.insert(InlineKeyboardButton('Radio', callback_data=new_callback('artist', artist.id, 'top5')))
+    kb.insert(InlineKeyboardButton('Radio', callback_data=new_callback('artist', artist.id, 'radio')))
     kb.insert(InlineKeyboardButton('Wikipedia', callback_data=new_callback('artist', artist.id, 'wiki')))
     kb.insert(InlineKeyboardButton('Search on Last.Fm', url=str(URL(f'https://www.last.fm/search?q={artist.name}'))))
     return kb
@@ -64,14 +64,14 @@ def related_artists_keyboard(related, main_artist_id):
 def artist_radio_keyboard(radio, artist_id):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(radio, start=1):
-        kb.insert(InlineKeyboardButton(f'{i}. {track.artist.name} \u2013 {track.title}', callback_data=new_callback('track', track.id, 'send')))
+        kb.insert(InlineKeyboardButton(f'{i}. {track.artist.name} \u2013 {track.title}', callback_data=new_callback('track_deezer', track.id, 'send')))
     kb.insert(InlineKeyboardButton('Go back', callback_data=new_callback('artist', artist_id, 'main')))
     return kb
 
 def album_keyboard(album, tracks, post=False):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(tracks, start=1):
-        kb.insert(InlineKeyboardButton(f'{i}. {track.title}', callback_data=new_callback('deezer_track', track.id, 'send')))
+        kb.insert(InlineKeyboardButton(f'{i}. {track.title}', callback_data=new_callback('track_deezer', track.id, 'send')))
     kb.insert(InlineKeyboardButton('Get all tracks', callback_data=new_callback('album', album.id, 'download')))
     if post:
         kb.insert(InlineKeyboardButton('Post', callback_data=new_callback('album', album.id, 'post')))

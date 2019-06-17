@@ -55,7 +55,7 @@ def playlist_keyboard(playlist, post):
     for i, track in enumerate(playlist.tracks, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i+1}. {track.artist} \u2013 {track.title}',
-            callback_data=new_callback('track_soundcloud', playlist.id, 'send')))
+            callback_data=new_callback('track_soundcloud', track.id, 'send')))
     kb.insert(InlineKeyboardButton('Get all tracks', callback_data=new_callback('playlist_soundcloud', playlist.id, 'download')))
     if post:
         kb.insert(InlineKeyboardButton('Post', callback_data=new_callback('playlist_soundcloud', playlist.id, 'post')))

@@ -5,6 +5,11 @@ from yarl import URL
 from utils import new_callback
 
 
+download_error_keyboard = InlineKeyboardMarkup(1)
+download_error_keyboard.insert(InlineKeyboardButton(
+    "🚫Error while downloading this track",
+    callback_data='pass'))
+
 finish_download_keyboard = InlineKeyboardMarkup(1)
 finish_download_keyboard.insert(InlineKeyboardButton(
     'Loading full track, please wait...', callback_data='finish_download'))

@@ -120,6 +120,11 @@ async def get_file(url, total_size=None):
     return await r.content.read()
 
 
+async def get_album_cover_url(album_id):
+    r = await request_get(f'https://api.deezer.com/album/{album_id}/image')
+    return r.url.replace('120x120', '1000x1000')
+
+
 def add_tags(path, track, album, image, lyrics):
     try:
         genre = album['genres']['data'][0]['name']

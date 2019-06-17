@@ -3,10 +3,13 @@ from time import time
 import os
 import shutil
 
+from aiogram import exceptions
+from aiogram.utils.markdown import escape_md
+
 import db_utils
 from bot import bot
 from userbot import post_large_track
-from utils import already_downloading, upload_track
+from utils import already_downloading, get_album_cover_url
 from var import var
 from logger import sent_message_logger, format_name
 import config
@@ -24,26 +27,19 @@ async def send_track(track, chat, Redownload=False):
         if (await check_and_forward(track, chat, quality)):
             return
 
-    if quality == 'mp3':
-        path = await track.download('MP3_320')
-    elif quality == 'flac':
-        path = await track.download('FLAC')
+    try:
+        if quality == 'mp3':
+            path = await track.download('MP3_320')
+        elif quality == 'flac':
+            path = await track.download('FLAC')
+    except ValueError:
+        return await bot.send_message(chat.id, f"🚫This track is not available ({track.artist.ame} - {track.title})")
 
     await bot.send_chat_action(chat.id, 'upload_audio')
 
-    if (os.path.getsize(path) >> 20) > 50:
-        msg = await bot.send_message(
-            chat_id=chat.id,
-            text='File is larger than 50 MB, uploading can take a while, please wait')
-        await post_large_track(path, track, quality)
-        await sleep(1)
-        file_id = await db_utils.get_track(track.id, quality)
-        await bot.send_audio(chat.id, file_id)
-        await msg.delete()
-    else:
-        msg = await upload_track(bot, path, track.title, track.artist.name, track.duration)
-        await msg.forward(chat.id)
-        await db_utils.add_track(track.id, msg.audio.file_id, quality)
+    await post_large_track(path, track, quality)
+    file_id = await db_utils.get_track(track.id, quality)
+    await bot.send_audio(chat.id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
     var.downloading.pop(track.id)
     sent_message_logger.info(
@@ -58,11 +54,18 @@ async def send_album(album, chat, pic=True, send_all=False):
                 album, tracks, chat.id in config.admins)
         else:
             markup = None
-        await bot.send_photo(
-            chat.id,
-            album.cover_xl,
-            caption=f'{album["artist"]["name"]} \u2013 {album.title}',
-            reply_markup=markup)
+        try:
+            await bot.send_photo(
+                chat.id,
+                album.cover_xl,
+                caption=f'{escape_md(album.artist.name)} \u2013 {escape_md(album.title)}',
+                reply_markup=markup)
+        except exceptions.TelegramAPIError:
+            await bot.send_photo(
+                chat.id,
+                get_album_cover_url(album.id),
+                caption=f'{escape_md(album.artist.name)} \u2013 {escape_md(album.title)}',
+                reply_markup=markup)
     if send_all:
         for track in await album.get_tracks():
             print(track.title)
@@ -73,7 +76,7 @@ async def send_artist(artist, chat_id):
     await bot.send_photo(
         chat_id=chat_id,
         photo=artist.picture_xl,
-        caption=f'[{artist.name}]({artist.share})',
+        caption=f'[{escape_md(artist.name)}]({artist.share})',
         parse_mode='markdown',
         reply_markup=keyboards.artist_keyboard(artist))
 
@@ -94,11 +97,7 @@ async def cache(track):
     file_id = await db_utils.get_track(track.id)
     if not file_id:
         path = await track.download()
-        if (os.path.getsize(path) >> 20) > 50:
-            await post_large_track(path, track)
-        else:
-            msg = await upload_track(bot, path, track.title, track.artist.name, track.duration)
-            await db_utils.add_track(track.id, msg.audio.file_id)
+        await post_large_track(path, track)
         shutil.rmtree(path.rsplit('/', 1)[0])
         print(f'cached track {track.artist.name} - {track.title}')
     else:
