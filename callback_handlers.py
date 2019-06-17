@@ -9,7 +9,7 @@ import utils
 import db_utils
 import methods
 import inline_keyboards
-from deezer import deezer_api
+from deezer import deezer_api, methods as dz_methods
 from soundcloud import soundcloud_api, methods as sc_methods
 import soundcloud.keyboards as sc_keyboards
 from var import var
@@ -93,7 +93,6 @@ async def today_stats_callback_handler(callback):
 async def sc_callback_handler(callback):
     print(callback.data)
     mode, obj_id, method = parse_callback(callback.data)
-    keyboard = None
 
     if mode == 'playlist_soundcloud':
         await callback.answer()
@@ -222,19 +221,19 @@ async def callback_handler(callback):
                 callback.message.chat.id,
                 callback.message.message_id,
                 None)
-            return await methods.send_album(
+            return await dz_methods.send_album(
                 album, callback.message.chat, pic=False, send_all=True)
 
         elif method == 'post':
             await callback.answer()
             album = await deezer_api.getalbum(obj_id)
             chat = await bot.get_chat(-1001171972924)
-            await methods.send_album(album, chat, send_all=True)
+            await dz_methods.send_album(album, chat, send_all=True)
 
         elif method == 'send':
             await callback.answer('downloading')
             album = await deezer_api.getalbum(obj_id)
-            return await methods.send_album(album, callback.message.chat)    
+            return await dz_methods.send_album(album, callback.message.chat)    
 
     elif mode == 'track_deezer':
         if utils.already_downloading(int(obj_id)):
@@ -242,4 +241,4 @@ async def callback_handler(callback):
         else:
             await callback.answer('downloading...')
             track = await deezer_api.gettrack(obj_id)
-            await methods.send_track(track, callback.message.chat)
+            await dz_methods.send_track(track, callback.message.chat)
