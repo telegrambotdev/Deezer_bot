@@ -91,9 +91,9 @@ async def search_handler(message):
             chat_id=message.chat.id,
             text=message.text + ':',
             reply_markup=sc_keyboards.search_results_keyboard(search_results, 1))
-
-    await bot.send_message(
-        chat_id=message.chat.id,
-        text=message.text + ':',
-        reply_markup=dz_keyboards.search_results_keyboard(search_results, 1))
+    else:
+        await bot.send_message(
+            chat_id=message.chat.id,
+            text=message.text + ':',
+            reply_markup=dz_keyboards.search_results_keyboard(search_results, 1))
     db_utils.add_user(message.from_user)
