@@ -4,8 +4,8 @@ from aiogram import types
 
 from bot import bot
 import db_utils
-import deezer_api
-import methods
+from . import deezer_api
+from . import methods
 import utils
 
 
