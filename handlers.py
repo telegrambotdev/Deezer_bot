@@ -97,3 +97,4 @@ async def search_handler(message):
             text=message.text + ':',
             reply_markup=dz_keyboards.search_results_keyboard(search_results, 1))
     db_utils.add_user(message.from_user)
+
