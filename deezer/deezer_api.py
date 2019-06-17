@@ -179,11 +179,13 @@ class Track(AttrDict):
 		return await download_track(self.id, quality)
 
 	async def get_max_size_cover(self, album):
-		url = album.cover_xl.rsplit('/', 1)[0] + '/1500x1500.png'
+		url = album.cover_xl
 		r = await request_get(url)
 		res = await r.content.read()
 		if len(res) < 100:
-			raise ValueError('Cant download album cover')
+			r = await request_get(album.cover)
+			r = await request_get(r.url.replace('120x120', '1000x1000'))
+			res = await r.content.read()
 		return res
 
 	def __repr__(self):
