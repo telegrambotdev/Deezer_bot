@@ -40,7 +40,7 @@ async def quality_setting_hanlder(callback):
         await bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.quality_settings_keyboard(setting))
+            reply_markup=dz_keyboards.quality_settings_keyboard(setting))
 
 
 async def pages_handler(callback):
