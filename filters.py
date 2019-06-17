@@ -4,10 +4,10 @@ from aiogram.dispatcher.filters import BoundFilter
 from aiogram import types
 
 
-deezer_track = re.compile(r'.*deezer\.com/.{0:3}track/(\d+).*')
-deezer_artist = re.compile(r'.*deezer\.com/{0:3}artist/(\d+).*')
-deezer_album = re.compile(r'.*deezer\.com/{0:3}album/(\d+).*')
-deezer_playlist = re.compile(r'.*deezer\.com/{0:3}playlist/(\d+).*')
+deezer_track = re.compile(r'.*deezer\.com/.{0,3}track/(\d+).*')
+deezer_artist = re.compile(r'.*deezer\.com/.{0,3}artist/(\d+).*')
+deezer_album = re.compile(r'.*deezer\.com/.{0,3}album/(\d+).*')
+deezer_playlist = re.compile(r'.*deezer\.com/.{0,3}playlist/(\d+).*')
 spotify_track = re.compile(r'.*open\.spotify\.com/track/([^? ]+)')
 spotify_album = re.compile(r'.*open\.spotify\.com/album/([^? ]+)')
 spotify_artist = re.compile(r'.*open\.spotify\.com/artist/([^? ]+)')
