@@ -6,8 +6,6 @@ from glob import iglob
 import soundcloud.methods as sc_methods
 from aiogram import types
 from aiogram.dispatcher.handler import SkipHandler
-from soundcloud import keyboards as sc_keyboards
-from soundcloud import soundcloud_api
 
 import config
 import db_utils
@@ -17,6 +15,8 @@ import utils
 from bot import bot
 from deezer import deezer_api
 from deezer import keyboards as dz_keyboards
+from soundcloud import keyboards as sc_keyboards
+from soundcloud import soundcloud_api
 from logger import error_logger
 from var import var
 
@@ -31,7 +31,7 @@ async def quality_setting_handler(message: types.Message):
         current_setting = await db_utils.get_quality_setting(message.chat.id)
         return await bot.send_message(
             message.chat.id, 'Select quality',
-            reply_markup=inline_keyboards.quality_settings_keyboard(current_setting))
+            reply_markup=dz_keyboards.quality_settings_keyboard(current_setting))
 
 
 async def soundcloud_link_handler(message: types.Message):
