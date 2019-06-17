@@ -161,21 +161,21 @@ async def artist_callback_handler(callback):
         return await bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.top5_keyboard(artist, top))
+            reply_markup=dz_keyboards.top5_keyboard(artist, top))
 
     elif method == 'albums':
         albums = await artist.albums()
         return await bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.albums_keyboard(artist, albums))
+            reply_markup=dz_keyboards.albums_keyboard(artist, albums))
 
     elif method == 'related':
         related = await artist.related()
         return await bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.related_artists_keyboard(
+            reply_markup=dz_keyboards.related_artists_keyboard(
                 related, artist.id))
 
     elif method == 'radio':
@@ -183,11 +183,11 @@ async def artist_callback_handler(callback):
         return await bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
-            reply_markup=inline_keyboards.artist_radio_keyboard(
+            reply_markup=dz_keyboards.artist_radio_keyboard(
                 radio, artist.id))
 
     elif method == 'main':
-        kboard = inline_keyboards.artist_keyboard(artist)
+        kboard = dz_keyboards.artist_keyboard(artist)
         return await bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
@@ -199,7 +199,7 @@ async def artist_callback_handler(callback):
             photo=artist.picture_xl,
             caption=f'[{artist.name}]({artist.share})',
             parse_mode='markdown',
-            reply_markup=inline_keyboards.artist_keyboard(artist))
+            reply_markup=dz_keyboards.artist_keyboard(artist))
 
     elif method == 'wiki':
         artist = await deezer_api.getartist(obj_id)
