@@ -4,70 +4,63 @@ from aiogram.dispatcher.filters import BoundFilter
 from aiogram import types
 
 
-# class SpotifyFilter(BoundFilter):
-# 	key = 'spotify'
-
-async def SpotifyFilter(self, message: types.Message):
-	return 'open.spotify.com/track' in message.text
-
-
-# class SpotifyPlaylistFilter(BoundFilter):
-# 	key = 'spotify_playlist'
-
-async def SpotifyPlaylistFilter(self, message: types.Message):
-	return 'open.spotify.com/playlist' in message.text
+deezer_track = re.compile(r'.*deezer\.com/.{0:3}track/(\d+).*')
+deezer_artist = re.compile(r'.*deezer\.com/{0:3}artist/(\d+).*')
+deezer_album = re.compile(r'.*deezer\.com/{0:3}album/(\d+).*')
+deezer_playlist = re.compile(r'.*deezer\.com/{0:3}playlist/(\d+).*')
+spotify_track = re.compile(r'.*open\.spotify\.com/track/([^? ]+)')
+spotify_album = re.compile(r'.*open\.spotify\.com/album/([^? ]+)')
+spotify_artist = re.compile(r'.*open\.spotify\.com/artist/([^? ]+)')
+spotify_playlist = re.compile(r'.*open\.spotify\.com/.+/playlist/([^? ]+)')
 
 
-# class SpotifyAlbumFilter(BoundFilter):
-# 	key = 'spotify_album'
-
-async def SpotifyAlbumFilter(self, message: types.Message):
-	return 'open.spotify.com/album' in message.text
-
-
-# class SpotifyArtistFilter(BoundFilter):
-# 	key = 'spotify_artist'
-
-async def SpotifyArtistFilter(self, message: types.Message):
-	return 'open.spotify.com/artist' in message.text
+async def SpotifyFilter(message: types.Message):
+	match = re.match(spotify_track, message.text)
+	if match:
+		return {'track_id': match.group(1)}
 
 
-# class DeezerFilter(BoundFilter):
-# 	key = 'deezer'
-
-async def DeezerFilter(self, message: types.Message):
-	return re.match(r'.+deezer.com/??track/.+', message.text)
-
-
-# class DeezerPlaylistFilter(BoundFilter):
-# 	key = 'deezer_playlist'
-
-async def DeezerPlaylistFilter(self, message: types.Message):
-	return re.match(r'.+deezer.com/???playlist/.+', message.text)
+async def SpotifyPlaylistFilter(message: types.Message):
+	match = re.match(spotify_playlist, message.text)
+	if match:
+		return {'playlist_id': match.group(1)}
 
 
-# class DeezerAlbumFilter(BoundFilter):
-# 	key = 'deezer_album'
-
-async def DeezerAlbumFilter(self, message: types.Message):
-	return re.match(r'.+deezer.com/???album/.+', message.text)
-
-
-# class DeezerArtistFilter(BoundFilter):
-# 	key = 'deezer_artist'
-
-async def DeezerArtistFilter(self, message: types.Message):
-	return re.match(r'.+deezer.com/???artist/.+', message.text)
+async def SpotifyAlbumFilter(message: types.Message):
+	match = re.match(spotify_album, message.text)
+	if match:
+		return {'album_id': match.group(1)}
 
 
-# class ShazamFilter(BoundFilter):
-# 	key = 'shazam'
+async def SpotifyArtistFilter(message: types.Message):
+	match = re.match(spotify_artist, message.text)
+	if match:
+		return {'artist_id': match.group(1)}
 
-async def ShazamFilter(self, message: types.Message):
+
+async def DeezerFilter(message: types.Message):
+	match = re.match(deezer_track, message.text)
+	if match:
+		return {'track_id': match.group(1)}
+
+
+async def DeezerPlaylistFilter(message: types.Message):
+	match = re.match(deezer_playlist, message.text)
+	if match:
+		return {'playlist_id': match.group(1)}
+
+
+async def DeezerAlbumFilter(message: types.Message):
+	match = re.match(deezer_album, message.text)
+	if match:
+		return {'album_id': match.group(1)}
+
+
+async def DeezerArtistFilter(message: types.Message):
+	match = re.match(deezer_artist, message.text)
+	if match:
+		return {'artist_id': match.group(1)}
+
+
+async def ShazamFilter(message: types.Message):
 	return 'shazam.com' in message.text
-
-
-filters = (
-	SpotifyFilter, SpotifyPlaylistFilter, SpotifyAlbumFilter,
-	SpotifyArtistFilter, DeezerFilter, DeezerPlaylistFilter,
-	DeezerAlbumFilter, DeezerArtistFilter, ShazamFilter)

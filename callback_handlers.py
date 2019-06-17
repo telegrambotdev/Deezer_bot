@@ -58,7 +58,7 @@ async def pages_handler(callback):
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
                 message_id=callback.message.message_id,
-                reply_markup=sc_keyboards.sc_search_results_keyboard(search_results, int(page)))
+                reply_markup=sc_keyboards.search_results_keyboard(search_results, int(page)))
 
 
 async def stats_callback_handler(callback):
@@ -128,20 +128,20 @@ async def sc_artist_callback_handler(callback):
     artist = await soundcloud_api.get_artist(obj_id)
 
     if method == 'main':
-        keyboard = sc_keyboards.sc_artist_keyboard(artist)
+        keyboard = sc_keyboards.artist_keyboard(artist)
 
     elif method == 'tracks':
         tracks = await artist.get_tracks()
-        keyboard = sc_keyboards.sc_artist_tracks_keyboard(tracks, artist.id)
+        keyboard = sc_keyboards.artist_tracks_keyboard(tracks, artist.id)
 
     elif method == 'playlists':
         playlists = await artist.get_playlists()
-        keyboard = sc_keyboards.sc_artist_playlists_keyboard(playlists, artist.id)
+        keyboard = sc_keyboards.artist_playlists_keyboard(playlists, artist.id)
 
     elif method == 'download':
         tracks = await artist.get_tracks()
         for track in tracks:
-            await methods.send_soundcloud_track(callback.message.chat.id, track)
+            await sc_methods.send_soundcloud_track(callback.message.chat.id, track)
             await sleep(.3)
         return
 

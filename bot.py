@@ -12,7 +12,7 @@ from aiogram.dispatcher import Dispatcher
 
 import config
 import utils
-from filters import filters
+import filters
 from middlewares import Middleware
 from sql import database
 from var import var
@@ -52,28 +52,19 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
         handlers.spotify_album_handler,
         lambda m: 'open.spotify.com/album' in m.text)
     dp.register_message_handler(
-        handlers.spotify_artist_handler, lambda m: 'open.spotify.com/artist' in m.text)
+        handlers.spotify_artist_handler, filters.SpotifyArtistFilter)
     dp.register_message_handler(
-        handlers.spotify_playlist_handler,
-        lambda m: re.match(spotify_playlist, m.text))
+        handlers.spotify_playlist_handler, filters.SpotifyPlaylistFilter)
     dp.register_message_handler(
-        handlers.spotify_handler,
-        lambda m: 'open.spotify.com/track' in m.text)
+        handlers.spotify_handler, filters.SpotifyFilter)
     dp.register_message_handler(
-        handlers.artist_handler,
-        lambda m: '/artist/' in m.text)
+        handlers.artist_handler, filters.DeezerArtistFilter)
     dp.register_message_handler(
-        handlers.album_handler,
-        lambda m: '/album/' in m.text)
+        handlers.album_handler, filters.DeezerAlbumFilter)
     dp.register_message_handler(
-        handlers.cache_playlist,
-        lambda m: '/playlist/' in m.text and '/c ' in m.text)
+        handlers.playlist_handler, filters.DeezerPlaylistFilter)
     dp.register_message_handler(
-        handlers.playlist_handler,
-        lambda m: '/playlist/' in m.text)
-    dp.register_message_handler(
-        handlers.track_handler, 
-        lambda m: '/track/' in m.text)
+        handlers.track_handler, filters.DeezerFilter)
     dp.register_message_handler(
         handlers.search_handler, lambda m: m.chat.type == 'private')
     dp.register_inline_handler(

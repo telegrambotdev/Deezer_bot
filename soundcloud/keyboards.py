@@ -6,7 +6,7 @@ from yarl import URL
 from utils import new_callback
 
 
-def sc_search_results_keyboard(results, page, per_page=5):
+def search_results_keyboard(results, page, per_page=5):
     kb = InlineKeyboardMarkup(2)
     total_pages = ceil(len(results) / per_page)
     start = (page-1) * per_page
@@ -29,7 +29,7 @@ def sc_search_results_keyboard(results, page, per_page=5):
     return kb
 
 
-def sc_artist_tracks_keyboard(tracks, artist_id):
+def artist_tracks_keyboard(tracks, artist_id):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(tracks[:97], start=1):
         kb.insert(InlineKeyboardButton(
@@ -40,7 +40,7 @@ def sc_artist_tracks_keyboard(tracks, artist_id):
     return kb
 
 
-def sc_artist_playlists_keyboard(playlists, artist_id):
+def artist_playlists_keyboard(playlists, artist_id):
     kb = InlineKeyboardMarkup(1)
     for i, playlist in enumerate(playlists, start=1):
         kb.insert(InlineKeyboardButton(
@@ -50,7 +50,7 @@ def sc_artist_playlists_keyboard(playlists, artist_id):
     return kb
 
 
-def sc_playlist_keyboard(playlist, post):
+def playlist_keyboard(playlist, post):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(playlist.tracks, start=1):
         kb.insert(InlineKeyboardButton(
@@ -62,7 +62,7 @@ def sc_playlist_keyboard(playlist, post):
     return kb
 
 
-def sc_artist_keyboard(artist):
+def artist_keyboard(artist):
     kb = InlineKeyboardMarkup(2)
     kb.insert(InlineKeyboardButton('Tracks', callback_data=new_callback('sc_artist', artist.id, 'tracks')))
     kb.insert(InlineKeyboardButton('Playlists', callback_data=new_callback('sc_artist', artist.id, 'playlists')))

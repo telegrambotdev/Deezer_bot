@@ -1,18 +1,20 @@
 import asyncio
-import random
 import os
+import random
 from asyncio import sleep
-from asyncache import cached
-from cachetools import TTLCache
 from contextlib import suppress
 
-from . import decrypt
-from AttrDict import AttrDict
-from logger import error_logger, file_download_logger
+from asyncache import cached
+from cachetools import TTLCache
+
 import utils
+from AttrDict import AttrDict
+from config import deezer_private_cookies, deezer_private_headers
+from logger import error_logger, file_download_logger
 from utils import request_get, request_post
 from var import var
-from config import deezer_private_cookies, deezer_private_headers
+
+from . import decrypt
 
 unofficial_api_url = 'https://www.deezer.com/ajax/gw-light.php'
 api_url = 'https://api.deezer.com'
@@ -93,7 +95,14 @@ async def download_track(track_id, quality='MP3_320'):
 	track = await gettrack(track_id)
 	album = await getalbum(track.album.id)
 	private_info = await getprivateinfo(track.id)
-	private_track = private_info['DATA']
+	try:
+		private_track = private_info['DATA']
+	except KeyError:
+		await getCSRFToken()
+		try:
+			private_track = private_info['DATA']
+		except KeyError:
+			raise ValueError('Cant download track')
 	try:
 		lyrics = private_info['LYRICS']['LYRICS_TEXT']
 	except KeyError:
@@ -193,7 +202,7 @@ class Album(AttrDict):
 
 	async def get_tracks(self):
 		tracks = []
-		r = await request_get(self.tracklist)
+		r = await request_get(self.tracklist, data={'limit': -1})
 		json = await r.json()
 		for track in json['data']:
 			tracks.append(Track(track))
@@ -216,7 +225,7 @@ class Artist(AttrDict):
 
 	async def albums(self):
 		try:
-			r = await api_call('artist', self.id, 'albums')
+			r = await api_call('artist', self.id, 'albums', limit=99)
 			return [Album(album) for album in r]
 		except Exception as e:
 			print(self.name, e, type(e))

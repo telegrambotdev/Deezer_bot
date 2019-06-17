@@ -46,32 +46,24 @@ class Spotify_API:
 				result.append(AttrDict(item))
 		return result
 
-	async def get_track(self, url, retries=0):
+	async def get_track(self, track_id, retries=0):
 		if self.expires_in < time():
 			self.restart()
 		if retries > 3:
 			raise ValueError('Cannot get track')
-		url = re.findall(spotify_track, url)[0]
-		url = 'https://' + url
-		track_id = url.split('/')[-1]
 		r = await request_get(
 			f'https://api.spotify.com/v1/tracks/{track_id}',
 			headers={'Authorization': f'Bearer {self.token}'})
 		print(r.url)
 		json = await r.json(content_type=None)
-		try:
-			json['error']
-		except KeyError:
+		if not json.get('error'):
 			return AttrDict(json)
 		else:
-			self.restart()
-			return await self.get_track(url, retries + 1)
+			raise ValueError('Cannot get track')
 
-	async def get_playlist(self, url):
+	async def get_playlist(self, playlist_id):
 		if self.expires_in < time():
 			self.restart()
-		url = re.findall(spotify_playlist, url)[0]
-		playlist_id = url.split('/')[-1]
 		r = await request_get(
 			f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks',
 			headers={'Authorization': f'Bearer {self.token}'})
@@ -82,11 +74,9 @@ class Spotify_API:
 		else:
 			raise ValueError('Error getting playlist: ' + json.get('error'))
 
-	async def get_album(self, url):
+	async def get_album(self, album_id):
 		if self.expires_in < time():
 			self.restart()
-		url = re.findall(spotify_album, url)[0]
-		album_id = url.split('/')[-1]
 		r = await request_get(
 			f'https://api.spotify.com/v1/albums/{album_id}',
 			headers={'Authorization': f'Bearer {self.token}'})
@@ -98,11 +88,9 @@ class Spotify_API:
 			raise ValueError('Error getting albums: ' + json.get('error'))
 
 		
-	async def get_artist(self, url):
+	async def get_artist(self, artist_id):
 		if self.expires_in < time():
 			self.restart()
-		url = re.findall(spotify_artist, url)[0]
-		artist_id = url.split('/')[-1]
 		r = await request_get(
 			f'https://api.spotify.com/v1/artists/{artist_id}',
 			json={'Authorization': f'Bearer {self.token}'})

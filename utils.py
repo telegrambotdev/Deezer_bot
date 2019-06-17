@@ -42,15 +42,15 @@ def clear_link(message):
                 or message.text[entity.offset: entity.offset + entity.length]
 
 
-def split_string(text):
+def split_string(text, divider='\n'):
     result = []
-    words = text.split('\n')
+    words = text.split(divider)
     string = ''
     for i, word in enumerate(words):
         if (len(string + word) > 4096):
             result.append(string)
             string = ''
-        string += word + '\n'
+        string += word + divider
         if i == len(words) - 1:
             result.append(string)
             string = ''
@@ -108,17 +108,15 @@ def calling_queue(size):
     return wrapper
 
 
-@calling_queue(10)
 async def download_file(url, path):
-    r = await request_get(url)  # pylint: disable=no-member
+    r = await request_get(url)
     async with aiofiles.open(path, 'wb') as f:
         async for chunk in r.content.iter_chunked(2048):
             await f.write(chunk)
 
 
-@calling_queue(10)
 async def get_file(url, total_size=None):
-    r = await request_get(url)  # pylint: disable=no-member
+    r = await request_get(url)
     return await r.content.read()
 
 
@@ -162,8 +160,8 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.artist = track.artist
     tag.album = album_title
     tag.album_artist = track.artist if album_title else ''
-    tag.original_release_date = track.created_at.split('T')[0].split(' ')[
-        0].replace('/', '-')
+    tag.original_release_date = track.created_at.split('T')[0] \
+        .split(' ')[0].replace('/', '-')
     tag.non_std_genre = track.get('genre', '')
     if lyrics:
         tag.lyrics.set(lyrics)
@@ -185,7 +183,7 @@ async def request_get(url, *args, **kwargs):
             if errcount['count'] > 3:
                 exit(1)
             await var.session.close()
-            var.session = aiohttp.ClientSession()
+            var.session = aiohttp.ClientSession(raise_for_status=True)
             errcount['count'] += 1
         except Exception as err:
             retries_count += 1
@@ -212,3 +210,33 @@ async def request_post(url, *args, **kwargs):
                 raise ValueError('Number of retries exceeded') from err
         else:
             return result
+
+
+@calling_queue(3)
+async def upload_track(bot, path, title, performer, duration=None, tries=0):
+    if tries > 3:
+        raise RuntimeError('can\'t upload track')
+    try:
+        msg = await bot.send_audio(
+            chat_id=-1001246220493, audio=types.InputFile(path),
+            title=title, performer=performer, duration=duration)
+    except exceptions.RetryAfter as e:
+        print(f'flood control exceeded, sleeping for {e.timeout + 10} seconds')
+        await sleep(e.timeout + 10)
+        return await upload_track(bot, path, title, performer, duration, tries + 1)
+    except exceptions.TelegramAPIError:
+        await sleep(5)
+        return await upload_track(bot, path, title, performer, duration, tries + 1)
+    return msg
+
+
+async def launch_with_timeout(coro, timeout, on_error='raise'):
+    task = asyncio.create_task(coro)
+    try:
+        result = await asyncio.wait_for(task, timeout)
+        return result
+    except TimeoutError as exc:
+        if on_error == 'raise':
+            raise
+        elif on_error == 'print':
+            print(exc)
