@@ -90,6 +90,6 @@ def albums_keyboard(artist, albums):
 def top5_keyboard(artist, top):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(top, start=1):
-        kb.insert(InlineKeyboardButton(f'{i}. {track.title}', callback_data=new_callback('track', track.id, 'send')))
+        kb.insert(InlineKeyboardButton(f'{i}. {track.title}', callback_data=new_callback('track_deezer', track.id, 'send')))
     kb.insert(InlineKeyboardButton('Go back', callback_data=new_callback('artist', artist.id, 'main')))     
     return kb
