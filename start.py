@@ -15,6 +15,8 @@ from var import var
 import handlers
 import inline_handlers
 import callback_handlers
+from deezer import handlers as dz_handlers
+from spotify import handlers as sp_handlers
 import filters
 from logger import update_logging_files
 
@@ -32,7 +34,7 @@ async def close():
 if __name__ == '__main__':
     with suppress(FileNotFoundError):
         shutil.rmtree('downloads')
-    register_handlers(dp, handlers, inline_handlers, callback_handlers)
+    register_handlers(dp, handlers, inline_handlers, callback_handlers, dz_handlers, sp_handlers)
     logging = asyncio.ensure_future(update_logging_files())
     executor.start_polling(dp, loop=loop)
     loop.run_until_complete(close())

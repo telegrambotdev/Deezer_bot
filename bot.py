@@ -20,9 +20,7 @@ from var import var
 loop = asyncio.get_event_loop()
 
 
-def register_handlers(dp, handlers, inline_handlers, callback_handlers):
-    spotify_playlist = re.compile(r'.+spotify.com/.+/playlist/.+')
-
+def register_handlers(dp, handlers, inline_handlers, callback_handlers, dz_handlers, sp_handlers):
     if '-a' in argv:
         dp.register_message_handler(handlers.only_admin_handler)
     dp.register_message_handler(
@@ -41,30 +39,26 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers):
     dp.register_message_handler(
         handlers.today_stats_handler, commands=['today'])	
     dp.register_message_handler(
-        handlers.redownload_handler, commands=['re', 'redownload'])
+        dz_handlers.redownload_handler, commands=['re', 'redownload'])
     dp.register_message_handler(
-        handlers.post_to_channel_handler,
-        lambda m: m.chat.id in config.admins, commands=['post'])
+        dz_handlers.artist_search_handler, commands=['a', 'artist'])
+    dp.register_message_handler(dz_handlers.diskography_handler, commands=['d'])
     dp.register_message_handler(
-        handlers.artist_search_handler, commands=['a', 'artist'])
-    dp.register_message_handler(handlers.diskography_handler, commands=['d'])
+        sp_handlers.spotify_album_handler, filters.SpotifyAlbumFilter)
     dp.register_message_handler(
-        handlers.spotify_album_handler,
-        lambda m: 'open.spotify.com/album' in m.text)
+        sp_handlers.spotify_artist_handler, filters.SpotifyArtistFilter)
     dp.register_message_handler(
-        handlers.spotify_artist_handler, filters.SpotifyArtistFilter)
+        sp_handlers.spotify_playlist_handler, filters.SpotifyPlaylistFilter)
     dp.register_message_handler(
-        handlers.spotify_playlist_handler, filters.SpotifyPlaylistFilter)
+        sp_handlers.spotify_handler, filters.SpotifyFilter)
     dp.register_message_handler(
-        handlers.spotify_handler, filters.SpotifyFilter)
+        dz_handlers.artist_handler, filters.DeezerArtistFilter)
     dp.register_message_handler(
-        handlers.artist_handler, filters.DeezerArtistFilter)
+        dz_handlers.album_handler, filters.DeezerAlbumFilter)
     dp.register_message_handler(
-        handlers.album_handler, filters.DeezerAlbumFilter)
+        dz_handlers.playlist_handler, filters.DeezerPlaylistFilter)
     dp.register_message_handler(
-        handlers.playlist_handler, filters.DeezerPlaylistFilter)
-    dp.register_message_handler(
-        handlers.track_handler, filters.DeezerFilter)
+        dz_handlers.track_handler, filters.DeezerFilter)
     dp.register_message_handler(
         handlers.search_handler, lambda m: m.chat.type == 'private')
     dp.register_inline_handler(
