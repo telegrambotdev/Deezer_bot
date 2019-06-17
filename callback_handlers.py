@@ -10,6 +10,7 @@ import db_utils
 import methods
 import inline_keyboards
 from deezer import deezer_api, methods as dz_methods
+from deezer import keyboards as dz_keyboards
 from soundcloud import soundcloud_api, methods as sc_methods
 import soundcloud.keyboards as sc_keyboards
 from var import var
@@ -52,7 +53,7 @@ async def pages_handler(callback):
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
                 message_id=callback.message.message_id,
-                reply_markup=inline_keyboards.search_results_keyboard(search_results, int(page)))
+                reply_markup=dz_keyboards.search_results_keyboard(search_results, int(page)))
         elif mode == 'sc_page':
             search_results = await soundcloud_api.search(q=q)
             await bot.edit_message_reply_markup(
@@ -71,7 +72,7 @@ async def stats_callback_handler(callback):
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
             text=f'users: {all_users_count}\n\n'
-                f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
+            f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
             reply_markup=inline_keyboards.stats_keyboard)
 
 
@@ -109,7 +110,6 @@ async def sc_callback_handler(callback):
         elif method == 'post':
             return await sc_methods.send_soundcloud_playlist(
                 -1001171972924, playlist, send_all=True)
-
 
     elif mode == 'track_soundcloud':
         if utils.already_downloading(int(obj_id)):
@@ -233,7 +233,7 @@ async def callback_handler(callback):
         elif method == 'send':
             await callback.answer('downloading')
             album = await deezer_api.getalbum(obj_id)
-            return await dz_methods.send_album(album, callback.message.chat)    
+            return await dz_methods.send_album(album, callback.message.chat)
 
     elif mode == 'track_deezer':
         if utils.already_downloading(int(obj_id)):
