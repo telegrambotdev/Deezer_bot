@@ -136,6 +136,10 @@ async def sc_artist_callback_handler(callback):
     elif method == 'playlists':
         playlists = await artist.get_playlists()
         keyboard = sc_keyboards.artist_playlists_keyboard(playlists, artist.id)
+    
+    elif method == 'likes':
+        likes = await artist.get_likes()
+        keyboard = sc_keyboards.likes_keyboard(likes, artist.id)
 
     elif method == 'download':
         tracks = await artist.get_tracks()
