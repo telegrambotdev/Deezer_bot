@@ -1,13 +1,11 @@
 from contextlib import suppress
-import traceback
 from asyncio import sleep
 
-from aiogram import exceptions, types
+from aiogram import exceptions
 
 from bot import bot
 import utils
 import db_utils
-import methods
 import inline_keyboards
 from deezer import deezer_api, methods as dz_methods
 from deezer import keyboards as dz_keyboards
@@ -29,7 +27,9 @@ async def finish_download_handler(data):
 
 
 async def large_file_handler(callback):
-    await callback.answer('Track is too large, Telegram won\'t let to upload it', show_alert=True)
+    await callback.answer(
+        'Track is too large, Telegram won\'t let to upload it',
+        show_alert=True)
 
 
 async def quality_setting_hanlder(callback):
@@ -53,13 +53,15 @@ async def pages_handler(callback):
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
                 message_id=callback.message.message_id,
-                reply_markup=dz_keyboards.search_results_keyboard(search_results, int(page)))
+                reply_markup=dz_keyboards.search_results_keyboard(
+                    search_results, int(page)))
         elif mode == 'sc_page':
             search_results = await soundcloud_api.search(q=q)
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
                 message_id=callback.message.message_id,
-                reply_markup=sc_keyboards.search_results_keyboard(search_results, int(page)))
+                reply_markup=sc_keyboards.search_results_keyboard(
+                    search_results, int(page)))
 
 
 async def stats_callback_handler(callback):
@@ -72,7 +74,8 @@ async def stats_callback_handler(callback):
             chat_id=callback.message.chat.id,
             message_id=callback.message.message_id,
             text=f'users: {all_users_count}\n\n'
-            f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
+            f'Deezer tracks: {dz_tracks_count}\n\n'
+            f'SoundCloud tracks: {sc_tracks_count}',
             reply_markup=inline_keyboards.stats_keyboard)
 
 
@@ -117,7 +120,8 @@ async def sc_callback_handler(callback):
         else:
             await callback.answer('downloading...')
             track = await soundcloud_api.get_track(obj_id)
-            await sc_methods.send_soundcloud_track(callback.message.chat.id, track)
+            await sc_methods.send_soundcloud_track(
+                callback.message.chat.id, track)
 
 
 async def sc_artist_callback_handler(callback):
@@ -136,7 +140,7 @@ async def sc_artist_callback_handler(callback):
     elif method == 'playlists':
         playlists = await artist.get_playlists()
         keyboard = sc_keyboards.artist_playlists_keyboard(playlists, artist.id)
-    
+
     elif method == 'likes':
         likes = await artist.get_likes()
         keyboard = sc_keyboards.likes_keyboard(likes, artist.id)

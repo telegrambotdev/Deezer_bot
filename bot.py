@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import asyncio
-import re
 from sys import argv
 
 import aiohttp
@@ -11,7 +10,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
 
 import config
-import utils
 import filters
 from middlewares import Middleware
 from sql import database
@@ -20,7 +18,8 @@ from var import var
 loop = asyncio.get_event_loop()
 
 
-def register_handlers(dp, handlers, inline_handlers, callback_handlers, dz_handlers, sp_handlers):
+def register_handlers(dp, handlers, inline_handlers,
+                      callback_handlers, dz_handlers, sp_handlers):
     if '-a' in argv:
         dp.register_message_handler(handlers.only_admin_handler)
     dp.register_message_handler(
@@ -32,17 +31,20 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers, dz_handl
     dp.register_callback_query_handler(
         callback_handlers.soundcloud_handler,
         lambda c: c.data.startswith('sc_track'))
-    dp.register_message_handler(handlers.start_command_handler, commands=['start'])
-    dp.register_message_handler(handlers.quality_setting_handler, commands=['quality'])
     dp.register_message_handler(
-        handlers.getstats_handler, commands=['stats'])	
+        handlers.start_command_handler, commands=['start'])
     dp.register_message_handler(
-        handlers.today_stats_handler, commands=['today'])	
+        handlers.quality_setting_handler, commands=['quality'])
+    dp.register_message_handler(
+        handlers.getstats_handler, commands=['stats'])
+    dp.register_message_handler(
+        handlers.today_stats_handler, commands=['today'])
     dp.register_message_handler(
         dz_handlers.redownload_handler, commands=['re', 'redownload'])
     dp.register_message_handler(
         dz_handlers.artist_search_handler, commands=['a', 'artist'])
-    dp.register_message_handler(dz_handlers.diskography_handler, commands=['d'])
+    dp.register_message_handler(
+        dz_handlers.diskography_handler, commands=['d'])
     dp.register_message_handler(
         sp_handlers.spotify_album_handler, filters.SpotifyAlbumFilter)
     dp.register_message_handler(
@@ -110,11 +112,11 @@ try:
 
     from spotify import Spotify_API
     var.spot = Spotify_API(
-            config.spotify_client, config.spotify_secret)
+        config.spotify_client, config.spotify_secret)
     var.db = database('db.sqlite')
     var.conn = loop.run_until_complete(aioredis.create_connection(
-            ('localhost', 6379), encoding='utf-8', db=4, loop=loop))
+        ('localhost', 6379), encoding='utf-8', db=4, loop=loop))
     print('datebase connected')
-    
+
 except Exception as e:
     print(e)

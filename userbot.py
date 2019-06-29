@@ -20,7 +20,7 @@ loop = asyncio.get_event_loop()
 async def start():
     global client
     client = pyrogram.Client(
-        'DeezerMusicBot', api_id=config.client_api_id,
+        'DeezerMusicBot_', api_id=config.client_api_id,
         api_hash=config.client_api_hash, bot_token=config.bot_token)
     await client.start()
 
@@ -36,6 +36,13 @@ async def post_large_track(path, track, quality='mp3', provider='deezer'):
             chat_id=-1001246220493, audio=path, duration=track.duration,
             title=track.title, performer=track.artist)
         await db_utils.add_sc_track(track.id, msg.audio.file_id)
+    elif provider == 'vk':
+        msg = await client.send_audio(
+            chat_id=-1001246220493, audio=path, duration=track.duration,
+            title=track.title, performer=track.performer)
+        await db_utils.add_vk_track(track.full_id, msg.audio.file_id)
+    else:
+        raise ValueError(f'wrong provider: {provider}')
 
 
 loop.run_until_complete(start())

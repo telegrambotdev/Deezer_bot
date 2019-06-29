@@ -1,0 +1,7 @@
+config.py
+*.sqlite
+*.session
+*.code-workspace
+*.json
+.vscode/
+__pycache__/

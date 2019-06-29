@@ -1,72 +1,177 @@
-import re
-import asyncio
+import json
 
-# from var import var
-from bs4 import BeautifulSoup
-from aiohttp import ClientSession
-
-# import config
-
-session = ClientSession()
+import config
+from var import var
+from utils import download_file, get_file, request_get, vk_add_tags
+from AttrDict import AttrDict
 
 
-url = 'https://m.vk.com/audio'
-search_result = re.compile(r'audio(-?\d+)_(\d+).+')
-RE_LOGIN_HASH = re.compile(r'name="lg_h" value="([a-z0-9]+)"')
+HEADERS = {"user-agent": "VKAndroidApp/5.11.1-2316"}
+HOST_API = "https://api.vk.com/"
+OAUTH = "https://oauth.vk.com/"
+BACKUP_API = "http://api.xn--41a.ws/api.php"
+
+VK_API_VERSION = "5.89"
 
 
-async def search():
-    pass
+async def call_oauth(method, param={}, **kwargs):
+    """Выполнение метода VK API"""
+    try:
+        response = await(
+            await request_get(method, params=param, headers=HEADERS)).json()
+    except Exception as e:
+        raise e
+
+    if "error" in response:
+        if "need_captcha" == response["error"]:
+            raise Exception("Error : CAPTHA!")
+
+        elif "need_validation" == response["error"]:
+            if "ban_info" in response:
+                # print(response)
+                raise Exception(
+                    "Error: {error_description}".format(**response))
+
+            return "Error: 2fa isn't supported"
+
+        else:
+            raise Exception("Error : {error_description}".format(**response))
+
+    return response
 
 
-def scrap_search(soup):
-    results = []
-    for item in soup.find_all(class_='audios_block audios_list _si_container'):
-        result = {}
-        result['title'] = item.find(class_='ai_title').text
-        result['artist'] = item.find(class_='ai_artist').text
-        match = re.match(search_result, item['id'])
-        result['owner_id'] = match.group(1)
-        result['id'] = match.group(2)
-        results.append(result)
-    return results
+async def call(method, param={}, **kwargs):
+    """Выполнение метода VK API"""
+    try:
+        response = await (
+            await request_get(method, json=param, headers=HEADERS)).json()
+    except Exception as e:
+        raise e
+
+    if "error" in response:
+        raise Exception(
+            "VKError #{error_code}: {error_msg}".format(**response["error"])
+        )
+
+    if "response" in response:
+        return response["response"]
+
+    return response
 
 
-async def vk_login(login, password, captcha_sid=None, captcha_key=None):
-    """ Авторизация ВКонтакте с получением cookies remixsid
-    :param captcha_sid: id капчи
-    :type captcha_key: int or str
-    :param captcha_key: ответ капчи
-    :type captcha_key: str
-    """
+async def autorization(login, password, client_id, client_secret,
+                       code, captcha_sid="null", captcha_key="null",
+                       forse_reauth=False):
+    if not forse_reauth:
+        try:
+            with open("vk_auth.json", "r") as f:
+                var.vk_auth = json.load(f)['access_token']
+                return var.vk_auth
+        except FileNotFoundError:
+            pass
 
-    response = await session.get('https://vk.com/')
-    response_text = await response.text()
-
-    values = {
-        'act': 'login',
-        'role': 'al_frame',
-        '_origin': 'https://vk.com',
-        'utf8': '1',
-        'email': login,
-        'pass': password,
-        'lg_h': re.match(RE_LOGIN_HASH, response_text).group(0)
+    param = {
+        "grant_type": "password",
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "username": login,
+        "password": password,
+        "v": VK_API_VERSION,
+        "2fa_supported": "1",
+        "code": code,
+        "captcha_sid": captcha_sid,
+        "captcha_key": captcha_key,
     }
 
-    if captcha_sid and captcha_key:
+    response = await call_oauth(OAUTH + "token", param)
 
-        values.update({
-            'captcha_sid': captcha_sid,
-            'captcha_key': captcha_key
-        })
+    with open("vk_auth.json", "w") as f:
+        json.dump(response, f)
+    var.vk_auth = response['access_token']
 
-    response = await session.post('https://login.vk.com/', data=values)
-
-    if 'onLoginFailed(4' in response_text:
-        raise ValueError('Bad password')
+    return response['access_token']
 
 
-async def main():
-    await vk_login('79654924081', 'P8F4zJ3j7hNCI1CbDbFQOBkxgQGCvkn6')
+async def refreshToken(access_token):
+    param = {
+        "access_token": access_token,
+        "receipt": config.vk_token_receipt,
+        "v": VK_API_VERSION,
+    }
 
-asyncio.get_event_loop().run_until_complete(main())
+    return await call(HOST_API + "method/auth.refreshToken", param)
+
+
+async def user_get(access_token):
+    param = {"access_token": access_token, "v": VK_API_VERSION}
+
+    return await call(HOST_API + "method/users.get", param)
+
+
+async def get_audio(refresh_token):
+    param = {"access_token": refresh_token, "v": VK_API_VERSION}
+
+    return await call(HOST_API + "method/audio.get", param)
+
+
+async def get_catalog(refresh_token):
+    param = {"access_token": refresh_token, "v": VK_API_VERSION}
+
+    return await call(HOST_API + "method/audio.getCatalog", param)
+
+
+async def search(query, refresh_token=None):
+    param = {"access_token": var.vk_token_receipt,
+             "v": VK_API_VERSION, "q": query}
+
+    return await call(HOST_API + "method/audio.search", param)
+
+
+async def get_playlist(refresh_token):
+    param = {
+        "access_token": refresh_token,
+        "owner_id": "",
+        "id": "",
+        "need_playlist": 1,
+        "v": VK_API_VERSION,
+    }
+
+    return await call(HOST_API + "method/execute.getPlaylist", param)
+
+
+async def get_music_page(refresh_token):
+    param = {
+        "func_v": 3,
+        "need_playlists": 1,
+        "access_token": config.vk_token_receipt,
+        "v": VK_API_VERSION,
+    }
+
+    return await call(HOST_API + "method/execute.getMusicPage", param)
+
+
+class Track(AttrDict):
+    def __init__(self, mapping):
+        super().__init__(mapping)
+
+    async def download(self, path=None):
+        if not path:
+            path = (
+                f"downloads/vk_{self.id}/"
+                + f"{self.performer} - {self.title}".replace("/", "_")[:70]
+                + ".mp3"
+            )
+        await download_file(self.url, path)
+        cover = None
+        if self.album and self.album.thumb and self.album.thumb.photo_600:
+            cover = await get_file(self.album.thumb.photo_600)
+        vk_add_tags(path, self.artist, self.title, self.album, cover)
+        return path
+
+
+class Playlist(AttrDict):
+    def __init__(self, mapping):
+        super().__init__(mapping)
+        self.tracks = []
+        for track in self.list:
+            self.tracks.append(Track(track))
