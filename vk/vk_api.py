@@ -32,7 +32,7 @@ async def call_oauth(method, param={}, **kwargs):
                 raise Exception(
                     "Error: {error_description}".format(**response))
 
-            return "Error: 2fa isn't supported"
+                return "Error: 2fa isn't supported"
 
         else:
             raise Exception("Error : {error_description}".format(**response))
@@ -44,7 +44,7 @@ async def call(method, param={}, **kwargs):
     """Выполнение метода VK API"""
     try:
         response = await (
-            await request_get(method, json=param, headers=HEADERS)).json()
+            await request_get(method, params=param, headers=HEADERS)).json()
     except Exception as e:
         raise e
 
@@ -102,36 +102,40 @@ async def refreshToken(access_token):
     return await call(HOST_API + "method/auth.refreshToken", param)
 
 
-async def user_get(access_token):
-    param = {"access_token": access_token, "v": VK_API_VERSION}
+async def user_get():
+    param = {"access_token": var.vk_, "v": VK_API_VERSION}
 
     return await call(HOST_API + "method/users.get", param)
 
 
-async def get_audio(refresh_token):
-    param = {"access_token": refresh_token, "v": VK_API_VERSION}
+async def get_audio():
+    param = {
+        "access_token": var.vk_refresh_token,
+        "v": VK_API_VERSION}
 
     return await call(HOST_API + "method/audio.get", param)
 
 
-async def get_catalog(refresh_token):
-    param = {"access_token": refresh_token, "v": VK_API_VERSION}
+async def get_catalog():
+    param = {
+        "access_token": var.vk_refresh_token,
+        "v": VK_API_VERSION}
 
     return await call(HOST_API + "method/audio.getCatalog", param)
 
 
-async def search(query, refresh_token=None):
-    param = {"access_token": var.vk_token_receipt,
+async def search(query):
+    param = {"access_token": var.vk_refresh_token,
              "v": VK_API_VERSION, "q": query}
 
     return await call(HOST_API + "method/audio.search", param)
 
 
-async def get_playlist(refresh_token):
+async def get_playlist(owner_id, playlist_id):
     param = {
-        "access_token": refresh_token,
-        "owner_id": "",
-        "id": "",
+        "access_token": var.vk_refresh_token,
+        "owner_id": owner_id,
+        "id": playlist_id,
         "need_playlist": 1,
         "v": VK_API_VERSION,
     }
@@ -139,11 +143,11 @@ async def get_playlist(refresh_token):
     return await call(HOST_API + "method/execute.getPlaylist", param)
 
 
-async def get_music_page(refresh_token):
+async def get_music_page():
     param = {
         "func_v": 3,
         "need_playlists": 1,
-        "access_token": config.vk_token_receipt,
+        "access_token": var.vk_refresh_token,
         "v": VK_API_VERSION,
     }
 
