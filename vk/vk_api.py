@@ -99,7 +99,11 @@ async def refreshToken(access_token):
         "v": VK_API_VERSION,
     }
 
-    return await call(HOST_API + "method/auth.refreshToken", param)
+    response = await call(HOST_API + "method/auth.refreshToken", param)
+    token = response['token']
+    var.vk_refresh_token = token
+
+    return token
 
 
 async def user_get():
