@@ -79,7 +79,7 @@ def register_handlers(dp, handlers, inline_handlers,
         text='big_file')
     dp.register_callback_query_handler(
         callback_handlers.pages_handler,
-        Text(startswith='page'))
+        Text(contains='page'))
     dp.register_callback_query_handler(
         callback_handlers.stats_callback_handler,
         text='stats')
