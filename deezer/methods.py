@@ -63,7 +63,7 @@ async def send_album(album, chat, pic=True, send_all=False):
         except exceptions.TelegramAPIError:
             await bot.send_photo(
                 chat.id,
-                get_album_cover_url(album.id),
+                await get_album_cover_url(album.id),
                 caption=f'{escape_md(album.artist.name)} \u2013 {escape_md(album.title)}',
                 reply_markup=markup)
     if send_all:
