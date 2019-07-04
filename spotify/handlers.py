@@ -1,9 +1,11 @@
 import re
+from asyncio import sleep
 
 from deezer import deezer_api
 from deezer import methods as dz_methods
 from bot import bot
 from var import var
+
 
 async def spotify_handler(message, track_id):
     spotify_song = await var.spot.get_track(track_id)
@@ -21,7 +23,7 @@ async def spotify_handler(message, track_id):
 
 async def spotify_playlist_handler(message, playlist_id):
     spotify_playlist = await var.spot.get_playlist(playlist_id)
-    for track in spotify_playlist:  
+    for track in spotify_playlist:
         try:
             search_query = '{} {}'.format(
                 track.artists[0].name, re.match(r'[^\(\[\-]+', track.name).group(0))
