@@ -41,7 +41,7 @@ async def send_track(track, chat, Redownload=False):
     file_id = await db_utils.get_track(track.id, quality)
     await bot.send_audio(chat.id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
-    var.downloading.pop((track.id, chat.id))
+    var.downloading.pop(track.id)
     sent_message_logger.info(
         f'[send track {track.id} to {format_name(chat)}] {track}')
 
