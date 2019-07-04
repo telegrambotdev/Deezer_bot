@@ -8,6 +8,7 @@ import aioredis
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
+from aiogram.dispatcher.filters import Text
 
 import config
 import filters
@@ -27,10 +28,10 @@ def register_handlers(dp, handlers, inline_handlers,
         content_types=[types.ContentType.AUDIO])
     dp.register_message_handler(
         handlers.soundcloud_link_handler,
-        lambda m: 'soundcloud.com' in m.text)
+        Text(contains='soundcloud.com'))
     dp.register_callback_query_handler(
         callback_handlers.soundcloud_handler,
-        lambda c: c.data.startswith('sc_track'))
+        Text(startswith='sc_track'))
     dp.register_message_handler(
         handlers.start_command_handler, commands=['start'])
     dp.register_message_handler(
@@ -65,42 +66,41 @@ def register_handlers(dp, handlers, inline_handlers,
         handlers.search_handler, lambda m: m.chat.type == 'private')
     dp.register_inline_handler(
         inline_handlers.artist_search_inline_handler,
-        lambda q: '.ar' in q.query)
+        Text(contains='.ar'))
     dp.register_inline_handler(inline_handlers.inline_handler)
     dp.register_callback_query_handler(
         callback_handlers.quality_setting_hanlder,
-        lambda d: d.data.startswith('quality'))
+        Text(startswith='quality'))
     dp.register_callback_query_handler(
         callback_handlers.finish_download_handler,
-        lambda d: d.data == 'finish_download')
+        text='finish_download')
     dp.register_callback_query_handler(
         callback_handlers.large_file_handler,
-        lambda d: 'big_file' in d.data)
+        text='big_file')
     dp.register_callback_query_handler(
         callback_handlers.pages_handler,
-        lambda d: 'page' in d.data)
+        Text(startswith='page'))
     dp.register_callback_query_handler(
         callback_handlers.stats_callback_handler,
-        lambda d: d.data == 'stats')
+        text='stats')
     dp.register_callback_query_handler(
         callback_handlers.today_stats_callback_handler,
-        lambda d: d.data == 'today')
+        text='today')
     dp.register_callback_query_handler(
         callback_handlers.sc_artist_callback_handler,
-        lambda d: 'sc_artist' in d.data)
+        Text(startswith='sc_artist'))
     dp.register_callback_query_handler(
         callback_handlers.sc_callback_handler,
-        lambda d: 'soundcloud' in d.data)
+        Text(contains='soundcloud'))
     dp.register_callback_query_handler(
         callback_handlers.artist_callback_handler,
-        lambda d: 'artist' in d.data)
+        Text(contains='artist'))
     dp.register_callback_query_handler(callback_handlers.callback_handler)
     dp.register_chosen_inline_handler(inline_handlers.finish_download_handler)
     dp.middleware.setup(Middleware())
 
 
 try:
-    global session
     bot = Bot(token=config.bot_token, loop=loop)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)

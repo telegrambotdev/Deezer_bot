@@ -1,6 +1,4 @@
-from asyncio import sleep
 from time import time
-import os
 import shutil
 
 from aiogram import exceptions
@@ -33,7 +31,9 @@ async def send_track(track, chat, Redownload=False):
         elif quality == 'flac':
             path = await track.download('FLAC')
     except ValueError:
-        return await bot.send_message(chat.id, f"🚫This track is not available ({track.artist.ame} - {track.title})")
+        return await bot.send_message(
+            chat.id,
+            f"🚫This track is not available ({track.artist.name} - {track.title})")
 
     await bot.send_chat_action(chat.id, 'upload_audio')
 
@@ -41,7 +41,7 @@ async def send_track(track, chat, Redownload=False):
     file_id = await db_utils.get_track(track.id, quality)
     await bot.send_audio(chat.id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
-    var.downloading.pop(track.id)
+    var.downloading.pop((track.id, chat.id))
     sent_message_logger.info(
         f'[send track {track.id} to {format_name(chat)}] {track}')
 

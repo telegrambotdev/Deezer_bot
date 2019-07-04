@@ -1,3 +1,4 @@
+import os
 import json
 
 import config
@@ -9,7 +10,6 @@ from AttrDict import AttrDict
 HEADERS = {"user-agent": "VKAndroidApp/5.11.1-2316"}
 HOST_API = "https://api.vk.com/"
 OAUTH = "https://oauth.vk.com/"
-BACKUP_API = "http://api.xn--41a.ws/api.php"
 
 VK_API_VERSION = "5.89"
 
@@ -92,7 +92,7 @@ async def autorization(login, password, client_id, client_secret,
     return response['access_token']
 
 
-async def refreshToken(access_token):
+async def refresh_token(access_token: str):
     param = {
         "access_token": access_token,
         "receipt": config.vk_token_receipt,
@@ -107,17 +107,34 @@ async def refreshToken(access_token):
 
 
 async def user_get():
-    param = {"access_token": var.vk_, "v": VK_API_VERSION}
+    param = {"access_token": var.vk_refresh_token, "v": VK_API_VERSION}
 
     return await call(HOST_API + "method/users.get", param)
 
 
-async def get_audio():
+async def get_audio(owner_id):
     param = {
         "access_token": var.vk_refresh_token,
-        "v": VK_API_VERSION}
+        "v": VK_API_VERSION,
+        "owner_id": owner_id
+    }
 
-    return await call(HOST_API + "method/audio.get", param)
+    audios = await call(HOST_API + "method/audio.get", param)
+
+    return [Track(track) for track in audios['items']]
+
+
+async def get_track(owner_id: int, track_id: int):
+    param = {
+        "access_token": var.vk_refresh_token,
+        "v": VK_API_VERSION,
+        "owner_id": owner_id,
+        "id": track_id
+    }
+
+    track = await call(HOST_API + "method/audio.get", param)
+
+    return Track(track)
 
 
 async def get_catalog():
@@ -128,14 +145,17 @@ async def get_catalog():
     return await call(HOST_API + "method/audio.getCatalog", param)
 
 
-async def search(query):
+async def search(query: str):
     param = {"access_token": var.vk_refresh_token,
              "v": VK_API_VERSION, "q": query}
 
-    return await call(HOST_API + "method/audio.search", param)
+    results = await call(HOST_API + "method/audio.search", param)
+
+    return [Track(track) for track in results['items']]
 
 
-async def get_playlist(owner_id, playlist_id):
+async def get_playlist(
+        owner_id: int, playlist_id: int, access_key: str = None):
     param = {
         "access_token": var.vk_refresh_token,
         "owner_id": owner_id,
@@ -143,43 +163,71 @@ async def get_playlist(owner_id, playlist_id):
         "need_playlist": 1,
         "v": VK_API_VERSION,
     }
+    if access_key:
+        param['access_key'] = access_key
 
-    return await call(HOST_API + "method/execute.getPlaylist", param)
+    return Playlist(
+        (await call(HOST_API + "method/execute.getPlaylist", param))['audios'],
+        playlist_id)
 
 
-async def get_music_page():
+async def get_music_page(owner_id):
     param = {
         "func_v": 3,
         "need_playlists": 1,
         "access_token": var.vk_refresh_token,
         "v": VK_API_VERSION,
+        "owner_id": owner_id
     }
 
-    return await call(HOST_API + "method/execute.getMusicPage", param)
+    playlist = await call(HOST_API + "method/execute.getMusicPage", param)
+
+    return playlist
 
 
 class Track(AttrDict):
-    def __init__(self, mapping):
+    def __init__(self, mapping: dict):
         super().__init__(mapping)
 
-    async def download(self, path=None):
+    @property
+    def full_id(self):
+        return f"{self.owner_id}_{self.id}"
+
+    async def download(self, path: str = None):
         if not path:
+            os.makedirs(f"downloads/vk_{self.id}/", exist_ok=True)
             path = (
-                f"downloads/vk_{self.id}/"
-                + f"{self.performer} - {self.title}".replace("/", "_")[:70]
-                + ".mp3"
-            )
+                f"downloads/vk_{self.id}/" +
+                f"{self.artist} - {self.title}".replace("/", "_")[:70] +
+                ".mp3")
         await download_file(self.url, path)
         cover = None
         if self.album and self.album.thumb and self.album.thumb.photo_600:
             cover = await get_file(self.album.thumb.photo_600)
-        vk_add_tags(path, self.artist, self.title, self.album, cover)
+        vk_add_tags(path, self, cover)
         return path
 
 
-class Playlist(AttrDict):
-    def __init__(self, mapping):
-        super().__init__(mapping)
-        self.tracks = []
-        for track in self.list:
-            self.tracks.append(Track(track))
+class Playlist:
+    def __init__(self, tracks: list, playlist_id: int):
+        self.tracks = [Track(track) for track in tracks]
+
+        for track in self.tracks:
+            if track.album and track.album['id'] == playlist_id:
+                for key, val in track.album.items():
+                    if not isinstance(val, dict):
+                        setattr(self, key, val)
+                    else:
+                        setattr(self, key, AttrDict(val))
+                break
+        else:
+            raise ValueError('Can\'t get a playlist')
+
+
+async def login():
+    auth = await autorization(
+        '79654924081',
+        'P8F4zJ3j7hNCI1CbDbFQOBkxgQGCvkn6',
+        *config.vk_android_clinet_key,
+        config.vk_auth)
+    await refresh_token(auth)

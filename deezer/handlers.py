@@ -9,7 +9,6 @@ from . import methods
 import utils
 
 
-
 async def redownload_handler(message: types.Message):
     if 'com/' in message.text:
         obj_type = message.text.split('/')[-2]
@@ -23,7 +22,9 @@ async def redownload_handler(message: types.Message):
                 await methods.send_track(track, message.chat, Redownload=True)
     else:
         search = await deezer_api.search(q=message.text.strip('/re '))
-        await methods.send_track(await deezer_api.gettrack(search[0].id), message.chat, Redownload=True)
+        await methods.send_track(
+            await deezer_api.gettrack(search[0].id),
+            message.chat, Redownload=True)
 
 
 async def diskography_handler(message: types.Message):

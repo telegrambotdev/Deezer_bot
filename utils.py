@@ -11,11 +11,9 @@ from time import time
 
 import aiofiles
 import aiohttp
-import mutagen
+from mutagen.flac import FLAC, Picture
 from aiogram import exceptions, types
-from eyed3 import id3
-from mutagen.easyid3 import EasyID3
-from mutagen.mp3 import MP3
+from eyed3.id3 import Tag
 from yarl import URL
 
 from var import var
@@ -37,8 +35,8 @@ def clear_link(message):
     for entity in message.entities:
         if entity.type == "url":
             return (
-                entity.url
-                or message.text[entity.offset: entity.offset + entity.length]
+                entity.url or
+                message.text[entity.offset: entity.offset + entity.length]
             )
 
 
@@ -134,25 +132,22 @@ def add_tags(path, track, album, image, lyrics):
     except (KeyError, IndexError):
         genre = ""
 
-    tag = id3.Tag()
-    tag.parse(path)
-    tag.artist = track["artist"]["name"]
-    tag.album = track["album"]["title"]
-    tag.album_artist = album["artist"]["name"]
-    try:
-        tag.original_release_date = track["album"]["release_date"]
-        tag.recording_date = int(track["album"]["release_date"].split("-")[0])
-    except Exception:
-        pass
-    tag.title = track["title"]
-    tag.track_num = track["track_position"]
-    tag.disc_num = track["disk_number"]
-    tag.non_std_genre = genre
-    tag.bpm = track["bpm"]
-    if lyrics:
-        tag.lyrics.set(lyrics)
-    tag.images.set(type_=3, img_data=image, mime_type="image/png")
-    tag.save()
+    tags = {
+        'artist': track["artist"]["name"],
+        'album': track["album"]["title"],
+        'album_artist': album["artist"]["name"],
+        'original_release_date': track["album"]["release_date"],
+        'recording_date': int(track["album"]["release_date"].split("-")[0]),
+        'title': track["title"],
+        'track_num': track["track_position"],
+        'disc_num': track["disk_number"],
+        'non_std_genre': genre,
+        'bpm': track["bpm"]
+    }
+    if path.endswith('mp3'):
+        add_mp3_tags(path, tags, image, lyrics, image_mimetype='image/jpg')
+    elif path.endswith('flac'):
+        add_flac_tags(path, tags, image, lyrics, image_mimetype='image/jpg')
 
 
 def sc_add_tags(path, track, image, lyrics=None):
@@ -161,16 +156,34 @@ def sc_add_tags(path, track, image, lyrics=None):
     except KeyError:
         album_title = ""
 
-    tag = id3.Tag()
+    tags = {
+        'title': track.title,
+        'artist': track.artist,
+        'album': album_title,
+        'album_artist': track.artist if album_title else "",
+        'album_title': album_title,
+        'original_release_date': (
+            track.created_at.split("T")[0].split(" ")[0].replace("/", "-")),
+        'non_std_genre': track.get("genre", ""),
+    }
+    add_mp3_tags(path, tags, image, lyrics)
+
+
+def vk_add_tags(path, track, image=None):
+    tags = {
+        'title': track.title,
+        'artist': track.artist,
+    }
+    if track.album:
+        tags.update({'album': track.album.title})
+    add_mp3_tags(path, tags, image, image_mimetype='image/jpg')
+
+
+def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
+    tag = Tag()
     tag.parse(path)
-    tag.title = track.title
-    tag.artist = track.artist
-    tag.album = album_title
-    tag.album_artist = track.artist if album_title else ""
-    tag.original_release_date = (
-        track.created_at.split("T")[0].split(" ")[0].replace("/", "-")
-    )
-    tag.non_std_genre = track.get("genre", "")
+    for key, val in tags.items():
+        setattr(tag, key, val)
     if lyrics:
         tag.lyrics.set(lyrics)
     if image:
@@ -178,16 +191,15 @@ def sc_add_tags(path, track, image, lyrics=None):
     tag.save()
 
 
-def vk_add_tags(path, artist, title, album, image=None):
-    tag = id3.Tag()
-    tag.parse(path)
-    tag.title = title
-    tag.artist = artist
-    if album:
-        tag.album = album.title
-        tag.album_artist = album.artist
-    if image:
-        tag.images.set(type_=3, img_data=image, mime_type="image/png")
+def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpeg'):
+    tag = FLAC(path)
+    pic = Picture()
+    pic.data = image
+    pic.type = 3
+    pic.mime = image_mimetype
+    tag.add_picture(pic)
+    for key, val in tags.items():
+        tag[key] = val
     tag.save()
 
 

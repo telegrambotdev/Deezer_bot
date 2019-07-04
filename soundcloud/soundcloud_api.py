@@ -1,19 +1,12 @@
-import asyncio
 import re
-from pprint import pprint
-from sys import argv
 import os
 
-import aiofiles
-import aiohttp
 from asyncache import cached
 from cachetools import TTLCache
 
 from AttrDict import AttrDict
 from config import soundcloud_client
 from utils import download_file, get_file, sc_add_tags, request_get
-import bot
-from var import var
 
 api = 'https://api.soundcloud.com'
 api_v2 = 'https://api-v2.soundcloud.com'
@@ -47,22 +40,25 @@ class SoundCloudTrack(AttrDict):
             os.makedirs(f'downloads/{self.id}', exist_ok=True)
             filepath = \
                 f'downloads/{self.id}/ ' + \
-                f'{self.user.username} - {self.title}'.replace('/', '_')[:97] + '.mp3'
+                f'{self.user.username} - {self.title}'.replace('/', '_')[
+                    :97] + '.mp3'
         else:
             os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
 
-        print(f'[Soundcloud] Start downloading: {self.id} | {self.artist} - {self.title}')
+        print(
+            f'[Soundcloud] Start downloading: {self.id} | {self.artist} - {self.title}')
         await download_file(await self.download_url(), filepath)
         cover = await get_file(self.artwork_url) if self.artwork_url else None
         sc_add_tags(filepath, self, cover)
-        print(f'[Soundcloud] Finished downloading: {self.id} | {self.artist} - {self.title}')
+        print(
+            f'[Soundcloud] Finished downloading: {self.id} | {self.artist} - {self.title}')
         return filepath
 
     @property
     def artwork_url(self):
         return self['artwork_url'].replace('large', 't500x500')
 
-    @property 
+    @property
     def thumb_url(self):
         return self['artwork_url']
 
@@ -111,14 +107,14 @@ class SoundCloudPlaylist(AttrDict):
     @property
     def artwork_url(self):
         return self['artwork_url'].replace('large', 't500x500')
-        
+
 
 async def resolve(url):
     req = await request_get(
         api + '/resolve', params={'url': url, 'client_id': soundcloud_client})
     res = await req.json()
     if res['kind'] == 'user':
-        return SoundCloudArtist(res)        
+        return SoundCloudArtist(res)
     elif res['kind'] == 'track':
         return SoundCloudTrack(res)
     elif res['kind'] == 'playlist':
@@ -161,18 +157,3 @@ async def get_playlist(playlist_id):
         params={'client_id': soundcloud_client})
     result = await req.json()
     return SoundCloudPlaylist(result)
-
-
-async def main():
-    # track = await get_track(347808757)
-    # print(track['title'])
-
-    # query = ' '.join(argv[1:])
-    query = 'jaron'
-    for res in await search(query, kind='user'):
-        pprint(res)
-        # print(await res.download())
-
-
-if __name__ == '__main__':
-    asyncio.get_event_loop().run_until_complete(main())
