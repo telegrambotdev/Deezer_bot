@@ -1,6 +1,9 @@
 import os
 import json
 
+from asyncache import cached
+from cachetools import TTLCache
+
 import config
 from var import var
 from utils import download_file, get_file, request_get, vk_add_tags
@@ -124,13 +127,16 @@ async def get_audio(owner_id):
     return [Track(track) for track in audios['items']]
 
 
-async def get_track(owner_id: int, track_id: int):
+async def get_track(owner_id: int, track_id: int, access_key: str = None):
     param = {
         "access_token": var.vk_refresh_token,
         "v": VK_API_VERSION,
         "owner_id": owner_id,
         "id": track_id
     }
+
+    if access_key:
+        param['access_key'] = access_key
 
     track = await call(HOST_API + "method/audio.get", param)
 
@@ -145,6 +151,7 @@ async def get_catalog():
     return await call(HOST_API + "method/audio.getCatalog", param)
 
 
+@cached(TTLCache(100, 1200))
 async def search(query: str):
     param = {"access_token": var.vk_refresh_token,
              "v": VK_API_VERSION, "q": query}
@@ -226,8 +233,8 @@ class Playlist:
 
 async def login():
     auth = await autorization(
-        '79654924081',
-        'P8F4zJ3j7hNCI1CbDbFQOBkxgQGCvkn6',
+        config.vk_login,
+        config.vk_password,
         *config.vk_android_clinet_key,
         config.vk_auth)
     await refresh_token(auth)

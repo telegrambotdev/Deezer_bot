@@ -13,8 +13,9 @@ def search_results_keyboard(results, page, per_page=5):
     last_page = page == total_pages
     for i, result in enumerate(results[start: stop], start=start):
         kb.insert(InlineKeyboardButton(
-            f'{i+1}. {result.performer} - {result.title}',
-            callback_data=new_callback('track_vk', result.id, 'send')))
+            f'{i+1}. {result.artist} - {result.title}',
+            callback_data=new_callback(
+                'track_vk', f"{result.owner_id}_{result.id}", 'send')))
         kb.row()
     if page != 1:
         kb.insert(InlineKeyboardButton(

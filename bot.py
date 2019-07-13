@@ -63,7 +63,7 @@ def register_handlers(dp, handlers, inline_handlers,
     dp.register_message_handler(
         dz_handlers.track_handler, filters.DeezerFilter)
     dp.register_message_handler(
-        handlers.search_handler, lambda m: m.chat.type == 'private')
+        handlers.search_handler, types.ChatType.is_private)
     dp.register_inline_handler(
         inline_handlers.artist_search_inline_handler,
         Text(contains='.ar'))
@@ -74,9 +74,6 @@ def register_handlers(dp, handlers, inline_handlers,
     dp.register_callback_query_handler(
         callback_handlers.finish_download_handler,
         text='finish_download')
-    dp.register_callback_query_handler(
-        callback_handlers.large_file_handler,
-        text='big_file')
     dp.register_callback_query_handler(
         callback_handlers.pages_handler,
         Text(contains='page'))

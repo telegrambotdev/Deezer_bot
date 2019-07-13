@@ -26,12 +26,6 @@ async def finish_download_handler(data):
     await data.answer('please wait, downloading track...', show_alert=True)
 
 
-async def large_file_handler(callback):
-    await callback.answer(
-        'Track is too large, Telegram won\'t let to upload it',
-        show_alert=True)
-
-
 async def quality_setting_hanlder(callback):
     _, setting = parse_callback(callback.data)
     await db_utils.set_quality_setting(callback.from_user.id, setting)
