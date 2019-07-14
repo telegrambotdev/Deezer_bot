@@ -3,21 +3,17 @@
 from contextlib import suppress
 import asyncio
 import shutil
-import re
-from sys import argv
 
 from aiogram.utils import executor
-from aiogram import types
-from aiohttp import ClientSession
 
-from bot import bot, dp, register_handlers
+from bot import dp, register_handlers
 from var import var
 import handlers
 import inline_handlers
 import callback_handlers
 from deezer import handlers as dz_handlers
 from spotify import handlers as sp_handlers
-import filters
+from vk import handlers as vk_handlers
 from logger import update_logging_files
 
 loop = asyncio.get_event_loop()
@@ -34,8 +30,9 @@ async def close():
 if __name__ == '__main__':
     with suppress(FileNotFoundError):
         shutil.rmtree('downloads')
-    register_handlers(dp, handlers, inline_handlers,
-                      callback_handlers, dz_handlers, sp_handlers)
+    register_handlers(
+        dp, handlers, inline_handlers, callback_handlers,
+        dz_handlers, sp_handlers, vk_handlers)
     logging = asyncio.ensure_future(update_logging_files())
     executor.start_polling(dp, loop=loop)
     loop.run_until_complete(close())

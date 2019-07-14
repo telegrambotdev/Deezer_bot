@@ -10,21 +10,24 @@ from utils import already_downloading
 from . import keyboards
 
 
-async def send_track(chat_id, track):
-    if not already_downloading(track.id):
-        var.downloading[track.id] = int(time())
+async def send_track(chat_id, track_id):
+    if not already_downloading(track_id):
+        var.downloading[track_id] = int(time())
     else:
         return
-    file_id = await db_utils.get_vk_track(track.full_id)
+    file_id = await db_utils.get_vk_track(track_id)
     if file_id:
         return await bot.send_audio(chat_id, file_id)
-    path = await track.download()
-    await bot.send_chat_action(chat_id, 'upload_audio')
-    await post_large_track(path, track, provider='vk')
-    file_id = await db_utils.get_vk_track(track.full_id)
-    await bot.send_audio(chat_id, file_id)
-    shutil.rmtree(path.rsplit('/', 1)[0])
-    var.downloading.pop(track.id)
+
+    track = var.vk_tracks.get(track_id)
+    if track and track.url_valid():
+        path = await track.download()
+        await bot.send_chat_action(chat_id, 'upload_audio')
+        await post_large_track(path, track, provider='vk')
+        file_id = await db_utils.get_vk_track(track.full_id)
+        await bot.send_audio(chat_id, file_id)
+        shutil.rmtree(path.rsplit('/', 1)[0])
+        var.downloading.pop(track.id)
 
 
 async def send_playlist(chat_id, playlist, pic=True, send_all=False):

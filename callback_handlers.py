@@ -19,9 +19,15 @@ from utils import parse_callback
 
 async def vk_handler(callback):
     await callback.answer()
-    track_id = callback.data.split(':')[1]
-    track = var.vk_tracks[track_id]
-    await vk_methods.send_track(callback.message.chat.id, track)
+    mode, obj_id, action = parse_callback(callback.data)
+    if mode == 'vk_track':
+        track_id = callback.data.split(':')[1]
+        await vk_methods.send_track(callback.message.chat.id, track_id)
+    elif mode == 'vk_playlist' and action == 'download':
+        owner_id, playlist_id, access_key = obj_id.split('_')
+        playlist = await vk_api.get_playlist(owner_id, playlist_id, access_key)
+        await vk_methods.send_playlist(
+            callback.message.chat.id, playlist, pic=False, send_all=True)
 
 
 async def soundcloud_handler(callback):

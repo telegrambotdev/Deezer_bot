@@ -11,55 +11,66 @@ spotify_track = re.compile(r'.*open\.spotify\.com/track/([^? ]+)')
 spotify_album = re.compile(r'.*open\.spotify\.com/album/([^? ]+)')
 spotify_artist = re.compile(r'.*open\.spotify\.com/artist/([^? ]+)')
 spotify_playlist = re.compile(r'.*open\.spotify\.com/.+/playlist/([^? ]+)')
+vk_playlist = re.compile(
+    r'.*vk\.com/.+z=audio_playlist(\d+)_(\d+)(%2F|/)?([^&]*)')
 
 
-async def SpotifyFilter(message: types.Message):
+def SpotifyFilter(message: types.Message):
     match = re.match(spotify_track, message.text)
     if match:
         return {'track_id': match.group(1)}
 
 
-async def SpotifyPlaylistFilter(message: types.Message):
+def SpotifyPlaylistFilter(message: types.Message):
     match = re.match(spotify_playlist, message.text)
     if match:
         return {'playlist_id': match.group(1)}
 
 
-async def SpotifyAlbumFilter(message: types.Message):
+def SpotifyAlbumFilter(message: types.Message):
     match = re.match(spotify_album, message.text)
     if match:
         return {'album_id': match.group(1)}
 
 
-async def SpotifyArtistFilter(message: types.Message):
+def SpotifyArtistFilter(message: types.Message):
     match = re.match(spotify_artist, message.text)
     if match:
         return {'artist_id': match.group(1)}
 
 
-async def DeezerFilter(message: types.Message):
+def DeezerFilter(message: types.Message):
     match = re.match(deezer_track, message.text)
     if match:
         return {'track_id': match.group(1)}
 
 
-async def DeezerPlaylistFilter(message: types.Message):
+def DeezerPlaylistFilter(message: types.Message):
     match = re.match(deezer_playlist, message.text)
     if match:
         return {'playlist_id': match.group(1)}
 
 
-async def DeezerAlbumFilter(message: types.Message):
+def DeezerAlbumFilter(message: types.Message):
     match = re.match(deezer_album, message.text)
     if match:
         return {'album_id': match.group(1)}
 
 
-async def DeezerArtistFilter(message: types.Message):
+def DeezerArtistFilter(message: types.Message):
     match = re.match(deezer_artist, message.text)
     if match:
         return {'artist_id': match.group(1)}
 
 
-async def ShazamFilter(message: types.Message):
+def VKPlaylistFilter(message: types.Message):
+    match = re.match(vk_playlist, message.text)
+    if match:
+        return {
+            'owner_id': match.group(1),
+            'playlist_id': match.group(2),
+            'access_key': match.group(4)}
+
+
+def ShazamFilter(message: types.Message):
     return 'shazam.com' in message.text

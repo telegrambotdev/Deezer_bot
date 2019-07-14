@@ -20,7 +20,7 @@ loop = asyncio.get_event_loop()
 
 
 def register_handlers(dp, handlers, inline_handlers,
-                      callback_handlers, dz_handlers, sp_handlers):
+                      callback_handlers, dz_handlers, sp_handlers, vk_handlers):
     if '-a' in argv:
         dp.register_message_handler(handlers.only_admin_handler)
     dp.register_message_handler(
@@ -65,6 +65,8 @@ def register_handlers(dp, handlers, inline_handlers,
         dz_handlers.playlist_handler, filters.DeezerPlaylistFilter)
     dp.register_message_handler(
         dz_handlers.track_handler, filters.DeezerFilter)
+    dp.register_message_handler(
+        vk_handlers.playlist_handler, filters.VKPlaylistFilter)
     dp.register_message_handler(
         handlers.search_handler, types.ChatType.is_private)
     dp.register_inline_handler(

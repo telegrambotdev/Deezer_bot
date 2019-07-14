@@ -1,6 +1,7 @@
 import os
 import json
 import asyncio
+from time import time
 
 from asyncache import cached
 from cachetools import TTLCache
@@ -174,12 +175,18 @@ async def get_playlist(
         "need_playlist": 1,
         "v": VK_API_VERSION,
     }
+
     if access_key:
         param['access_key'] = access_key
 
-    return Playlist(
+    playlist = Playlist(
         (await call(HOST_API + "method/execute.getPlaylist", param))['audios'],
         playlist_id)
+
+    for track in playlist.tracks:
+        var.vk_tracks[track.full_id] = track
+
+    return playlist
 
 
 async def get_music_page(owner_id):
@@ -199,18 +206,18 @@ async def get_music_page(owner_id):
 class Track(AttrDict):
     def __init__(self, mapping: dict):
         super().__init__(mapping)
+        self.valid_till = time() + 23 * 3600
+        self.full_id = f"{self.owner_id}_{self.id}"
 
-    @property
-    def full_id(self):
-        return f"{self.owner_id}_{self.id}"
+    def url_valid(self):
+        return self.valid_till < time()
 
     async def download(self, path: str = None):
         if not path:
             os.makedirs(f"downloads/vk_{self.id}/", exist_ok=True)
-            path = (
-                f"downloads/vk_{self.id}/" +
-                f"{self.artist} - {self.title}".replace("/", "_")[:70] +
-                ".mp3")
+            path = (f"downloads/vk_{self.id}/" +
+                    f"{self.artist} - {self.title}".replace("/", "_")[:70] +
+                    ".mp3")
         await download_file(self.url, path)
         cover = None
         if self.album and self.album.thumb and self.album.thumb.photo_600:
