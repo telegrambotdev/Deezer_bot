@@ -11,7 +11,8 @@ from deezer import deezer_api, methods as dz_methods
 from deezer import keyboards as dz_keyboards
 from soundcloud import soundcloud_api, methods as sc_methods
 import soundcloud.keyboards as sc_keyboards
-from vk import methods as vk_methods
+from vk import vk_api, methods as vk_methods
+import vk.keyboards as vk_keyboards
 from var import var
 from utils import parse_callback
 
@@ -63,6 +64,13 @@ async def pages_handler(callback):
                 chat_id=callback.message.chat.id,
                 message_id=callback.message.message_id,
                 reply_markup=sc_keyboards.search_results_keyboard(
+                    search_results, int(page)))
+        elif mode == 'vk_page':
+            search_results = await vk_api.search(q)
+            await bot.edit_message_reply_markup(
+                chat_id=callback.message.chat.id,
+                message_id=callback.message.message_id,
+                reply_markup=vk_keyboards.search_results_keyboard(
                     search_results, int(page)))
 
 

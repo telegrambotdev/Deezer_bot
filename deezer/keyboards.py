@@ -40,7 +40,9 @@ def search_results_keyboard(results, page, per_page=5):
         InlineKeyboardButton(
             text='Deezer ✅', callback_data=new_callback('page', 1)),
         InlineKeyboardButton(
-            text='SoundCloud ☑️', callback_data=new_callback('sc_page', 1)))
+            text='SoundCloud ☑️', callback_data=new_callback('sc_page', 1)),
+        InlineKeyboardButton(
+            text='VK ☑️', callback_data=new_callback('vk_page', 1)))
     return kb
 
 
