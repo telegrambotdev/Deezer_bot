@@ -251,10 +251,6 @@ async def callback_handler(callback):
         if method == 'download':
             await callback.answer()
             album = await deezer_api.getalbum(obj_id)
-            await bot.edit_message_reply_markup(
-                callback.message.chat.id,
-                callback.message.message_id,
-                None)
             return await dz_methods.send_album(
                 album, callback.message.chat, pic=False, send_all=True)
 
