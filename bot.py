@@ -32,9 +32,6 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers,
     dp.register_callback_query_handler(
         callback_handlers.soundcloud_handler,
         Text(startswith='sc_track'))
-    dp.register_callback_query_handler(
-        callback_handlers.vk_handler,
-        Text(startswith='vk_'))
     dp.register_message_handler(
         handlers.start_command_handler, commands=['start'])
     dp.register_message_handler(
@@ -99,6 +96,10 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers,
     dp.register_callback_query_handler(
         callback_handlers.artist_callback_handler,
         Text(contains='artist'))
+    dp.register_callback_query_handler(
+        callback_handlers.vk_handler,
+        Text(startswith='vk_'))
+
     dp.register_callback_query_handler(callback_handlers.callback_handler)
     dp.register_chosen_inline_handler(inline_handlers.finish_download_handler)
     dp.middleware.setup(Middleware())
