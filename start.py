@@ -34,7 +34,8 @@ async def close():
 if __name__ == '__main__':
     with suppress(FileNotFoundError):
         shutil.rmtree('downloads')
-    register_handlers(dp, handlers, inline_handlers, callback_handlers, dz_handlers, sp_handlers)
+    register_handlers(dp, handlers, inline_handlers,
+                      callback_handlers, dz_handlers, sp_handlers)
     logging = asyncio.ensure_future(update_logging_files())
     executor.start_polling(dp, loop=loop)
     loop.run_until_complete(close())

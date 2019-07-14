@@ -15,6 +15,7 @@ import filters
 from middlewares import Middleware
 from sql import database
 from var import var
+from vk import vk_api
 
 loop = asyncio.get_event_loop()
 
@@ -114,6 +115,7 @@ try:
     var.spot = Spotify_API(
         config.spotify_client, config.spotify_secret)
     var.db = database('db.sqlite')
+    loop.run_until_complete(vk_api.login())
     var.conn = loop.run_until_complete(aioredis.create_connection(
         ('localhost', 6379), encoding='utf-8', db=4, loop=loop))
     print('datebase connected')
