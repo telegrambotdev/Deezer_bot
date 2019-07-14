@@ -74,7 +74,8 @@ async def pages_handler(callback):
                 reply_markup=sc_keyboards.search_results_keyboard(
                     search_results, int(page)))
         elif mode == 'vk_page':
-            return await callback.answer('Not avaliable for now')
+            await callback.answer()
+            # return await callback.answer('Not avaliable for now')
             search_results = await vk_api.search(q)
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
