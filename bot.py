@@ -105,6 +105,7 @@ try:
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     var.downloading = {}
+    var.vk_tracks = {}
     var.session = aiohttp.ClientSession(raise_for_status=True)
     print('created session')
     var.CSRFToken = None
