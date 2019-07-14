@@ -19,8 +19,8 @@ from var import var
 loop = asyncio.get_event_loop()
 
 
-def register_handlers(dp, handlers, inline_handlers,
-                      callback_handlers, dz_handlers, sp_handlers, vk_handlers):
+def register_handlers(dp, handlers, inline_handlers, callback_handlers,
+                      dz_handlers, sp_handlers, vk_handlers):
     if '-a' in argv:
         dp.register_message_handler(handlers.only_admin_handler)
     dp.register_message_handler(

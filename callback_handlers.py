@@ -22,7 +22,8 @@ async def vk_handler(callback):
     mode, obj_id, action = parse_callback(callback.data)
     if mode == 'vk_track':
         track_id = callback.data.split(':')[1]
-        await vk_methods.send_track(callback.message.chat.id, track_id)
+        track = await vk_api.get_track(track_id)
+        await vk_methods.send_track(callback.message.chat.id, track)
     elif mode == 'vk_playlist' and action == 'download':
         owner_id, playlist_id, access_key = obj_id.split('_')
         playlist = await vk_api.get_playlist(owner_id, playlist_id, access_key)
@@ -164,7 +165,8 @@ async def sc_artist_callback_handler(callback):
     elif method == 'download':
         tracks = await artist.get_tracks()
         for track in tracks:
-            await sc_methods.send_soundcloud_track(callback.message.chat.id, track)
+            await sc_methods.send_soundcloud_track(
+                callback.message.chat.id, track)
             await sleep(.3)
         return
 

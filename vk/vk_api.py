@@ -129,20 +129,30 @@ async def get_audio(owner_id):
     return [Track(track) for track in audios['items']]
 
 
-async def get_track(owner_id: int, track_id: int, access_key: str = None):
+@cached(TTLCache(100, 1200))
+async def get_track(track_id):
     param = {
         "access_token": var.vk_refresh_token,
         "v": VK_API_VERSION,
-        "owner_id": owner_id,
-        "id": track_id
+        "audios": track_id
     }
 
-    if access_key:
-        param['access_key'] = access_key
+    tracks = await call(HOST_API + "method/audio.getById", param)
 
-    track = await call(HOST_API + "method/audio.get", param)
+    return Track(tracks[0])
 
-    return Track(track)
+
+@cached(TTLCache(100, 1200))
+async def get_tracks(track_ids):
+    param = {
+        "access_token": var.vk_refresh_token,
+        "v": VK_API_VERSION,
+        "audios": ','.join(track_ids)
+    }
+
+    tracks = await call(HOST_API + "method/audio.getById", param)
+
+    return [Track(track) for track in tracks]
 
 
 async def get_catalog():

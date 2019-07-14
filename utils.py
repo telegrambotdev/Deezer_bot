@@ -183,7 +183,10 @@ def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
     tag = Tag()
     tag.parse(path)
     for key, val in tags.items():
-        setattr(tag, key, val)
+        try:
+            setattr(tag, key, val)
+        except Exception as e:
+            print(e)
     if lyrics:
         tag.lyrics.set(lyrics)
     if image:
@@ -261,10 +264,12 @@ async def upload_track(bot, path, title, performer, duration=None, tries=0):
     except exceptions.RetryAfter as e:
         print(f"flood control exceeded, sleeping for {e.timeout + 10} seconds")
         await sleep(e.timeout + 10)
-        return await upload_track(bot, path, title, performer, duration, tries + 1)
+        return await upload_track(
+            bot, path, title, performer, duration, tries + 1)
     except exceptions.TelegramAPIError:
         await sleep(5)
-        return await upload_track(bot, path, title, performer, duration, tries + 1)
+        return await upload_track(
+            bot, path, title, performer, duration, tries + 1)
     return msg
 
 
