@@ -34,11 +34,19 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
             markup = keyboards.playlist_keyboard(playlist)
         else:
             markup = None
-        await bot.send_photo(
-            chat_id,
-            playlist.thumb.photo_600,
-            caption=f'{escape_md(playlist.title)}',
-            reply_markup=markup)
+        if hasattr(playlist, 'photo'):
+            await bot.send_photo(
+                chat_id,
+                playlist.photo.photo_600,
+                caption=f'{escape_md(playlist.title)}',
+                reply_markup=markup)
+        else:
+            await bot.send_photo(
+                chat_id,
+                'AgADBAADjKkxG2SUZVFzIAqSalXHJZnn-RkABIP8pp76pJdTqbwFAAEC',
+                caption=f'{escape_md(playlist.title)}',
+                reply_markup=markup)
+
     if send_all:
         for track in playlist:
             print(track.title)
