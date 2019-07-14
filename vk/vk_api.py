@@ -257,3 +257,4 @@ async def login():
     await refresh_token(auth)
 
 asyncio.get_event_loop().run_until_complete(login())
+print('vk login')
