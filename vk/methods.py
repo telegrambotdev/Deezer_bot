@@ -26,6 +26,7 @@ async def send_track(chat_id, track):
     await bot.send_audio(chat_id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
     var.downloading.pop(track.full_id)
+    var.vk_tracks.pop(track.full_id)
 
 
 async def send_playlist(chat_id, playlist, pic=True, send_all=False):

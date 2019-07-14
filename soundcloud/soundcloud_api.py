@@ -80,7 +80,7 @@ class SoundCloudArtist(AttrDict):
         return [SoundCloudTrack(track) for track in res]
 
     async def get_likes(self, limit=200):
-        res = await api_call('users', self.id, 'likes', limit=limit)
+        res = await api_call('users', self.id, 'favorites', limit=limit)
         return [SoundCloudTrack(track) for track in res]
 
     async def get_reposts(self, limit=200):

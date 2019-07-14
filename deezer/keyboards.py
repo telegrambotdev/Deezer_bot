@@ -103,6 +103,7 @@ def album_keyboard(album, tracks, post=False):
     if post:
         kb.insert(InlineKeyboardButton(
             'Post', callback_data=new_callback('album', album.id, 'post')))
+    kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
     return kb
 
 

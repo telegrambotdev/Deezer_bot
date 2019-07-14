@@ -74,6 +74,8 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers,
         Text(contains='.ar'))
     dp.register_inline_handler(inline_handlers.inline_handler)
     dp.register_callback_query_handler(
+        callback_handlers.close_keyboard, text='close')
+    dp.register_callback_query_handler(
         callback_handlers.quality_setting_hanlder,
         Text(startswith='quality'))
     dp.register_callback_query_handler(

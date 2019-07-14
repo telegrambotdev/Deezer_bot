@@ -17,6 +17,11 @@ from var import var
 from utils import parse_callback
 
 
+async def close_keyboard(callback):
+    await callback.answer()
+    await callback.message.edit_message_reply_markup()
+
+
 async def vk_handler(callback):
     await callback.answer()
     mode, obj_id, action = parse_callback(callback.data)

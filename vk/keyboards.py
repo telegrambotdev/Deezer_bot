@@ -48,4 +48,5 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
             'Post',
             callback_data=new_callback(
                 'vk_playlist', playlist.full_id, 'post')))
+    kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
     return kb
