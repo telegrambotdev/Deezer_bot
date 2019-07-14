@@ -179,9 +179,9 @@ async def get_playlist(
     if access_key:
         param['access_key'] = access_key
 
-    playlist = Playlist(
-        (await call(HOST_API + "method/execute.getPlaylist", param))['audios'],
-        playlist_id)
+    response = await call(HOST_API + "method/execute.getPlaylist", param)
+    print(response)
+    playlist = Playlist(response)
 
     for track in playlist.tracks:
         var.vk_tracks[track.full_id] = track
@@ -218,28 +218,24 @@ class Track(AttrDict):
             path = (f"downloads/vk_{self.id}/" +
                     f"{self.artist} - {self.title}".replace("/", "_")[:70] +
                     ".mp3")
+        print(
+            f'[VK] Start downloading: {self.full_id} '
+            f' | {self.artist} - {self.title}')
         await download_file(self.url, path)
         cover = None
         if self.album and self.album.thumb and self.album.thumb.photo_600:
             cover = await get_file(self.album.thumb.photo_600)
         vk_add_tags(path, self, cover)
+        print(
+            f'[VK] Finished downloading: {self.full_id} '
+            f' | {self.artist} - {self.title}')
         return path
 
 
-class Playlist:
-    def __init__(self, tracks: list, playlist_id: int):
-        self.tracks = [Track(track) for track in tracks]
-
-        for track in self.tracks:
-            if track.album and track.album['id'] == playlist_id:
-                for key, val in track.album.items():
-                    if not isinstance(val, dict):
-                        setattr(self, key, val)
-                    else:
-                        setattr(self, key, AttrDict(val))
-                break
-        else:
-            raise ValueError('Can\'t get a playlist')
+class Playlist(AttrDict):
+    def __init__(self, mapping):
+        super().__init__(mapping['playlist'])
+        self.tracks = [Track(track) for track in mapping['audios']]
 
 
 async def login():
