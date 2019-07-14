@@ -54,11 +54,11 @@ async def quality_setting_hanlder(callback):
 
 
 async def pages_handler(callback):
-    await callback.answer()
     mode, page = parse_callback(callback.data)
     q = callback.message.text[:-1]
     with suppress(exceptions.MessageNotModified):
         if mode == 'page':
+            await callback.answer()
             search_results = await deezer_api.search(q=q)
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
@@ -66,6 +66,7 @@ async def pages_handler(callback):
                 reply_markup=dz_keyboards.search_results_keyboard(
                     search_results, int(page)))
         elif mode == 'sc_page':
+            await callback.answer()
             search_results = await soundcloud_api.search(q=q)
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
@@ -73,6 +74,7 @@ async def pages_handler(callback):
                 reply_markup=sc_keyboards.search_results_keyboard(
                     search_results, int(page)))
         elif mode == 'vk_page':
+            return await callback.answer('Not avaliable for now')
             search_results = await vk_api.search(q)
             await bot.edit_message_reply_markup(
                 chat_id=callback.message.chat.id,
