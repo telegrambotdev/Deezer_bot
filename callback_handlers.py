@@ -1,7 +1,7 @@
 from contextlib import suppress
 from asyncio import sleep
 
-from aiogram import exceptions
+from aiogram import exceptions, types
 
 from bot import bot
 import utils
@@ -17,9 +17,9 @@ from var import var
 from utils import parse_callback
 
 
-async def close_keyboard(callback):
+async def close_keyboard(callback: types.CallbackQuery):
     await callback.answer()
-    await callback.message.edit_message_reply_markup()
+    await callback.message.edit_reply_markup()
 
 
 async def vk_handler(callback):
