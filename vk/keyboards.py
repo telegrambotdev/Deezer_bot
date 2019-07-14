@@ -48,3 +48,4 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
             'Post',
             callback_data=new_callback(
                 'vk_playlist', f"{playlist.owner_id}_{playlist.id}", 'post')))
+    return kb
