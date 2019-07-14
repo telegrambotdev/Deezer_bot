@@ -11,8 +11,16 @@ from deezer import deezer_api, methods as dz_methods
 from deezer import keyboards as dz_keyboards
 from soundcloud import soundcloud_api, methods as sc_methods
 import soundcloud.keyboards as sc_keyboards
+from vk import methods as vk_methods
 from var import var
 from utils import parse_callback
+
+
+async def vk_handler(callback):
+    await callback.answer()
+    track_id = callback.data.split(':')[1]
+    track = var.vk_tracks[track_id]
+    await vk_methods.send_track(callback.message.chat.id, track)
 
 
 async def soundcloud_handler(callback):

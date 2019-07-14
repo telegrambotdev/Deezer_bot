@@ -15,7 +15,7 @@ def search_results_keyboard(results, page, per_page=5):
         kb.insert(InlineKeyboardButton(
             f'{i+1}. {result.artist} - {result.title}',
             callback_data=new_callback(
-                'track_vk', f"{result.owner_id}_{result.id}", 'send')))
+                'vk_track', result.full_id, 'send')))
         kb.row()
     if page != 1:
         kb.insert(InlineKeyboardButton(
@@ -39,11 +39,12 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
             callback_data=new_callback(
-                'track_vk', f"{track.owner_id}_{track.id}", 'send')))
+                'vk_track', track.full_id, 'send')))
     kb.insert(InlineKeyboardButton(
         'Get all tracks', callback_data=new_callback(
-            'playlist_vk', playlist.id, 'download')))
+            'vk_playlist', playlist.id, 'download')))
     if post:
         kb.insert(InlineKeyboardButton(
             'Post',
-            callback_data=new_callback('playlist_vk', playlist.id, 'post')))
+            callback_data=new_callback(
+                'vk_playlist', f"{playlist.owner_id}_{playlist.id}", 'post')))

@@ -9,7 +9,7 @@ from cachetools import TTLCache
 import utils
 from AttrDict import AttrDict
 from config import deezer_private_cookies, deezer_private_headers
-from logger import error_logger, file_download_logger
+from logger import file_download_logger
 from utils import request_get, request_post
 from var import var
 
@@ -36,7 +36,8 @@ async def getCSRFToken():
 
 
 async def private_api_call(method, **json_req):
-    api_token = 'null' if method == 'deezer.getUserData' else (var.CSRFToken or await getCSRFToken())
+    api_token = 'null' if method == 'deezer.getUserData' else (
+        var.CSRFToken or await getCSRFToken())
     context = {
         'api_version': '1.0',
         'api_token': api_token,
@@ -51,7 +52,8 @@ async def private_api_call(method, **json_req):
 
 
 async def api_call(obj_name, obj_id, method='', errcount=0, **params):
-    r = await request_get(f'{api_url}/{obj_name}/{obj_id}/{method}', params=params)
+    r = await request_get(
+        f'{api_url}/{obj_name}/{obj_id}/{method}', params=params)
     obj = AttrDict(await r.json())
     if obj.error:
         if errcount > 2:
@@ -176,7 +178,8 @@ class Track(AttrDict):
             track_number = '0' + str(self.track_position)
         else:
             track_number = str(self.track_position)
-        return f'{track_number} {self.artist.name} - {self.title}'.replace('/', '_')[:200].strip()
+        return f'{track_number} {self.artist.name} - {self.title}' \
+            .replace('/', '_')[:200].strip()
 
     async def download(self, quality='MP3_320'):
         return await download_track(self.id, quality)

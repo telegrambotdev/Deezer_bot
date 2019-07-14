@@ -157,8 +157,11 @@ async def search(query: str):
              "v": VK_API_VERSION, "q": query}
 
     results = await call(HOST_API + "method/audio.search", param)
+    tracks = [Track(track) for track in results['items']]
+    for track in tracks:
+        var.vk_tracks[track.full_id] = track
 
-    return [Track(track) for track in results['items']]
+    return tracks
 
 
 async def get_playlist(

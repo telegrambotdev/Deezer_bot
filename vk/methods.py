@@ -30,7 +30,7 @@ async def send_track(chat_id, track):
 async def send_playlist(chat_id, playlist, pic=True, send_all=False):
     if pic:
         if not send_all:
-            markup = keyboards.playlist_keyboard()
+            markup = keyboards.playlist_keyboard(playlist)
         else:
             markup = None
         await bot.send_photo(

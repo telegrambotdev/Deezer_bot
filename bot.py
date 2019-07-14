@@ -32,6 +32,9 @@ def register_handlers(dp, handlers, inline_handlers,
     dp.register_callback_query_handler(
         callback_handlers.soundcloud_handler,
         Text(startswith='sc_track'))
+    dp.register_callback_query_handler(
+        callback_handlers.vk_handler,
+        Text(startswith='vk_track'))
     dp.register_message_handler(
         handlers.start_command_handler, commands=['start'])
     dp.register_message_handler(
