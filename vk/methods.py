@@ -37,7 +37,7 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
         if hasattr(playlist, 'photo'):
             await bot.send_photo(
                 chat_id,
-                playlist.photo.photo_600,
+                playlist.photo['photo_600'],
                 caption=f'{escape_md(playlist.title)}',
                 reply_markup=markup)
         else:
