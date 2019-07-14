@@ -256,8 +256,6 @@ async def login(force_reauth=False):
         config.vk_auth,
         force_reauth=force_reauth)
     await refresh_token(auth)
-    print(var.vk_refresh_token)
-    await refresh_token(auth)
 
-asyncio.get_event_loop().run_until_complete(login(True))
+asyncio.get_event_loop().run_until_complete(login())
 print('vk login')
