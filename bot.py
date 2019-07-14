@@ -34,7 +34,7 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers,
         Text(startswith='sc_track'))
     dp.register_callback_query_handler(
         callback_handlers.vk_handler,
-        Text(startswith='vk_track'))
+        Text(startswith='vk_'))
     dp.register_message_handler(
         handlers.start_command_handler, commands=['start'])
     dp.register_message_handler(
