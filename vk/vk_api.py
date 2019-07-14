@@ -242,10 +242,11 @@ class Track(AttrDict):
         return path
 
 
-class Playlist(AttrDict):
+class Playlist:
     def __init__(self, mapping):
-        self.tracks = [Track(track) for track in mapping['audios']]
-        super().__init__(mapping['playlist'])
+        self.tracks = [Track(x) for x in mapping['audios']]
+        for key, val in mapping['playlist'].items():
+            self.__setattr__(key, val)
 
 
 async def login(force_reauth=False):

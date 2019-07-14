@@ -8,7 +8,7 @@ class AttrDict(dict):
     """
 
     def __init__(self, mapping):
-        super(AttrDict, self).__init__()
+        super().__init__()
         try:
             for key, value in mapping.items():
                 self.__setitem__(key, value)
