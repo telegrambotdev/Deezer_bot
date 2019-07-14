@@ -1,5 +1,6 @@
 import os
 import json
+import asyncio
 
 from asyncache import cached
 from cachetools import TTLCache
@@ -241,3 +242,5 @@ async def login():
         *config.vk_android_clinet_key,
         config.vk_auth)
     await refresh_token(auth)
+
+asyncio.get_event_loop().run_until_complete(login())
