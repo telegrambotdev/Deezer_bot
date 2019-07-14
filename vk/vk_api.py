@@ -131,6 +131,10 @@ async def get_audio(owner_id):
 
 @cached(TTLCache(100, 1200))
 async def get_track(track_id):
+    cached_track = var.vk_tracks.get(track_id)
+    if cached_track:
+        return cached_track
+
     param = {
         "access_token": var.vk_refresh_token,
         "v": VK_API_VERSION,
@@ -246,6 +250,14 @@ class Playlist:
         self.tracks = [Track(x) for x in mapping['audios']]
         for key, val in mapping['playlist'].items():
             self.__setattr__(key, val)
+
+        if not hasattr(self, 'photo'):
+            self.photo = None
+
+        if hasattr(self, 'access_key'):
+            self.full_id = f'{self.owner_id}_{self.id}_{self.access_key}'
+        else:
+            self.full_id = f'{self.owner_id}_{self.id}_'
 
 
 async def login(force_reauth=False):

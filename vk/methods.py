@@ -48,6 +48,6 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
                 reply_markup=markup)
 
     if send_all:
-        for track in playlist:
+        for track in playlist.tracks:
             print(track.title)
             await send_track(chat_id, track)

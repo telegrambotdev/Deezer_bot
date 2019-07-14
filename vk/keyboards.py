@@ -42,10 +42,10 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
                 'vk_track', track.full_id, 'send')))
     kb.insert(InlineKeyboardButton(
         'Get all tracks', callback_data=new_callback(
-            'vk_playlist', playlist.id, 'download')))
+            'vk_playlist', playlist.full_id, 'download')))
     if post:
         kb.insert(InlineKeyboardButton(
             'Post',
             callback_data=new_callback(
-                'vk_playlist', f"{playlist.owner_id}_{playlist.id}", 'post')))
+                'vk_playlist', playlist.full_id, 'post')))
     return kb
