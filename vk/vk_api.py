@@ -66,8 +66,8 @@ async def call(method, param={}, **kwargs):
 
 async def autorization(login, password, client_id, client_secret,
                        code, captcha_sid="null", captcha_key="null",
-                       forse_reauth=False):
-    if not forse_reauth:
+                       force_reauth=False):
+    if not force_reauth:
         try:
             with open("vk_auth.json", "r") as f:
                 var.vk_auth = json.load(f)['access_token']
@@ -248,13 +248,14 @@ class Playlist(AttrDict):
         super().__init__(mapping['playlist'])
 
 
-async def login():
+async def login(force_reauth=False):
     auth = await autorization(
         config.vk_login,
         config.vk_password,
         *config.vk_android_clinet_key,
-        config.vk_auth)
+        config.vk_auth,
+        force_reauth=force_reauth)
     await refresh_token(auth)
 
-asyncio.get_event_loop().run_until_complete(login())
+asyncio.get_event_loop().run_until_complete(login(True))
 print('vk login')
