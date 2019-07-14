@@ -234,8 +234,8 @@ class Track(AttrDict):
 
 class Playlist(AttrDict):
     def __init__(self, mapping):
-        super().__init__(mapping['playlist'])
         self.tracks = [Track(track) for track in mapping['audios']]
+        super().__init__(mapping['playlist'])
 
 
 async def login():
