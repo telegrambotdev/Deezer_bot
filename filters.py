@@ -10,7 +10,7 @@ deezer_playlist = re.compile(r'.*deezer\.com/.{0,3}playlist/(\d+).*')
 spotify_track = re.compile(r'.*open\.spotify\.com/track/([^? ]+)')
 spotify_album = re.compile(r'.*open\.spotify\.com/album/([^? ]+)')
 spotify_artist = re.compile(r'.*open\.spotify\.com/artist/([^? ]+)')
-spotify_playlist = re.compile(r'.*open\.spotify\.com/.+/playlist/([^? ]+)')
+spotify_playlist = re.compile(r'.*open\.spotify\.com.*/playlist/([^? ]+)')
 vk_playlist = re.compile(
     r'.*vk\.com/.+z=audio_playlist(\d+)_(\d+)(%2F|/)?([^&]*)')
 
