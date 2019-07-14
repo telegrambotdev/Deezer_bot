@@ -12,7 +12,7 @@ spotify_album = re.compile(r'.*open\.spotify\.com/album/([^? ]+)')
 spotify_artist = re.compile(r'.*open\.spotify\.com/artist/([^? ]+)')
 spotify_playlist = re.compile(r'.*open\.spotify\.com.*/playlist/([^? ]+)')
 vk_playlist = re.compile(
-    r'.*vk\.com/.+z=audio_playlist(\d+)_(\d+)(%2F|/)?([^&]*)')
+    r'.*vk\.com/.+z=audio_playlist(-?\d+)_(-?\d+)(%2F|/)?([^&]*)')
 
 
 def SpotifyFilter(message: types.Message):
