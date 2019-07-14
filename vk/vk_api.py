@@ -190,7 +190,6 @@ async def get_playlist(
         param['access_key'] = access_key
 
     response = await call(HOST_API + "method/execute.getPlaylist", param)
-    print(response)
     playlist = Playlist(response)
 
     for track in playlist.tracks:
