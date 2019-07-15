@@ -36,10 +36,16 @@ def search_results_keyboard(results, page, per_page=5):
 def playlist_keyboard(playlist, show_artists=False, post=False):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(playlist.tracks[:97], start=1):
-        kb.insert(InlineKeyboardButton(
-            f'{i}. {track.title}',
-            callback_data=new_callback(
-                'vk_track', track.full_id, 'send')))
+        if show_artists:
+            kb.insert(InlineKeyboardButton(
+                f'{i}.{track.artist} - {track.title}',
+                callback_data=new_callback(
+                    'vk_track', track.full_id, 'send')))
+        else:
+            kb.insert(InlineKeyboardButton(
+                f'{i}. {track.title}',
+                callback_data=new_callback(
+                    'vk_track', track.full_id, 'send')))
     kb.insert(InlineKeyboardButton(
         'Get all tracks', callback_data=new_callback(
             'vk_playlist', playlist.full_id, 'download')))

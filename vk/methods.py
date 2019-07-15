@@ -8,6 +8,7 @@ from userbot import post_large_track
 from var import var
 from utils import already_downloading
 from . import keyboards
+import config
 
 
 async def send_track(chat_id, track):
@@ -32,7 +33,10 @@ async def send_track(chat_id, track):
 async def send_playlist(chat_id, playlist, pic=True, send_all=False):
     if pic:
         if not send_all:
-            markup = keyboards.playlist_keyboard(playlist)
+            markup = keyboards.playlist_keyboard(
+                playlist,
+                show_artists=not hasattr(playlist, 'access_key'),
+                post=chat_id in config.admins)
         else:
             markup = None
         if playlist.photo:

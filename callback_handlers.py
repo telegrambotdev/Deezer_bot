@@ -34,6 +34,11 @@ async def vk_handler(callback):
         playlist = await vk_api.get_playlist(owner_id, playlist_id, access_key)
         await vk_methods.send_playlist(
             callback.message.chat.id, playlist, pic=False, send_all=True)
+    elif mode == 'vk_playlist' and action == 'post':
+        owner_id, playlist_id, access_key = obj_id.split('_')
+        playlist = await vk_api.get_playlist(owner_id, playlist_id, access_key)
+        await vk_methods.send_playlist(
+            -1001171972924, playlist, pic=True, send_all=True)
 
 
 async def soundcloud_handler(callback):
