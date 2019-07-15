@@ -50,3 +50,14 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
                 'vk_playlist', playlist.full_id, 'post')))
     kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
     return kb
+
+
+def profile_keyboard(tracks):
+    kb = InlineKeyboardMarkup(1)
+    for i, track in enumerate(tracks[:99], start=1):
+        kb.insert(InlineKeyboardButton(
+            f'{i}. {track.artist} - {track.title}',
+            callback_data=new_callback(
+                'vk_track', track.full_id, 'send')))
+    kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
+    return kb

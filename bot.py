@@ -65,6 +65,8 @@ def register_handlers(dp, handlers, inline_handlers, callback_handlers,
     dp.register_message_handler(
         vk_handlers.playlist_handler, filters.VKPlaylistFilter)
     dp.register_message_handler(
+        vk_handlers.profile_handler, filters.VKProfileFilter)
+    dp.register_message_handler(
         handlers.search_handler, types.ChatType.is_private)
     dp.register_inline_handler(
         inline_handlers.artist_search_inline_handler,
