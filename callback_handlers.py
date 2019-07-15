@@ -37,7 +37,9 @@ async def quality_setting_hanlder(callback):
             reply_markup=dz_keyboards.quality_settings_keyboard(setting))
 
 
-@dp.callback_query_handler(Text(contains='page'))
+@dp.callback_query_handler(Text(startswith='page'))
+@dp.callback_query_handler(Text(startswith='sc_page'))
+@dp.callback_query_handler(Text(startswith='vk_page'))
 async def pages_handler(callback):
     mode, page = parse_callback(callback.data)
     q = callback.message.text[:-1]
