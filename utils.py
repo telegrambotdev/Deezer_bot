@@ -190,7 +190,7 @@ def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
     if lyrics:
         tag.lyrics.set(lyrics)
     if image:
-        tag.images.set(type_=3, img_data=image, mime_type="image/png")
+        tag.images.set(type_=3, img_data=image, mime_type=image_mimetype)
     tag.save()
 
 

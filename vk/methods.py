@@ -35,7 +35,7 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
             markup = keyboards.playlist_keyboard(playlist)
         else:
             markup = None
-        if hasattr(playlist, 'photo'):
+        if playlist.photo:
             await bot.send_photo(
                 chat_id,
                 playlist.photo['photo_600'],
