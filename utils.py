@@ -288,14 +288,11 @@ async def launch_with_timeout(coro, timeout, on_error="raise"):
 async def answer_empty_inline_query(query: types.InlineQuery, text: str):
     if not text:
         return await query.answer(
-            inline_query_id=query.id,
             results=[],
             switch_pm_text='Search',
             switch_pm_parameter='0')
     elif query.offset == 'done':
-        return await query.answer(
-            inline_query_id=query.id,
-            results=[])
+        return await query.answer(results=[])
     else:
         return False
     return True
