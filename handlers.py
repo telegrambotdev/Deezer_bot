@@ -22,7 +22,7 @@ async def quality_setting_handler(message: types.Message):
             reply_markup=dz_keyboards.quality_settings_keyboard(current))
 
 
-@dp.message_handler(types.ContentType.AUDIO)
+@dp.message_handler(content_types=[types.ContentType.AUDIO])
 async def audio_file_handler(message: types.Message):
     if message.caption and message.chat.id in config.admins:
         await db_utils.add_track(int(message.caption), message.audio.file_id)
