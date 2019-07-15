@@ -12,7 +12,12 @@ async def playlist_handler(message, owner_id, playlist_id, access_key):
 
 
 @dp.message_handler(filters.VKProfileFilter)
-async def profile_handler(message, profile_id):
+async def profile_handler(message, profile_id, profile_nickname):
+    profile_id = await vk_api.get_user_id(profile_id or profile_nickname)
+    if not profile_id:
+        return await bot.send_message(
+            message.chat.id, 'Can\'t access audios of this account')
+
     tracks = await vk_api.get_audio(profile_id)
     await bot.send_message(
         message.chat.id, 'Tracks:',

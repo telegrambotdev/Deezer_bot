@@ -11,7 +11,8 @@ spotify_track = re.compile(r'.*open\.spotify\.com/track/([^? ]+)')
 spotify_album = re.compile(r'.*open\.spotify\.com/album/([^? ]+)')
 spotify_artist = re.compile(r'.*open\.spotify\.com/artist/([^? ]+)')
 spotify_playlist = re.compile(r'.*open\.spotify\.com.*/playlist/([^? ]+)')
-vk_profile = re.compile(r'.*vk.com/audios(-?\d+)')
+vk_profile_audios = re.compile(r'.*vk.com/audios(-?\d+)')
+vk_profile = re.compile(r'.*vk.com/(.+)')
 vk_playlist = re.compile(
     r'.*vk\.com/.+z=audio_playlist(-?\d+)_(-?\d+)(%2F|/)?([^&]*)')
 
@@ -65,9 +66,11 @@ def DeezerArtistFilter(message: types.Message):
 
 
 def VKProfileFilter(message: types.Message):
-    match = re.match(vk_profile, message.text)
-    if match:
-        return {'profile_id': match.group(1)}
+    match_audios = re.match(vk_profile_audios, message.text)
+    match_profile = re.match(vk_profile, message.text)
+    return {
+        'profile_id': match_audios and match_audios.group(1),
+        'profile_nickname': match_profile and match_profile.group(1)}
 
 
 def VKPlaylistFilter(message: types.Message):

@@ -112,10 +112,19 @@ async def refresh_token(access_token: str):
     return token
 
 
-async def user_get():
-    param = {"access_token": var.vk_refresh_token, "v": VK_API_VERSION}
+async def get_user_id(account):
+    param = {
+        "access_token": var.vk_refresh_token,
+        "v": VK_API_VERSION,
+        "user_ids": account,
+        "fields": "can_see_audio"}
 
-    return await call(HOST_API + "method/users.get", param)
+    response = await call(HOST_API + "method/users.get", param)
+    user_id = response[0]['id']
+    if not response[0]['can_see_audio']:
+        return None
+
+    return user_id
 
 
 async def get_audio(owner_id):
