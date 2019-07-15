@@ -68,9 +68,10 @@ def DeezerArtistFilter(message: types.Message):
 def VKProfileFilter(message: types.Message):
     match_audios = re.match(vk_profile_audios, message.text)
     match_profile = re.match(vk_profile, message.text)
-    return {
-        'profile_id': match_audios and match_audios.group(1),
-        'profile_nickname': match_profile and match_profile.group(1)}
+    if match_audios or match_profile:
+        return {
+            'profile_id': match_audios and match_audios.group(1),
+            'profile_nickname': match_profile and match_profile.group(1)}
 
 
 def VKPlaylistFilter(message: types.Message):
