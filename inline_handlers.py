@@ -47,9 +47,9 @@ async def albums_search(query: types.InlineQuery):
     search_results = await deezer_api.search('album', q)
     inline_results = [InlineQueryResultArticle(
         id=result.link,
-        title=result.album.title,
+        title=result.title,
         description=result.artist.name,
-        thumb_url=result.album.cover_small,
+        thumb_url=result.cover_small,
         thumb_width=56,
         thumb_height=56,
         input_message_content=InputTextMessageContent(result.link)
