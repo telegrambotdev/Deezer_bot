@@ -35,7 +35,7 @@ def search_results_keyboard(results, page, per_page=5):
 
 def playlist_keyboard(playlist, show_artists=False, post=False):
     kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(playlist.tracks, start=1):
+    for i, track in enumerate(playlist.tracks[:97], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
             callback_data=new_callback(
