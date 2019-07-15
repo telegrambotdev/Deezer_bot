@@ -1,7 +1,7 @@
 import asyncio
 
-
 import pyrogram
+from pyrogram.errors.exceptions import FloodWait
 
 import config
 import db_utils
@@ -19,22 +19,42 @@ async def start():
     return client
 
 
+async def upload(path, attrs):
+    try:
+        msg = await client.send_audio(-1001246220493, path, **attrs)
+    except FloodWait as exc:
+        await asyncio.sleep(exc.x + 1)
+        return await upload(path, attrs)
+    return msg.audio.file_id
+
+
 async def post_large_track(path, track, quality='mp3', provider='deezer'):
     if provider == 'deezer':
-        msg = await client.send_audio(
-            chat_id=-1001246220493, audio=path, duration=track.duration,
-            title=track.title, performer=track.artist.name)
-        await db_utils.add_track(track.id, msg.audio.file_id, quality)
+        attrs = {
+            'duration': track.duration,
+            'title': track.title,
+            'performer': track.artist.name
+        }
+        file_id = await upload(path, attrs)
+        await db_utils.add_track(track.id, file_id, quality)
+
     elif provider == 'soundcloud':
-        msg = await client.send_audio(
-            chat_id=-1001246220493, audio=path, duration=track.duration,
-            title=track.title, performer=track.artist)
-        await db_utils.add_sc_track(track.id, msg.audio.file_id)
+        attrs = {
+            'duration': track.duration,
+            'title': track.title,
+            'performer': track.artist
+        }
+        file_id = await upload(path, attrs)
+        await db_utils.add_sc_track(track.id, file_id)
+
     elif provider == 'vk':
-        msg = await client.send_audio(
-            chat_id=-1001246220493, audio=path, duration=track.duration,
-            title=track.title, performer=track.artist)
-        await db_utils.add_vk_track(track.full_id, msg.audio.file_id)
+        attrs = {
+            'duration': track.duration,
+            'title': track.title,
+            'performer': track.artist
+        }
+        file_id = await upload(path, attrs)
+        await db_utils.add_vk_track(track.full_id, file_id)
     else:
         raise ValueError(f'wrong provider: {provider}')
 
