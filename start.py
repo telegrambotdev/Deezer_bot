@@ -16,7 +16,7 @@ loop = asyncio.get_event_loop()
 def import_handlers():
     from deezer import handlers, callback_handlers
     from spotify import handlers
-    from vk import handlers as callback_handlers
+    from vk import handlers, callback_handlers
     from soundcloud import handlers, callback_handlers
     import handlers
     import inline_handlers
