@@ -7,9 +7,6 @@ import config
 import db_utils
 
 
-loop = asyncio.get_event_loop()
-
-
 async def start():
     client = pyrogram.Client(
         f"Bot_{config.bot_token.split(':')[0]}",
@@ -59,4 +56,4 @@ async def post_large_track(path, track, quality='mp3', provider='deezer'):
         raise ValueError(f'wrong provider: {provider}')
 
 
-client = loop.run_until_complete(start())
+client = asyncio.get_event_loop().run_until_complete(start())
