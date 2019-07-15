@@ -36,4 +36,4 @@ async def vk_profile_audio(callback):
     _, profile_id, page = parse_callback(callback.data)
     tracks = await vk_api.get_audio(profile_id)
     return await callback.message.edit_reply_markup(
-        keyboards.profile_keyboard(tracks, profile_id, page))
+        keyboards.profile_keyboard(tracks, profile_id, int(page)))
