@@ -54,7 +54,7 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
 
 def profile_keyboard(tracks):
     kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(tracks[:99], start=1):
+    for i, track in enumerate(tracks[:50], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.artist} - {track.title}',
             callback_data=new_callback(
