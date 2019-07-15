@@ -21,4 +21,4 @@ async def profile_handler(message, profile_id, profile_nickname):
     tracks = await vk_api.get_audio(profile_id)
     await bot.send_message(
         message.chat.id, 'Tracks:',
-        reply_markup=keyboards.profile_keyboard(tracks))
+        reply_markup=keyboards.profile_keyboard(tracks, profile_id, 1))

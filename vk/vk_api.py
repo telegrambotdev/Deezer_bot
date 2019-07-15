@@ -127,6 +127,7 @@ async def get_user_id(account):
     return user_id
 
 
+@cached(TTLCache(100, 1200))
 async def get_audio(owner_id):
     param = {
         "access_token": var.vk_refresh_token,

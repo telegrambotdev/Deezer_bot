@@ -58,12 +58,24 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
     return kb
 
 
-def profile_keyboard(tracks):
-    kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(tracks[:50], start=1):
-        kb.insert(InlineKeyboardButton(
-            f'{i}. {track.artist} - {track.title}',
+def profile_keyboard(tracks, profile_id, page, per_page=5):
+    kb = InlineKeyboardMarkup(2)
+    total_pages = ceil(len(tracks) / per_page)
+    start = (page - 1) * per_page
+    stop = start + per_page
+    last_page = page == total_pages
+
+    for i, track in enumerate(tracks[start: stop], start=start):
+        kb.row(InlineKeyboardButton(
+            f'{i+1}. {track.artist} - {track.title}',
             callback_data=new_callback(
                 'vk_track', track.full_id, 'send')))
-    kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
+    if page != 1:
+        kb.insert(InlineKeyboardButton(
+            '◀️', callback_data=new_callback(
+                'vk_profile_audio_page', profile_id, page - 1)))
+    if not last_page:
+        kb.insert(InlineKeyboardButton(
+            '️️▶️', callback_data=new_callback(
+                'vk_profile_audio_page', profile_id, page + 1)))
     return kb
