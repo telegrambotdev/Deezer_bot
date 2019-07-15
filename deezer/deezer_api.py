@@ -238,7 +238,7 @@ class Artist(AttrDict):
             print(self.name, e, type(e))
 
     async def top(self, limit=5):
-        r = await api_call('artist', self.id, 'top')
+        r = await api_call('artist', self.id, 'top', limit=limit)
         return [AttrDict(track) for track in r]
 
     async def related(self):
