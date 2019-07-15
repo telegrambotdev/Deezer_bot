@@ -86,7 +86,7 @@ async def search(obj='track', q=''):
         elif obj == 'album':
             result = [Album(result) for result in results['data']]
         else:
-            result = [AttrDict(result) for result in results['data']]
+            result = [Track(result) for result in results['data']]
         return result or []
     except KeyError:
         print(obj)

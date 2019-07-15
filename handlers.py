@@ -1,51 +1,28 @@
-import re
-from asyncio import sleep
-from datetime import date
-from glob import iglob
-
-import soundcloud.methods as sc_methods
 from aiogram import types
 from aiogram.dispatcher.handler import SkipHandler
+from aiogram.dispatcher.filters import Command, CommandStart
 
 import config
 import db_utils
 import inline_keyboards
-import methods
 import utils
-from bot import bot
+from bot import bot, dp
 from deezer import deezer_api
 from deezer import keyboards as dz_keyboards
 from soundcloud import keyboards as sc_keyboards
-from soundcloud import soundcloud_api
-from logger import error_logger
 from var import var
 
 
-async def only_admin_handler(message: types.Message):
-    if message.chat.id in config.admins:
-        raise SkipHandler()
-
-
+@dp.message_handler(Command('quality'))
 async def quality_setting_handler(message: types.Message):
     if message.chat.id in config.admins:
-        current_setting = await db_utils.get_quality_setting(message.chat.id)
+        current = await db_utils.get_quality_setting(message.chat.id)
         return await bot.send_message(
-            message.chat.id, 'Select quality',
-            reply_markup=dz_keyboards.quality_settings_keyboard(current_setting))
+            message.chat.id, 'Select quality (applies only for Deezer)',
+            reply_markup=dz_keyboards.quality_settings_keyboard(current))
 
 
-async def soundcloud_link_handler(message: types.Message):
-    url = utils.clear_link(message)
-    result = await soundcloud_api.resolve(url)
-    if result.kind == 'track':
-        await sc_methods.send_soundcloud_track(message.chat.id, result)
-    elif result.kind == 'user':
-        await sc_methods.send_soundcloud_artist(message.chat.id, result)
-    elif result.kind == 'playlist':
-        await sc_methods.send_soundcloud_playlist(message.chat.id, result)
-
-
-
+@dp.message_handler(types.ContentType.AUDIO)
 async def audio_file_handler(message: types.Message):
     if message.caption and message.chat.id in config.admins:
         await db_utils.add_track(int(message.caption), message.audio.file_id)
@@ -53,6 +30,7 @@ async def audio_file_handler(message: types.Message):
         print(message.audio.file_id)
 
 
+@dp.message_handler(CommandStart())
 async def start_command_handler(message: types.Message):
     db_utils.add_user(message.from_user)
     await bot.send_message(
@@ -63,6 +41,7 @@ async def start_command_handler(message: types.Message):
         reply_markup=inline_keyboards.start_keyboard)
 
 
+@dp.message_handler(Command('stats'))
 async def getstats_handler(message):
     sc_tracks_count = await var.conn.execute('get', 'tracks:soundcloud:total')
     dz_tracks_count = await var.conn.execute('get', 'tracks:deezer:total')
@@ -70,10 +49,12 @@ async def getstats_handler(message):
     await bot.send_message(
         chat_id=message.chat.id,
         text=f'users: {all_users_count}\n\n'
-            f'Deezer tracks: {dz_tracks_count}\n\nSoundCloud tracks: {sc_tracks_count}',
+        f'Deezer tracks: {dz_tracks_count}\n\n'
+        f'SoundCloud tracks: {sc_tracks_count}',
         reply_markup=inline_keyboards.stats_keyboard)
 
 
+@dp.message_handler(Command('today'))
 async def today_stats_handler(message):
     stats = utils.get_today_stats()
     await bot.send_message(
@@ -84,6 +65,8 @@ async def today_stats_handler(message):
         reply_markup=inline_keyboards.today_stats_keyboard)
 
 
+@dp.edited_message_handler(types.ChatType.is_private)
+@dp.message_handler(types.ChatType.is_private)
 async def search_handler(message):
     search_results = await deezer_api.search(q=message.text)
     if not len(search_results):

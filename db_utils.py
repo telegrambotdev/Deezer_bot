@@ -32,7 +32,8 @@ async def add_vk_track(track_id, file_id):
 
 
 async def get_quality_setting(user_id):
-    return await var.conn.execute('get', f'user:{user_id}:quality_setting') or 'mp3'
+    return await var.conn.execute(
+        'get', f'user:{user_id}:quality_setting') or 'mp3'
 
 
 async def set_quality_setting(user_id, setting):

@@ -3,10 +3,12 @@ from asyncio import sleep
 
 from deezer import deezer_api
 from deezer import methods as dz_methods
-from bot import bot
+from bot import bot, dp
 from var import var
+import filters
 
 
+@dp.message_handler(filters.SpotifyFilter)
 async def spotify_handler(message, track_id):
     spotify_song = await var.spot.get_track(track_id)
     print(track_id)
@@ -21,6 +23,7 @@ async def spotify_handler(message, track_id):
     await dz_methods.send_track(search_results[0], message.chat)
 
 
+@dp.message_handler(filters.SpotifyPlaylistFilter)
 async def spotify_playlist_handler(message, playlist_id):
     spotify_playlist = await var.spot.get_playlist(playlist_id)
     for track in spotify_playlist:
@@ -39,6 +42,7 @@ async def spotify_playlist_handler(message, playlist_id):
         await sleep(.5)
 
 
+@dp.message_handler(filters.SpotifyAlbumFilter)
 async def spotify_album_handler(message, album_id):
     spotify_album = await var.spot.get_album(album_id)
     search_results = await deezer_api.search(
@@ -50,6 +54,7 @@ async def spotify_album_handler(message, album_id):
     await dz_methods.send_album(search_results[0], message.chat)
 
 
+@dp.message_handler(filters.SpotifyArtistFilter)
 async def spotify_artist_handler(message, artist_id):
     spotify_artist = await var.spot.get_artist(artist_id)
     search_results = await deezer_api.search('artist', spotify_artist.name)

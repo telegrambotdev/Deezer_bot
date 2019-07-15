@@ -2,6 +2,7 @@ import os
 import json
 import asyncio
 from time import time
+from hashlib import md5
 
 from asyncache import cached
 from cachetools import TTLCache
@@ -224,6 +225,14 @@ class Track(AttrDict):
 
     def url_valid(self):
         return self.valid_till < time()
+
+    def hash_track(self):
+        args = [self.artist, self.title, str(self.duration)]
+        if self.album:
+            args.extend([str(self.album.id), self.album.title])
+
+        s = ':'.join(args).encode('utf-8', 'ignore')
+        return md5(s).hexdigest()
 
     async def download(self, path: str = None):
         if not path:

@@ -28,7 +28,7 @@ def search_results_keyboard(results, page, per_page=5):
     for i, result in enumerate(results[start:stop], start=start):
         kb.insert(InlineKeyboardButton(
             f'{i+1}. {result.artist.name} - {result.title}',
-            callback_data=new_callback('track_deezer', result.id, 'send')))
+            callback_data=new_callback('dz_track', result.id, 'send')))
         kb.row()
     if page != 1:
         kb.insert(InlineKeyboardButton(
@@ -50,18 +50,18 @@ def search_results_keyboard(results, page, per_page=5):
 def artist_keyboard(artist):
     kb = InlineKeyboardMarkup(2)
     kb.insert(InlineKeyboardButton(
-        'Top 5 Tracks',
-        callback_data=new_callback('artist', artist.id, 'top5')))
+        'Top 10 Tracks',
+        callback_data=new_callback('dz_artist', artist.id, 'top10')))
     kb.insert(InlineKeyboardButton(
         'Albums',
-        callback_data=new_callback('artist', artist.id, 'albums')))
+        callback_data=new_callback('dz_artist', artist.id, 'albums')))
     kb.insert(InlineKeyboardButton(
         'Related artists',
-        callback_data=new_callback('artist', artist.id, 'related')))
+        callback_data=new_callback('dz_artist', artist.id, 'related')))
     kb.insert(InlineKeyboardButton(
-        'Radio', callback_data=new_callback('artist', artist.id, 'radio')))
+        'Radio', callback_data=new_callback('dz_artist', artist.id, 'radio')))
     kb.insert(InlineKeyboardButton(
-        'Wikipedia', callback_data=new_callback('artist', artist.id, 'wiki')))
+        'Wikipedia', callback_data=new_callback('dz_artist', artist.id, 'wiki')))
     kb.insert(InlineKeyboardButton(
         'Search on Last.Fm',
         url=str(URL(f'https://www.last.fm/search?q={artist.name}'))))
@@ -73,9 +73,9 @@ def related_artists_keyboard(related, main_artist_id):
     for i, artist in enumerate(related[:10], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {artist.name}',
-            callback_data=new_callback('artist', artist.id, 'send')))
+            callback_data=new_callback('dz_artist', artist.id, 'send')))
     kb.insert(InlineKeyboardButton(
-        'Go back', callback_data=new_callback('artist', main_artist_id, 'main')))
+        'Go back', callback_data=new_callback('dz_artist', main_artist_id, 'main')))
     return kb
 
 
@@ -84,9 +84,9 @@ def artist_radio_keyboard(radio, artist_id):
     for i, track in enumerate(radio, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.artist.name} \u2013 {track.title}',
-            callback_data=new_callback('track_deezer', track.id, 'send')))
+            callback_data=new_callback('dz_track', track.id, 'send')))
     kb.insert(InlineKeyboardButton(
-        'Go back', callback_data=new_callback('artist', artist_id, 'main')))
+        'Go back', callback_data=new_callback('dz_artist', artist_id, 'main')))
     return kb
 
 
@@ -95,14 +95,14 @@ def album_keyboard(album, tracks, post=False):
     for i, track in enumerate(tracks, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
-            callback_data=new_callback('track_deezer', track.id, 'send')))
+            callback_data=new_callback('dz_track', track.id, 'send')))
 
     kb.insert(InlineKeyboardButton(
         'Get all tracks',
-        callback_data=new_callback('album', album.id, 'download')))
+        callback_data=new_callback('dz_album', album.id, 'download')))
     if post:
         kb.insert(InlineKeyboardButton(
-            'Post', callback_data=new_callback('album', album.id, 'post')))
+            'Post', callback_data=new_callback('dz_album', album.id, 'post')))
     kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
     return kb
 
@@ -113,21 +113,21 @@ def albums_keyboard(artist, albums):
         year = album.release_date.split('-')[0]
         kb.insert(InlineKeyboardButton(
             f'{album.title} ({year})',
-            callback_data=new_callback('album', album.id, 'send')))
+            callback_data=new_callback('dz_album', album.id, 'send')))
     kb.insert(InlineKeyboardButton(
         'Go back',
-        callback_data=new_callback('artist', artist.id, 'main')))
+        callback_data=new_callback('dz_artist', artist.id, 'main')))
     return kb
 
 
-def top5_keyboard(artist, top):
+def top10_keyboard(artist, top):
     kb = InlineKeyboardMarkup(1)
     for i, track in enumerate(top, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
-            callback_data=new_callback('track_deezer', track.id, 'send')))
+            callback_data=new_callback('dz_track', track.id, 'send')))
 
     kb.insert(InlineKeyboardButton(
         'Go back',
-        callback_data=new_callback('artist', artist.id, 'main')))
+        callback_data=new_callback('dz_artist', artist.id, 'main')))
     return kb

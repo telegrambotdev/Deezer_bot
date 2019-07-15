@@ -15,7 +15,7 @@ def search_results_keyboard(results, page, per_page=5):
     for i, result in enumerate(results[start: stop], start=start):
         kb.insert(InlineKeyboardButton(
             f'{i+1}. {result.artist} - {result.title}',
-            callback_data=new_callback('track_soundcloud', result.id, 'send')))
+            callback_data=new_callback('sc_track', result.id, 'send')))
         kb.row()
     if page != 1:
         kb.insert(InlineKeyboardButton(
@@ -40,7 +40,7 @@ def artist_tracks_keyboard(tracks, artist_id):
     for i, track in enumerate(tracks[:97], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
-            callback_data=new_callback('track_soundcloud', track.id, 'send')))
+            callback_data=new_callback('sc_track', track.id, 'send')))
     kb.insert(InlineKeyboardButton(
         'Get all tracks',
         callback_data=new_callback('sc_artist', artist_id, 'download')))
@@ -54,7 +54,7 @@ def artist_playlists_keyboard(playlists, artist_id):
     for i, playlist in enumerate(playlists, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {playlist.title}',
-            callback_data=new_callback('playlist_soundcloud', playlist.id, 'send')))
+            callback_data=new_callback('sc_playlist', playlist.id, 'send')))
     kb.insert(InlineKeyboardButton(
         'Go back', callback_data=new_callback('sc_artist', artist_id, 'main')))
     return kb
@@ -65,14 +65,14 @@ def playlist_keyboard(playlist, post):
     for i, track in enumerate(playlist.tracks, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.artist} \u2013 {track.title}',
-            callback_data=new_callback('track_soundcloud', track.id, 'send')))
+            callback_data=new_callback('sc_track', track.id, 'send')))
     kb.insert(
         InlineKeyboardButton(
             'Get all tracks', callback_data=new_callback(
-                'playlist_soundcloud', playlist.id, 'download')))
+                'sc_playlist', playlist.id, 'download')))
     if post:
         kb.insert(InlineKeyboardButton('Post', callback_data=new_callback(
-            'playlist_soundcloud', playlist.id, 'post')))
+            'sc_playlist', playlist.id, 'post')))
     kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
     return kb
 
@@ -82,9 +82,10 @@ def likes_keyboard(likes, artist_id):
     for i, track in enumerate(likes, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.artist} \u2013 {track.title}',
-            callback_data=new_callback('track_soundcloud', track.id, 'send')))
+            callback_data=new_callback('sc_track', track.id, 'send')))
     kb.insert(InlineKeyboardButton(
-        'Get all tracks', callback_data=new_callback('likes_soundcloud', artist_id, 'download')))
+        'Get all tracks', callback_data=new_callback(
+            'sc_artist', artist_id, 'likes_download')))
     kb.insert(InlineKeyboardButton(
         'Go back', callback_data=new_callback('sc_artist', artist_id, 'main')))
     return kb
