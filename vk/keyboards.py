@@ -58,7 +58,7 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
     return kb
 
 
-def profile_keyboard(tracks, profile_id, page, per_page=5):
+def profile_keyboard(tracks, profile_id, page, per_page=7):
     kb = InlineKeyboardMarkup(2)
     total_pages = ceil(len(tracks) / per_page)
     start = (page - 1) * per_page
@@ -70,6 +70,7 @@ def profile_keyboard(tracks, profile_id, page, per_page=5):
             f'{i+1}. {track.artist} - {track.title}',
             callback_data=new_callback(
                 'vk_track', track.full_id, 'send')))
+    kb.row()
     if page != 1:
         kb.insert(InlineKeyboardButton(
             '◀️', callback_data=new_callback(
