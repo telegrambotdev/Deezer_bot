@@ -13,7 +13,7 @@ from bot import bot, dp
 @dp.inline_handler(Text(startswith='.ar'))
 async def artist_search(query):
     q = query.query.lstrip('.ar ')
-    if utils.answer_empty_inline_query(query, q):
+    if await utils.answer_empty_inline_query(query, q):
         return
     offset = int(query.offset) if query.offset.isdecimal() else 0
 
@@ -40,7 +40,7 @@ async def artist_search(query):
 @dp.inline_handler(Text(startswith='.a'))
 async def albums_search(query: types.InlineQuery):
     q = query.query.lstrip('.a ')
-    if utils.answer_empty_inline_query(query, q):
+    if await utils.answer_empty_inline_query(query, q):
         return
     offset = int(query.offset) if query.offset.isdecimal() else 0
 
@@ -69,7 +69,7 @@ async def albums_search(query: types.InlineQuery):
 @dp.inline_handler()
 async def tracks_search(query: types.InlineQuery):
     q = query.query
-    if utils.answer_empty_inline_query(query, q):
+    if await utils.answer_empty_inline_query(query, q):
         return
     offset = int(query.offset) if query.offset.isdecimal() else 0
 
