@@ -40,7 +40,7 @@ class SoundCloudTrack(AttrDict):
             os.makedirs(f'downloads/{self.id}', exist_ok=True)
             filepath = \
                 f'downloads/{self.id}/ ' + \
-                f'{self.user.username} - {self.title}'.replace('/', '_')[
+                f'{self.user.username} - {self.title}'.replace('/', '_').strip()[
                     :97] + '.mp3'
         else:
             os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
