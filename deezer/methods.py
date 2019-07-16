@@ -23,8 +23,6 @@ async def send_track(track, chat, Redownload=False):
         return
     if not Redownload:
         file_id = await db_utils.get_track(track.id, quality)
-        if not file_id:
-            return False
         await bot.send_audio(chat.id, file_id)
         sent_message_logger.info(
             f'[send track {track.id} to {format_name(chat)}] {track}')
@@ -37,7 +35,6 @@ async def send_track(track, chat, Redownload=False):
             path = await track.download('FLAC')
     except ValueError as e:
         print(e)
-        raise
         return await bot.send_message(
             chat.id,
             ("🚫This track is not available "
