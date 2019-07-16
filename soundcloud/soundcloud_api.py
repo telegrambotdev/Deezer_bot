@@ -55,9 +55,10 @@ class SoundCloudTrack(AttrDict):
         return filepath
 
     async def get_thumb(self):
-        os.makedirs(f'downloads/{self.id}', exist_ok=True)
-        filepath = f'downloads/{self.id}/thumb.png'
-        return await download_file(self.thumb_url, filepath)
+        if self.thumb_url:
+            os.makedirs(f'downloads/{self.id}', exist_ok=True)
+            filepath = f'downloads/{self.id}/thumb.png'
+            return await download_file(self.thumb_url, filepath)
 
     @property
     def artwork_url(self):
