@@ -137,6 +137,7 @@ def add_tags(path, track, album, image, lyrics):
         'album': track["album"]["title"],
         'album_artist': album["artist"]["name"],
         'original_release_date': track["album"]["release_date"],
+        'recording_date': int(track["album"]["release_date"].split("-")[0]),
         'title': track["title"],
         'track_num': track["track_position"],
         'disc_num': track["disk_number"],
@@ -202,7 +203,7 @@ def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpeg'):
     tag.add_picture(pic)
     for key, val in tags.items():
         try:
-            tag[key] = val
+            tag[key] = str(val)
         except Exception as e:
             print(e)
     tag.save()
