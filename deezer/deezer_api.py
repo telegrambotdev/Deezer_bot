@@ -196,7 +196,9 @@ class Track(AttrDict):
         return res
 
     async def get_thumb(self):
-        return BytesIO(await utils.get_file(self.album.cover_small))
+        os.makedirs(f'downloads/{self.id}', exist_ok=True)
+        filepath = f'downloads/{self.id}/thumb.jpg'
+        return await utils.download_file(self.album.cover_small, filepath)
 
     def __repr__(self):
         with suppress(AttributeError):

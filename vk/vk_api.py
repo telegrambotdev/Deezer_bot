@@ -263,6 +263,12 @@ class Track(AttrDict):
             f' | {self.artist} - {self.title}')
         return path
 
+    async def get_thumb(self):
+        if self.album and self.album.thumb and self.album.thumb.photo_135:
+            os.makedirs(f"downloads/vk_{self.id}/", exist_ok=True)
+            filepath = f'downloads/vk_{self.id}/thumb.jpg'
+            return await download_file(self.album.thumb.photo_135, filepath)
+
 
 class Playlist:
     def __init__(self, mapping):

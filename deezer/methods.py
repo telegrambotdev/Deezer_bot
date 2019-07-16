@@ -22,8 +22,13 @@ async def send_track(track, chat, Redownload=False):
     else:
         return
     if not Redownload:
-        if (await check_and_forward(track, chat, quality)):
-            return
+        file_id = await db_utils.get_track(track.id, quality)
+        if not file_id:
+            return False
+        await bot.send_audio(chat.id, file_id)
+        sent_message_logger.info(
+            f'[send track {track.id} to {format_name(chat)}] {track}')
+        return True
 
     try:
         if quality == 'mp3':
@@ -35,7 +40,8 @@ async def send_track(track, chat, Redownload=False):
         raise
         return await bot.send_message(
             chat.id,
-            f"🚫This track is not available ({track.artist.name} - {track.title})")
+            ("🚫This track is not available "
+             f"({track.artist.name} - {track.title})"))
 
     await bot.send_chat_action(chat.id, 'upload_audio')
 
@@ -47,6 +53,7 @@ async def send_track(track, chat, Redownload=False):
     var.downloading.pop(track.id)
     sent_message_logger.info(
         f'[send track {track.id} to {format_name(chat)}] {track}')
+    return True
 
 
 async def send_album(album, chat, pic=True, send_all=False):
@@ -82,18 +89,6 @@ async def send_artist(artist, chat_id):
         caption=f'[{escape_md(artist.name)}]({artist.share})',
         parse_mode='markdown',
         reply_markup=keyboards.artist_keyboard(artist))
-
-
-async def check_and_forward(track, chat, quality='mp3'):
-    file_id = await db_utils.get_track(track.id, quality)
-    if not file_id:
-        return False
-    await bot.send_audio(
-        chat_id=chat.id, audio=file_id, title=track.title,
-        performer=track.artist.name, duration=track.duration)
-    sent_message_logger.info(
-        f'[send track {track.id} to {format_name(chat)}] {track}')
-    return True
 
 
 async def cache(track):

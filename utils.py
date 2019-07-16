@@ -114,6 +114,7 @@ async def download_file(url, path):
     async with aiofiles.open(path, "wb") as f:
         async for chunk in r.content.iter_chunked(2048):
             await f.write(chunk)
+    return path
 
 
 async def get_file(url):

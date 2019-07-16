@@ -25,7 +25,8 @@ async def upload(path, attrs):
     return msg.audio.file_id
 
 
-async def post_large_track(path, track, quality='mp3', provider='deezer', thumb=None):
+async def post_large_track(
+        path, track, quality='mp3', provider='deezer', thumb=None):
     if provider == 'deezer':
         attrs = {
             'duration': track.duration,
