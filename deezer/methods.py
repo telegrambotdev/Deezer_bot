@@ -30,7 +30,8 @@ async def send_track(track, chat, Redownload=False):
             path = await track.download('MP3_320')
         elif quality == 'flac':
             path = await track.download('FLAC')
-    except ValueError:
+    except ValueError as e:
+        print(e)
         return await bot.send_message(
             chat.id,
             f"🚫This track is not available ({track.artist.name} - {track.title})")
