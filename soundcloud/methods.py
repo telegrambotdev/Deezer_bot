@@ -16,20 +16,10 @@ async def send_soundcloud_track(chat_id, track):
     if file_id:
         return await bot.send_audio(chat_id, file_id)
     path = await track.download()
-    if (os.path.getsize(path) >> 20) > 50:
-        await post_large_track(path, track, provider='soundcloud')
-        file_id = await db_utils.get_sc_track(track.id)
-        return await bot.send_audio(chat_id, file_id)
-
-    await bot.send_chat_action(chat_id, 'upload_audio')
     thumb = await track.get_thumb()
-    msg = await bot.send_audio(
-        chat_id=chat_id,
-        audio=types.InputFile(path),
-        performer=track.artist,
-        title=track.title,
-        thumb=types.InputFile(thumb))
-    await db_utils.add_sc_track(track.id, msg.audio.file_id)
+    await post_large_track(path, track, provider='soundcloud', thumb=thumb)
+    file_id = await db_utils.get_sc_track(track.id)
+    await bot.send_audio(chat_id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
 
 
