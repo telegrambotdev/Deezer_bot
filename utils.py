@@ -75,11 +75,11 @@ def get_today_stats():
     downloaded_tracks = 0
     sent_tracks = 0
     received_messages = 0
-    for filename in glob.iglob(f"logs/{datestr}*file_downloads.log"):
+    for filename in glob.iglob(f"logs/{datestr}/*file_downloads.log"):
         downloaded_tracks += sum(1 for line in open(filename))
-    for filename in glob.iglob(f"logs/{datestr}*sent_messages.log"):
+    for filename in glob.iglob(f"logs/{datestr}/*sent_messages.log"):
         sent_tracks += sum(1 for line in open(filename))
-    for filename in glob.iglob(f"logs/{datestr}*messages.log"):
+    for filename in glob.iglob(f"logs/{datestr}/*messages.log"):
         received_messages += sum(1 for line in open(filename))
     return Stats(downloaded_tracks, sent_tracks, received_messages)
 
