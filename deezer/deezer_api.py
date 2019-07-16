@@ -196,7 +196,8 @@ class Track(AttrDict):
 
     def __repr__(self):
         with suppress(AttributeError):
-            return f'[{self.id}] {self.artist.name} - {self.title} - {self.album.title}'
+            return (f'[{self.id}] {self.artist.name}'
+                    f' - {self.title} - {self.album.title}')
         return self.title
 
     def __hash__(self):

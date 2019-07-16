@@ -202,7 +202,10 @@ def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpeg'):
     pic.mime = image_mimetype
     tag.add_picture(pic)
     for key, val in tags.items():
-        tag[key] = val
+        try:
+            tag[key] = val
+        except Exception as e:
+            print(e)
     tag.save()
 
 
