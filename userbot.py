@@ -25,12 +25,13 @@ async def upload(path, attrs):
     return msg.audio.file_id
 
 
-async def post_large_track(path, track, quality='mp3', provider='deezer'):
+async def post_large_track(path, track, quality='mp3', provider='deezer', thumb=None):
     if provider == 'deezer':
         attrs = {
             'duration': track.duration,
             'title': track.title,
-            'performer': track.artist.name
+            'performer': track.artist.name,
+            'thumb': thumb
         }
         file_id = await upload(path, attrs)
         await db_utils.add_track(track.id, file_id, quality)
@@ -39,7 +40,8 @@ async def post_large_track(path, track, quality='mp3', provider='deezer'):
         attrs = {
             'duration': track.duration,
             'title': track.title,
-            'performer': track.artist
+            'performer': track.artist,
+            'thumb': thumb
         }
         file_id = await upload(path, attrs)
         await db_utils.add_sc_track(track.id, file_id)
@@ -48,7 +50,8 @@ async def post_large_track(path, track, quality='mp3', provider='deezer'):
         attrs = {
             'duration': track.duration,
             'title': track.title,
-            'performer': track.artist
+            'performer': track.artist,
+            'thumb': thumb
         }
         file_id = await upload(path, attrs)
         await db_utils.add_vk_track(track.full_id, file_id)

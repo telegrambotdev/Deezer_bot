@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+from io import BytesIO
 from contextlib import suppress
 
 from asyncache import cached
@@ -193,6 +194,9 @@ class Track(AttrDict):
             r = await request_get(r.url.replace('120x120', '1000x1000'))
             res = await r.content.read()
         return res
+
+    async def get_thumb(self):
+        return BytesIO(await utils.get_file(self.album.cover_small))
 
     def __repr__(self):
         with suppress(AttributeError):

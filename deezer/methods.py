@@ -39,7 +39,8 @@ async def send_track(track, chat, Redownload=False):
 
     await bot.send_chat_action(chat.id, 'upload_audio')
 
-    await post_large_track(path, track, quality)
+    thumb = await track.get_thumb()
+    await post_large_track(path, track, quality, thumb=thumb)
     file_id = await db_utils.get_track(track.id, quality)
     await bot.send_audio(chat.id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
