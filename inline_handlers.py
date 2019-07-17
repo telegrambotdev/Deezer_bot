@@ -17,7 +17,7 @@ async def artist_search(query):
         return
     offset = int(query.offset) if query.offset.isdecimal() else 0
 
-    search_results = await deezer_api.search('artist', q)
+    search_results = await deezer_api.search(q, 'artist')
     inline_results = [InlineQueryResultArticle(
         id=result.link,
         title=result.name,
@@ -44,12 +44,41 @@ async def albums_search(query: types.InlineQuery):
         return
     offset = int(query.offset) if query.offset.isdecimal() else 0
 
-    search_results = await deezer_api.search('album', q)
+    search_results = await deezer_api.search(q, 'album')
     inline_results = [InlineQueryResultArticle(
         id=result.link,
         title=result.title,
         description=result.artist.name,
         thumb_url=result.cover_small,
+        thumb_width=56,
+        thumb_height=56,
+        input_message_content=InputTextMessageContent(result.link)
+    ) for result in search_results[offset: offset + 5]]
+
+    if offset + 6 < len(search_results):
+        next_offset = str(offset + 5)
+    else:
+        next_offset = 'done'
+    await bot.answer_inline_query(
+        inline_query_id=query.id,
+        results=inline_results,
+        next_offset=next_offset,
+        cache_time=30)
+
+
+@dp.inline_handler(Text(startswith='.pl'))
+async def playlist_search(query: types.InlineQuery):
+    q = query.query.lstrip('.pl ')
+    if await utils.answer_empty_inline_query(query, q):
+        return
+    offset = int(query.offset) if query.offset.isdecimal() else 0
+
+    search_results = await deezer_api.search(q, 'playlist')
+    inline_results = [InlineQueryResultArticle(
+        id=result.link,
+        title=result.title,
+        description=result.description,
+        thumb_url=result.picture_small,
         thumb_width=56,
         thumb_height=56,
         input_message_content=InputTextMessageContent(result.link)

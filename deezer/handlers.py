@@ -36,7 +36,7 @@ async def diskography_handler(message: types.Message):
     if artist_name.isdigit():
         artist = await deezer_api.getartist(artist_name)
     else:
-        artist = (await deezer_api.search('artist', artist_name))[0]
+        artist = (await deezer_api.search(artist_name, 'artist'))[0]
 
     tracks = await artist.all_tracks()
     total, skipped = len(tracks), 0
@@ -82,7 +82,7 @@ async def diskography_handler(message: types.Message):
 @dp.message_handler(commands=['a', 'artist'])
 async def artist_search_handler(message):
     artist = (await deezer_api.search(
-        'artist', message.text.strip(message.get_command())))[0]
+        message.text.strip(message.get_command()), 'artist'))[0]
     await methods.send_artist(artist, message.chat.id)
 
 

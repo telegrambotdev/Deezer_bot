@@ -77,7 +77,7 @@ async def api_call(obj_name, obj_id, method='', errcount=0, **params):
 
 
 @cached(TTLCache(100, 600))
-async def search(obj='track', q=''):
+async def search(q='', obj='track'):
     encoded_url = utils.encode_url(
         f'{api_url}/search/{obj}/', {'q': q, 'limit': 50})
     results = await (await request_get(encoded_url)).json()
@@ -86,8 +86,10 @@ async def search(obj='track', q=''):
             result = [Artist(result) for result in results['data']]
         elif obj == 'album':
             result = [Album(result) for result in results['data']]
-        else:
+        elif obj == 'track':
             result = [Track(result) for result in results['data']]
+        else:
+            result = [AttrDict(result) for result in results['data']]
         return result or []
     except KeyError:
         print(obj)
