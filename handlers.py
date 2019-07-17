@@ -58,7 +58,8 @@ async def today_stats_handler(message):
 
 @dp.message_handler(Command('quality'))
 async def quality_setting_handler(message: types.Message):
-    if message.chat.id in config.admins:
+    if message.chat.id in config.admins or \
+            message.chat.id in config.donated_users:
         current = await db_utils.get_quality_setting(message.chat.id)
         return await bot.send_message(
             message.chat.id, 'Select quality (applies only for Deezer)',
