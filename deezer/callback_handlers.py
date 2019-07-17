@@ -1,5 +1,7 @@
 from asyncio import sleep
+from contextlib import suppress
 
+from aiogram import exceptions
 from aiogram.dispatcher.filters import Text
 
 from . import deezer_api, keyboards, methods
@@ -9,9 +11,11 @@ from utils import parse_callback, already_downloading
 
 @dp.callback_query_handler(Text(startswith='dz_playlist'))
 async def deezer_playlist(callback):
-    await callback.answer('Playlist download started', show_alert=True)
     _, obj_id, method = parse_callback(callback.data)
     if method == 'download':
+        with suppress(exceptions.MessageNotModified):
+            await callback.message.edit_reply_markup()
+        await callback.answer('Playlist download started', show_alert=True)
         playlist = await deezer_api.getplaylist(obj_id)
         for track in playlist.tracks:
             await methods.send_track(track, callback.message.chat)
