@@ -40,18 +40,20 @@ class SoundCloudTrack(AttrDict):
             os.makedirs(f'downloads/{self.id}', exist_ok=True)
             filepath = \
                 f'downloads/{self.id}/ ' + \
-                f'{self.user.username} - {self.title}'.replace('/', '_').strip()[
-                    :97] + '.mp3'
+                f'{self.user.username} - {self.title}' \
+                .replace('/', '_').strip()[:97] + '.mp3'
         else:
             os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
 
         print(
-            f'[Soundcloud] Start downloading: {self.id} | {self.artist} - {self.title}')
+            f'[Soundcloud] Start downloading: {self.id}'
+            f' | {self.artist} - {self.title}')
         await download_file(await self.download_url(), filepath)
         cover = await get_file(self.artwork_url) if self.artwork_url else None
         sc_add_tags(filepath, self, cover)
         print(
-            f'[Soundcloud] Finished downloading: {self.id} | {self.artist} - {self.title}')
+            f'[Soundcloud] Finished downloading: {self.id}'
+            f' | {self.artist} - {self.title}')
         return filepath
 
     async def get_thumb(self):
