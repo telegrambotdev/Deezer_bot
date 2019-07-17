@@ -7,7 +7,7 @@ from aiogram.utils.markdown import escape_md
 import db_utils
 from bot import bot
 from userbot import post_large_track
-from utils import already_downloading, get_album_cover_url
+from utils import already_downloading, get_album_cover_url, calling_queue
 from var import var
 from logger import sent_message_logger, format_name
 import config
@@ -15,6 +15,7 @@ import config
 from . import keyboards
 
 
+@calling_queue(6)
 async def send_track(track, chat, Redownload=False):
     quality = await db_utils.get_quality_setting(chat.id)
     if not already_downloading(track.id):
