@@ -135,7 +135,7 @@ def top10_keyboard(artist, top):
 
 def playlist_keyboard(tracks, playlist_id):
     kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(tracks, start=1):
+    for i, track in enumerate(tracks[:80], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
             callback_data=new_callback('dz_track', track.id, 'send')))
