@@ -91,17 +91,17 @@ async def send_artist(artist, chat_id):
         reply_markup=keyboards.artist_keyboard(artist))
 
 
-async def send_playlist(playlist, chat_id):
+async def send_playlist(playlist, tracks, chat_id):
     try:
         await bot.send_photo(
             chat_id=chat_id, photo=playlist.picture_xl, caption=playlist.title,
-            reply_markup=keyboards.playlist_keyboard(playlist))
+            reply_markup=keyboards.playlist_keyboard(tracks, playlist.id))
     except exceptions.TelegramAPIError:
         await bot.send_photo(
             chat_id=chat_id,
             photo='AgADBAADjKkxG2SUZVFzIAqSalXHJZnn-RkABIP8pp76pJdTqbwFAAEC',
             caption=playlist.title,
-            reply_markup=keyboards.playlist_keyboard(playlist))
+            reply_markup=keyboards.playlist_keyboard(tracks, playlist.id))
 
 
 async def cache(track):

@@ -133,14 +133,14 @@ def top10_keyboard(artist, top):
     return kb
 
 
-def playlist_keyboard(playlist):
+def playlist_keyboard(tracks, playlist_id):
     kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(playlist.tracks, start=1):
+    for i, track in enumerate(tracks, start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.title}',
             callback_data=new_callback('dz_track', track.id, 'send')))
     kb.insert(InlineKeyboardButton(
         text='Get all tracks',
-        callback_data=new_callback('dz_playlist', playlist.id, 'download')))
+        callback_data=new_callback('dz_playlist', playlist_id, 'download')))
     kb.insert(InlineKeyboardButton(text='Close', callback_data='close'))
     return kb

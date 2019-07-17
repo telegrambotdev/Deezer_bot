@@ -101,7 +101,8 @@ async def album_handler(message, album_id):
 @dp.message_handler(filters.DeezerPlaylistFilter)
 async def playlist_handler(message, playlist_id):
     playlist = await deezer_api.getplaylist(playlist_id)
-    await methods.send_playlist(playlist, message.chat)
+    tracks = await deezer_api.getplaylist_tracks(playlist_id)
+    await methods.send_playlist(playlist, tracks, message.chat)
 
 
 @dp.message_handler(filters.DeezerFilter)
