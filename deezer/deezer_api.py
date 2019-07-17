@@ -162,7 +162,7 @@ async def getalbum(album_id):
 @cached(TTLCache(100, 600))
 async def getplaylist(playlist_id):
     playlist = await api_call('playlist', playlist_id, 'tracks', limit=2000)
-    return [Track(track) for track in playlist]
+    return AttrDict(playlist)
 
 
 @cached(TTLCache(100, 600))
