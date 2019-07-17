@@ -43,31 +43,27 @@ async def quality_setting_hanlder(callback):
 async def pages_handler(callback):
     mode, page = parse_callback(callback.data)
     q = callback.message.text[:-1]
+    await callback.answer()
+    if mode == 'page':
+        search_results = await deezer_api.search(q=q)
+        keyboard = dz_keyboards.search_results_keyboard(
+            search_results, int(page))
+    elif mode == 'sc_page':
+        await callback.answer()
+        search_results = await soundcloud_api.search(q=q)
+        keyboard = sc_keyboards.search_results_keyboard(
+            search_results, int(page))
+    elif mode == 'vk_page':
+        await callback.answer()
+        search_results = await vk_api.search(q)
+        keyboard = vk_keyboards.search_results_keyboard(
+            search_results, int(page))
+
     with suppress(exceptions.MessageNotModified):
-        if mode == 'page':
-            await callback.answer()
-            search_results = await deezer_api.search(q=q)
-            await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=dz_keyboards.search_results_keyboard(
-                    search_results, int(page)))
-        elif mode == 'sc_page':
-            await callback.answer()
-            search_results = await soundcloud_api.search(q=q)
-            await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=sc_keyboards.search_results_keyboard(
-                    search_results, int(page)))
-        elif mode == 'vk_page':
-            await callback.answer()
-            search_results = await vk_api.search(q)
-            await bot.edit_message_reply_markup(
-                chat_id=callback.message.chat.id,
-                message_id=callback.message.message_id,
-                reply_markup=vk_keyboards.search_results_keyboard(
-                    search_results, int(page)))
+        return await bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id,
+            message_id=callback.message.message_id,
+            reply_markup=keyboard)
 
 
 @dp.callback_query_handler(text='stats')
