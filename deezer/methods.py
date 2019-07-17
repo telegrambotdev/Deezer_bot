@@ -72,7 +72,8 @@ async def send_album(album, chat, pic=True, send_all=False):
             await bot.send_photo(
                 chat.id,
                 await get_album_cover_url(album.id),
-                caption=f'{escape_md(album.artist.name)} \u2013 {escape_md(album.title)}',
+                caption=(f'{escape_md(album.artist.name)} '
+                         f'\u2013 {escape_md(album.title)}'),
                 reply_markup=markup)
     if send_all:
         for track in await album.get_tracks():
@@ -87,6 +88,19 @@ async def send_artist(artist, chat_id):
         caption=f'[{escape_md(artist.name)}]({artist.share})',
         parse_mode='markdown',
         reply_markup=keyboards.artist_keyboard(artist))
+
+
+async def send_playlist(playlist, chat_id):
+    try:
+        await bot.send_photo(
+            chat_id=chat_id, photo=playlist.picture_xl, caption=playlist.title,
+            reply_markup=keyboards.playlist_keyboard(playlist))
+    except exceptions.TelegramAPIError:
+        await bot.send_photo(
+            chat_id=chat_id,
+            photo='AgADBAADjKkxG2SUZVFzIAqSalXHJZnn-RkABIP8pp76pJdTqbwFAAEC',
+            caption=playlist.title,
+            reply_markup=keyboards.playlist_keyboard(playlist))
 
 
 async def cache(track):
