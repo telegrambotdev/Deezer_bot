@@ -13,15 +13,6 @@ from soundcloud import keyboards as sc_keyboards
 from var import var
 
 
-@dp.message_handler(Command('quality'))
-async def quality_setting_handler(message: types.Message):
-    if message.chat.id in config.admins:
-        current = await db_utils.get_quality_setting(message.chat.id)
-        return await bot.send_message(
-            message.chat.id, 'Select quality (applies only for Deezer)',
-            reply_markup=dz_keyboards.quality_settings_keyboard(current))
-
-
 @dp.message_handler(content_types=[types.ContentType.AUDIO])
 async def audio_file_handler(message: types.Message):
     if message.caption and message.chat.id in config.admins:
@@ -63,6 +54,21 @@ async def today_stats_handler(message):
         f'Sent tracks: {stats.sent_tracks}\n\n'
         f'Received messages: {stats.received_messages}',
         reply_markup=inline_keyboards.today_stats_keyboard)
+
+
+@dp.message_handler(Command('quality'))
+async def quality_setting_handler(message: types.Message):
+    if message.chat.id in config.admins:
+        current = await db_utils.get_quality_setting(message.chat.id)
+        return await bot.send_message(
+            message.chat.id, 'Select quality (applies only for Deezer)',
+            reply_markup=dz_keyboards.quality_settings_keyboard(current))
+
+
+@dp.message_handler(Command('donate'))
+async def donate(message: types.Message):
+    return await bot.send_message(
+        message.chat.id, config.donate_message, parse_mode='markdown')
 
 
 @dp.edited_message_handler(types.ChatType.is_private)
