@@ -1,4 +1,5 @@
 from time import time
+import random
 import shutil
 
 from aiogram import exceptions
@@ -7,7 +8,7 @@ from aiogram.utils.markdown import escape_md
 import db_utils
 from bot import bot
 from userbot import post_large_track
-from utils import already_downloading, get_album_cover_url, calling_queue
+from utils import already_downloading, get_album_cover_url
 from var import var
 from logger import sent_message_logger, format_name
 import config
@@ -16,7 +17,6 @@ import server_methods
 from . import keyboards
 
 
-@calling_queue(6)
 async def send_track(track, chat, Redownload=False):
     quality = await db_utils.get_quality_setting(chat.id)
     if not already_downloading(track.id):
@@ -32,7 +32,8 @@ async def send_track(track, chat, Redownload=False):
                 f'[send track {track.id} to {format_name(chat)}] {track}')
             return True
 
-    if chat.id in config.admins or chat.id in config.donated_users:
+    if chat.id in config.admins or chat.id in config.donated_users \
+            or bool(random.randint(0, 2)):
         await server_methods.send_track(track, chat.id)
         var.downloading.pop(track.id)
         return True
