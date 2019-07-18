@@ -34,8 +34,15 @@ async def send_track(track, chat, Redownload=False):
 
     if chat.id in config.admins or chat.id in config.donated_users \
             or bool(random.randint(0, 2)):
+        print(
+            f'[Deezer] Start downloading: {track.id} |'
+            f' {track.artist.name} - {track.title} ')
         await server_methods.send_track(track, chat.id)
         var.downloading.pop(track.id)
+        print(
+            f'[Deezer] Finished downloading: {track.id} '
+            f'| {track.artist.name} - {track.title} ')
+    
         return True
 
     try:
