@@ -16,8 +16,8 @@ async def deezer_playlist(callback):
         with suppress(exceptions.MessageNotModified):
             await callback.message.edit_reply_markup()
         await callback.answer('Playlist download started', show_alert=True)
-        playlist = await deezer_api.getplaylist(obj_id)
-        for track in playlist.tracks:
+        tracks = await deezer_api.getplaylist_tracks(obj_id)
+        for track in tracks:
             await methods.send_track(track, callback.message.chat)
             await sleep(.1)
 
