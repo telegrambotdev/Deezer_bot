@@ -4,3 +4,4 @@ import utils
 import bot
 import userbot
 from . import keyboards, handlers, methods, deezer_api
+import server_methods

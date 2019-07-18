@@ -6,3 +6,4 @@ config.py
 .vscode/
 __pycache__/
 downloads/
+server_methods.py

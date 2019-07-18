@@ -11,6 +11,7 @@ from utils import already_downloading, get_album_cover_url, calling_queue
 from var import var
 from logger import sent_message_logger, format_name
 import config
+import server_methods
 
 from . import keyboards
 
@@ -29,6 +30,9 @@ async def send_track(track, chat, Redownload=False):
             sent_message_logger.info(
                 f'[send track {track.id} to {format_name(chat)}] {track}')
             return True
+
+    if chat.id == 140999479:
+        return await server_methods.send_track(track, chat.id)
 
     try:
         if quality == 'mp3':
