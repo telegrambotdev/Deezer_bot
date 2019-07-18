@@ -27,12 +27,15 @@ async def send_track(track, chat, Redownload=False):
         file_id = await db_utils.get_track(track.id, quality)
         if file_id:
             await bot.send_audio(chat.id, file_id)
+            var.downloading.pop(track.id)
             sent_message_logger.info(
                 f'[send track {track.id} to {format_name(chat)}] {track}')
             return True
 
-    if chat.id == 140999479:
-        return await server_methods.send_track(track, chat.id)
+    if chat.id in config.admins or chat.id in config.donated_users:
+        await server_methods.send_track(track, chat.id)
+        var.downloading.pop(track.id)
+        return True
 
     try:
         if quality == 'mp3':
