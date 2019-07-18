@@ -42,7 +42,8 @@ async def send_track(track, chat, Redownload=False):
         print(
             f'[Deezer_server] Finished downloading: {track.id} '
             f'| {track.artist.name} - {track.title} ')
-    
+        sent_message_logger.info(
+        f'[send track {track.id} to {format_name(chat)}] {track}')
         return True
 
     try:
