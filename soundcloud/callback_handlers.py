@@ -40,7 +40,7 @@ async def soundcloud_artist(callback):
 
     elif method == 'likes_download':
         likes = await artist.get_likes()
-        for track in tracks:
+        for track in likes:
             await methods.send_soundcloud_track(
                 callback.message.chat.id, track)
             await sleep(.3)
