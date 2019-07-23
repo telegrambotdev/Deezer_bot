@@ -33,7 +33,7 @@ async def send_track(track, chat, Redownload=False):
             return True
 
     if chat.id in config.admins or chat.id in config.donated_users \
-            or bool(random.randint(0, 3)):
+            or bool(random.randint(0, 5)):
         print(
             f'[Deezer_server] Start downloading: {track.id} |'
             f' {track.artist.name} - {track.title} ')
@@ -43,7 +43,7 @@ async def send_track(track, chat, Redownload=False):
             f'[Deezer_server] Finished downloading: {track.id} '
             f'| {track.artist.name} - {track.title} ')
         sent_message_logger.info(
-        f'[send track {track.id} to {format_name(chat)}] {track}')
+            f'[send track {track.id} to {format_name(chat)}] {track}')
         return True
 
     try:

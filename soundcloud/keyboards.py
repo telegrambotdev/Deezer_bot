@@ -62,7 +62,7 @@ def artist_playlists_keyboard(playlists, artist_id):
 
 def playlist_keyboard(playlist, post):
     kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(playlist.tracks, start=1):
+    for i, track in enumerate(playlist.tracks[:95], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.artist} \u2013 {track.title}',
             callback_data=new_callback('sc_track', track.id, 'send')))
@@ -79,7 +79,7 @@ def playlist_keyboard(playlist, post):
 
 def likes_keyboard(likes, artist_id):
     kb = InlineKeyboardMarkup(1)
-    for i, track in enumerate(likes, start=1):
+    for i, track in enumerate(likes[:95], start=1):
         kb.insert(InlineKeyboardButton(
             f'{i}. {track.artist} \u2013 {track.title}',
             callback_data=new_callback('sc_track', track.id, 'send')))
