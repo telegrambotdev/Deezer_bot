@@ -76,7 +76,7 @@ async def playlist_search(query: types.InlineQuery):
     search_results = await deezer_api.search(q, 'playlist')
     inline_results = [InlineQueryResultArticle(
         id=result.link,
-        title=result.title,
+        title=result.title or 'playlist',
         description=result.description,
         thumb_url=result.picture_small,
         thumb_width=56,
