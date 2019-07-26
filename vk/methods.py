@@ -40,18 +40,19 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
                 post=chat_id in config.admins)
         else:
             markup = None
-        if playlist.photo:
+        try:
             await bot.send_photo(
                 chat_id,
                 playlist.photo['photo_600'],
                 caption=f'{escape_md(playlist.title)}',
                 reply_markup=markup)
-        else:
+        except Exception:
             await bot.send_photo(
                 chat_id,
                 'AgADBAADjKkxG2SUZVFzIAqSalXHJZnn-RkABIP8pp76pJdTqbwFAAEC',
                 caption=f'{escape_md(playlist.title)}',
                 reply_markup=markup)
+            raise
 
     if send_all:
         for track in playlist.tracks:
