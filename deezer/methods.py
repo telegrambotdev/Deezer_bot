@@ -32,8 +32,7 @@ async def send_track(track, chat, Redownload=False):
                 f'[send track {track.id} to {format_name(chat)}] {track}')
             return True
 
-    if chat.id in config.admins or chat.id in config.donated_users \
-            or bool(random.randint(0, 5)):
+    try:
         print(
             f'[Deezer_server] Start downloading: {track.id} |'
             f' {track.artist.name} - {track.title} ')
@@ -45,6 +44,8 @@ async def send_track(track, chat, Redownload=False):
         sent_message_logger.info(
             f'[send track {track.id} to {format_name(chat)}] {track}')
         return True
+    except Exception:
+        pass
 
     try:
         if quality == 'mp3':
@@ -53,10 +54,11 @@ async def send_track(track, chat, Redownload=False):
             path = await track.download('FLAC')
     except ValueError as e:
         print(e)
-        return await bot.send_message(
+        await bot.send_message(
             chat.id,
             ("🚫This track is not available "
              f"({track.artist.name} - {track.title})"))
+        raise
 
     await bot.send_chat_action(chat.id, 'upload_audio')
 
