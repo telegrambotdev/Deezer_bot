@@ -9,6 +9,7 @@ import filters
 
 
 @dp.message_handler(filters.SpotifyFilter)
+@dp.channel_post_handler(filters.SpotifyFilter)
 async def spotify_handler(message, track_id):
     spotify_song = await var.spot.get_track(track_id)
     print(track_id)

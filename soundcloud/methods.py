@@ -49,5 +49,10 @@ async def send_soundcloud_playlist(chat_id, playlist, pic=True, send_all=False):
                 caption=f'{playlist.user.username} \u2013 {playlist.title}')
     if send_all:
         for track in playlist.tracks:
-            print(track.title)
-            await send_soundcloud_track(chat_id, track)
+            try:
+                print(track.title)
+                await send_soundcloud_track(chat_id, track)
+            except Exception:
+                print(e)
+                await bot.send_message(
+                    chat_id, f'track {track.title} is not available')

@@ -106,6 +106,7 @@ async def playlist_handler(message, playlist_id):
 
 
 @dp.message_handler(filters.DeezerFilter)
+@dp.channel_post_handler(filters.DeezerFilter)
 async def track_handler(message, track_id):
     track = await deezer_api.gettrack(track_id)
     if utils.already_downloading(track.id):
