@@ -36,7 +36,7 @@ async def send_track(track, chat, Redownload=False):
         print(
             f'[Deezer_server] Start downloading: {track.id} |'
             f' {track.artist.name} - {track.title} ')
-        await server_methods.send_track(track, chat.id)
+        await server_methods.send_track(track, chat.id, quality)
         var.downloading.pop(track.id)
         print(
             f'[Deezer_server] Finished downloading: {track.id} '
