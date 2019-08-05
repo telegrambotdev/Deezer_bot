@@ -11,7 +11,7 @@ from time import time
 
 import aiofiles
 import aiohttp
-from mutagen.flac import FLAC, Picture
+from mutagen.flac import FLAC, File, Picture
 from aiogram import exceptions, types
 from eyed3.id3 import Tag
 from yarl import URL
@@ -197,17 +197,19 @@ def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
 
 def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpeg'):
     tag = FLAC(path)
+    filehandle = File(path)
     pic = Picture()
     pic.data = image
     pic.type = 3
     pic.mime = image_mimetype
-    tag.add_picture(pic)
+    filehandle.add_picture(pic)
     for key, val in tags.items():
         try:
             tag[key] = str(val)
         except Exception as e:
             print(e)
     tag.save()
+    filehandle.save()
 
 
 errcount = {"count": 0}
