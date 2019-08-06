@@ -195,7 +195,7 @@ def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
     tag.save()
 
 
-def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpeg'):
+def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpg'):
     tag = FLAC(path)
     pic = Picture()
     pic.data = image
