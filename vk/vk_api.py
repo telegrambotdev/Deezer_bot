@@ -1,6 +1,7 @@
 import os
 import json
 import asyncio
+import random
 from time import time
 from hashlib import md5
 
@@ -185,13 +186,20 @@ async def search(query: str):
     param = {"access_token": var.vk_refresh_token,
              "v": VK_API_VERSION, "q": query}
 
-    results = await alt_search(query) \
-        or await call(HOST_API + "method/audio.search", param)
-    tracks = [Track(track) for track in results['items']]
-    for track in tracks:
-        var.vk_tracks[track.full_id] = track
+    if random.randint(0, 1):
+        results = await alt_search(query) \
+            or await call(HOST_API + "method/audio.search", param)
+    else:
+        results = await call(HOST_API + "method/audio.search", param) \
+            or await alt_search(query)
 
-    return tracks
+    if results:
+        tracks = [Track(track) for track in results['items']]
+        for track in tracks:
+            var.vk_tracks[track.full_id] = track
+
+        return tracks
+    return []
 
 
 async def get_playlist(
