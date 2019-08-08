@@ -27,7 +27,7 @@ def import_handlers():
 async def close():
     var.db.commit()
     var.db.close()
-    var.conn.close()
+    await var.conn.close()
     logging.cancel()
     await var.session.close()
 
