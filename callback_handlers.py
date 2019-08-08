@@ -14,6 +14,13 @@ from utils import parse_callback
 from var import var
 
 
+@dp.callback_query_handler(text='delete')
+async def close_keyboard(callback: types.CallbackQuery):
+    await callback.answer()
+    await callback.message.reply_to_message.delete()
+    await callback.message.delete()
+
+
 @dp.callback_query_handler(text='close')
 async def close_keyboard(callback: types.CallbackQuery):
     await callback.answer()

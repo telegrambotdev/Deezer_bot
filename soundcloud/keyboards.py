@@ -31,6 +31,8 @@ def search_results_keyboard(results, page, per_page=5):
         InlineKeyboardButton(
             text='VK ☑️', callback_data=new_callback('vk_page', 1))
     )
+    kb.row(InlineKeyboardButton(
+        text='Close', callback_data='delete'))
 
     return kb
 
