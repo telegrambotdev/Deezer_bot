@@ -24,7 +24,7 @@ try:
     bot = Bot(token=config.bot_token, loop=loop)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
-    app = get_new_configured_app(dp, WEBHOOK_URL)
+    app = get_new_configured_app(dp, WEBHOOK_URL_PATH)
     var.downloading = {}
     var.vk_tracks = {}
     var.session = aiohttp.ClientSession(raise_for_status=True)
