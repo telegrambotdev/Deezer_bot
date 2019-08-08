@@ -20,6 +20,15 @@ WEBHOOK_URL_PATH = f'/webhook/{config.bot_token}'
 WEBHOOK_URL = f"https://{WEBHOOK_HOST}{WEBHOOK_URL_PATH}"
 
 
+async def on_startup(app):
+    webhook = await bot.get_webhook_info()
+    if webhook.url != WEBHOOK_URL:
+        if not webhook.url:
+            await bot.delete_webhook()
+
+        await bot.set_webhook(WEBHOOK_URL)
+
+
 try:
     bot = Bot(token=config.bot_token, loop=loop)
     storage = MemoryStorage()
@@ -40,15 +49,6 @@ try:
     var.conn = loop.run_until_complete(aioredis.create_connection(
         ('localhost', 6379), encoding='utf-8', db=4, loop=loop))
     print('datebase connected')
-
-
-async def on_startup(app):
-    webhook = await bot.get_webhook_info()
-    if webhook.url != WEBHOOK_URL:
-        if not webhook.url:
-            await bot.delete_webhook()
-
-        await bot.set_webhook(WEBHOOK_URL)
 
 
 except Exception as e:
