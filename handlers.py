@@ -7,9 +7,9 @@ import db_utils
 import inline_keyboards
 import utils
 from bot import bot, dp
-from deezer import deezer_api
-from deezer import keyboards as dz_keyboards
-from soundcloud import keyboards as sc_keyboards
+from deezer import deezer_api, keyboards as dz_keyboards
+from soundcloud import soundcloud_api, keyboards as sc_keyboards
+from vk import vk_api, keyboards as vk_keyboards
 from var import var
 
 
@@ -75,9 +75,16 @@ async def donate(message: types.Message):
 @dp.edited_message_handler(types.ChatType.is_private)
 @dp.message_handler(types.ChatType.is_private)
 async def search_handler(message):
-    search_results = await deezer_api.search(q=message.text)
-    if not len(search_results):
-        await bot.send_message(
+    search_results = await deezer_api.search(message.text)
+    if not search_results:
+        search_results = await soundcloud_api.search(message.text)
+        if not search_results:
+            search_results = vk_api.search(message.text)
+            return await bot.send_message(
+                chat_id=message.chat.id,
+                text=message.text + ':',
+                reply_markup=vk_keyboards.search_results_keyboard(search_results, 1))
+        return await bot.send_message(
             chat_id=message.chat.id,
             text=message.text + ':',
             reply_markup=sc_keyboards.search_results_keyboard(search_results, 1))
