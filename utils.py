@@ -8,6 +8,7 @@ from concurrent.futures._base import TimeoutError
 from datetime import date
 from functools import wraps
 from time import time
+from hashlib import sha256
 
 import aiofiles
 import aiohttp
@@ -17,6 +18,17 @@ from eyed3.id3 import Tag
 from yarl import URL
 
 from var import var
+import config
+
+
+def sign(args):
+    sign_str = ':'.join(str(arg) for arg in args) + config.request_sign
+    sha256(sign_str.encode('ascii'))
+
+
+def check_sign(data: dict):
+    input_sign = data.pop('sign', None)
+    return sign(data.values(), config.request_sign) == input_sign
 
 
 def new_callback(*args, sep=":"):
