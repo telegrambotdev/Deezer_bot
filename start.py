@@ -37,6 +37,6 @@ if __name__ == '__main__':
         shutil.rmtree('downloads')
     logging = asyncio.ensure_future(update_logging_files())
     import_handlers()
-    web.run_app(app)
+    web.run_app(app, port=8081)
     loop.run_until_complete(close())
     loop.close()
