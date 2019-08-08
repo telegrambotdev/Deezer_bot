@@ -78,12 +78,6 @@ async def search_handler(message):
     search_results = await deezer_api.search(message.text)
     if not search_results:
         search_results = await soundcloud_api.search(message.text)
-        if not search_results:
-            search_results = vk_api.search(message.text)
-            return await bot.send_message(
-                chat_id=message.chat.id,
-                text=message.text + ':',
-                reply_markup=vk_keyboards.search_results_keyboard(search_results, 1))
         return await bot.send_message(
             chat_id=message.chat.id,
             text=message.text + ':',
