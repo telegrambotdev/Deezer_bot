@@ -4,9 +4,9 @@ from contextlib import suppress
 import asyncio
 import shutil
 
-from aiogram.utils import executor
+from aiohttp import web
 
-from bot import dp
+from bot import app
 from var import var
 from logger import update_logging_files
 
@@ -37,6 +37,6 @@ if __name__ == '__main__':
         shutil.rmtree('downloads')
     logging = asyncio.ensure_future(update_logging_files())
     import_handlers()
-    executor.start_polling(dp, loop=loop)
+    web.run_app(app)
     loop.run_until_complete(close())
     loop.close()
