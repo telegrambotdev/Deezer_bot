@@ -14,7 +14,7 @@ from sql import database
 from var import var
 
 loop = asyncio.get_event_loop()
-WEBHOOK_HOST = 'static.134.32.203.116.clients.your-server.de/app'
+WEBHOOK_HOST = 'yessir-whatever.tk/app'
 WEBHOOK_URL_PATH = f'/webhook/{config.bot_token}'
 
 WEBHOOK_URL = f"https://{WEBHOOK_HOST}{WEBHOOK_URL_PATH}"
