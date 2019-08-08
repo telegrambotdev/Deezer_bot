@@ -21,7 +21,7 @@ def import_handlers():
     import handlers
     import inline_handlers
     import callback_handlers
-    import error_handlers
+    # import error_handlers
 
 
 async def close():
