@@ -17,7 +17,8 @@ from var import var
 @dp.callback_query_handler(text='delete')
 async def close_keyboard(callback: types.CallbackQuery):
     await callback.answer()
-    await callback.message.reply_to_message.delete()
+    if callback.message.reply_to_message:
+        await callback.message.reply_to_message.delete()
     await callback.message.delete()
 
 
