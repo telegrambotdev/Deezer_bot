@@ -25,6 +25,7 @@ try:
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     app = get_new_configured_app(dp, WEBHOOK_URL_PATH)
+    app.on_startup.append(on_startup)
     var.downloading = {}
     var.vk_tracks = {}
     var.session = aiohttp.ClientSession(raise_for_status=True)
@@ -39,6 +40,16 @@ try:
     var.conn = loop.run_until_complete(aioredis.create_connection(
         ('localhost', 6379), encoding='utf-8', db=4, loop=loop))
     print('datebase connected')
+
+
+async def on_startup(app):
+    webhook = await bot.get_webhook_info()
+    if webhook.url != WEBHOOK_URL:
+        if not webhook.url:
+            await bot.delete_webhook()
+
+        await bot.set_webhook(WEBHOOK_URL)
+
 
 except Exception as e:
     print(e)
