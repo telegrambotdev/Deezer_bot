@@ -5,5 +5,5 @@ from bot import dp
 
 @dp.errors_handler(exception=Exception)
 async def invalid_query(data, exc):
-    print('Exception', data, exc)
+    print('Exception', exc)
     return True
