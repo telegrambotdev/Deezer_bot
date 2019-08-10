@@ -1,3 +1,4 @@
+import sys
 import asyncio
 
 import pyrogram
@@ -8,8 +9,9 @@ import db_utils
 
 
 async def start():
+    app_name = sys.argv[0] if sys.argv else 'interactive'
     client = pyrogram.Client(
-        f"{__name__}_Bot_{config.bot_token.split(':')[0]}",
+        f"{app_name}_Bot_{config.bot_token.split(':')[0]}",
         api_id=config.client_api_id,
         api_hash=config.client_api_hash, bot_token=config.bot_token)
     await client.start()
