@@ -87,7 +87,7 @@ async def deezer_album(callback):
     elif method == 'send':
         await query_answer(callback, 'downloading')
         album = await deezer_api.getalbum(obj_id)
-        return await methods.send_album(album, callback.message.chat)
+        return await methods.send_album(album, callback.message.chat.id)
 
 
 @dp.callback_query_handler(Text(startswith='dz_track'))
