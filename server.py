@@ -72,4 +72,4 @@ async def deezer_playlist_send(request):
 
 app.on_startup.append(on_startup)
 app.on_shutdown.append(on_shutdown)
-web.run_app(app, port=8082)
+web.run_app(app, host='localhost', port=8082)
