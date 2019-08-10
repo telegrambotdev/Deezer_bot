@@ -18,7 +18,7 @@ async def deezer_playlist(callback):
         await query_answer(
             callback, 'Playlist download started', show_alert=True)
         await var.session.post(
-            'localhost:8082/deezer/send.playlist', json={
+            'http://localhost:8082/deezer/send.playlist', json={
                 'playlist_id': obj_id, 'chat_id': callback.message.chat.id
             })
 

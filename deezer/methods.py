@@ -11,7 +11,7 @@ from . import keyboards
 
 async def send_track(track, chat_id, Redownload=False):
     await var.session.post(
-        'localhost:8082/deezer/send.track', json={
+        'http://localhost:8082/deezer/send.track', json={
             'track_id': track.id, 'chat_id': chat_id
         })
 
@@ -39,7 +39,7 @@ async def send_album(album, chat_id, pic=True, send_all=False):
                 reply_markup=markup)
     if send_all:
         await var.session.post(
-            'localhost:8082/deezer/send.album', json={
+            'http://localhost:8082/deezer/send.album', json={
                 'album_id': album.id, 'chat_id': chat_id
             })
 
