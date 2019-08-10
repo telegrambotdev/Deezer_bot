@@ -6,7 +6,7 @@ import aioredis
 from aiogram import Bot, types
 from aiohttp import web, ClientSession
 
-from deezer import deezer_api, _server_methods as deezer_methods
+from deezer import deezer_api, server_methods as deezer_methods
 from vk import vk_api
 import config
 from userbot import post_large_track
