@@ -31,6 +31,13 @@ def check_sign(data: dict):
     return sign(data.values(), config.request_sign) == input_sign
 
 
+async def query_answer(query, *args, **kwargs):
+    try:
+        await query.answer(*args, **kwargs)
+    except exceptions.InvalidQueryID as exc:
+        print(exc)
+
+
 def new_callback(*args, sep=":"):
     return sep.join(str(arg) for arg in args)
 

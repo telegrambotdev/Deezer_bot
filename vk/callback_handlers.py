@@ -2,12 +2,12 @@ from aiogram.dispatcher.filters import Text
 
 from bot import dp
 from . import vk_api, methods, keyboards
-from utils import parse_callback
+from utils import parse_callback, query_answer
 
 
 @dp.callback_query_handler(Text(startswith='vk_track'))
 async def vk_track(callback):
-    await callback.answer()
+    await query_answer(callback)
     _, obj_id, action = parse_callback(callback.data)
     track_id = callback.data.split(':')[1]
     track = await vk_api.get_track(track_id)
@@ -16,7 +16,7 @@ async def vk_track(callback):
 
 @dp.callback_query_handler(Text(startswith='vk_playlist'))
 async def vk_playlist(callback):
-    await callback.answer()
+    await query_answer(callback)
     _, obj_id, action = parse_callback(callback.data)
     if action == 'download':
         owner_id, playlist_id, access_key = obj_id.split('_')
@@ -32,7 +32,7 @@ async def vk_playlist(callback):
 
 @dp.callback_query_handler(Text(startswith='vk_profile_audio_page'))
 async def vk_profile_audio(callback):
-    await callback.answer()
+    await query_answer(callback)
     _, profile_id, page = parse_callback(callback.data)
     tracks = await vk_api.get_audio(profile_id)
     return await callback.message.edit_reply_markup(

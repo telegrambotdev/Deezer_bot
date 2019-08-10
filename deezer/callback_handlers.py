@@ -1,4 +1,3 @@
-from asyncio import sleep
 from contextlib import suppress
 
 from aiogram import exceptions
@@ -6,7 +5,7 @@ from aiogram.dispatcher.filters import Text
 
 from . import deezer_api, keyboards, methods
 from bot import bot, dp
-from utils import parse_callback, already_downloading
+from utils import parse_callback, already_downloading, query_answer
 from var import var
 
 
@@ -16,7 +15,8 @@ async def deezer_playlist(callback):
     if method == 'download':
         with suppress(exceptions.MessageNotModified):
             await callback.message.edit_reply_markup()
-        await callback.answer('Playlist download started', show_alert=True)
+        await query_answer(
+            callback, 'Playlist download started', show_alert=True)
         await var.session.post(
             'localhost:8082/deezer/send.playlist', json={
                 'playlist_id': obj_id, 'chat_id': callback.message.chat.id
@@ -25,7 +25,7 @@ async def deezer_playlist(callback):
 
 @dp.callback_query_handler(Text(startswith='dz_artist'))
 async def deezer_artist(callback):
-    await callback.answer()
+    await query_answer(callback)
     _, obj_id, method = parse_callback(callback.data)
 
     artist = await deezer_api.getartist(obj_id)
@@ -74,19 +74,19 @@ async def deezer_album(callback):
     _, obj_id, method = parse_callback(callback.data)
 
     if method == 'download':
-        await callback.answer()
+        await query_answer(callback)
         album = await deezer_api.getalbum(obj_id)
         return await methods.send_album(
             album, callback.message.chat, pic=False, send_all=True)
 
     elif method == 'post':
-        await callback.answer()
+        await query_answer(callback)
         album = await deezer_api.getalbum(obj_id)
         chat = await bot.get_chat(-1001171972924)
         await methods.send_album(album, chat, send_all=True)
 
     elif method == 'send':
-        await callback.answer('downloading')
+        await query_answer(callback, 'downloading')
         album = await deezer_api.getalbum(obj_id)
         return await methods.send_album(album, callback.message.chat)
 
@@ -95,8 +95,8 @@ async def deezer_album(callback):
 async def deezer_track(callback):
     obj_id = parse_callback(callback.data)[1]
     if already_downloading(int(obj_id)):
-        return await callback.answer('already downloading, please wait...')
+        return await query_answer(callback, 'already downloading, please wait...')
     else:
-        await callback.answer('downloading...')
+        await query_answer(callback, 'downloading...')
         track = await deezer_api.gettrack(obj_id)
         await methods.send_track(track, callback.message.chat.id)
