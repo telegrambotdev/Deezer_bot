@@ -43,7 +43,7 @@ async def deezer_send(request):
     chat_id = data.get('chat_id')
     if track_id and chat_id:
         track = await deezer_api.gettrack(track_id)
-        asyncio.create_task(await deezer_methods.send_track(track, chat_id))
+        asyncio.create_task(deezer_methods.send_track(track, chat_id))
         return web.Response(text='OK')
     else:
         return web.Response(text='no data', status=404)
