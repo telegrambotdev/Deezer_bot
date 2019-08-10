@@ -53,7 +53,7 @@ async def spotify_album_handler(message, album_id):
         return await bot.send_message(
             chat_id=message.chat.id,
             text=f'Sorry, album {spotify_album.name} by {spotify_album.artists[0].name} is not found on Deezer')
-    await dz_methods.send_album(search_results[0], message.chat)
+    await dz_methods.send_album(search_results[0], message.chat.id)
 
 
 @dp.message_handler(filters.SpotifyArtistFilter)

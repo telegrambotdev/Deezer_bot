@@ -77,13 +77,12 @@ async def deezer_album(callback):
         await query_answer(callback)
         album = await deezer_api.getalbum(obj_id)
         return await methods.send_album(
-            album, callback.message.chat, pic=False, send_all=True)
+            album, callback.message.chat.id, pic=False, send_all=True)
 
     elif method == 'post':
         await query_answer(callback)
         album = await deezer_api.getalbum(obj_id)
-        chat = await bot.get_chat(-1001171972924)
-        await methods.send_album(album, chat, send_all=True)
+        await methods.send_album(album, -1001171972924, send_all=True)
 
     elif method == 'send':
         await query_answer(callback, 'downloading')
