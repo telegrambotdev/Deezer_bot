@@ -34,6 +34,11 @@ async def on_shutdown(app):
     await asyncio.sleep(0)
 
 
+@routes.get('/')
+async def ok(request):
+    return web.Response(text='OK')
+
+
 @routes.post('/deezer/send.track')
 async def deezer_send(request):
     track_id = request.query.get('track_id')
