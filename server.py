@@ -14,7 +14,7 @@ from var import var
 
 loop = asyncio.get_event_loop()
 bot = Bot(config.bot_token, loop=loop)
-app = web.Application(loop=loop)
+app = web.Application()
 routes = web.RouteTableDef()
 session = None
 
