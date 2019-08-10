@@ -36,6 +36,7 @@ async def on_shutdown(app):
 
 @routes.post('/deezer/send.track')
 async def deezer_send(request):
+    print(await request.read())
     data = await request.json()
     track_id = data.get('track_id')
     chat_id = data.get('chat_id')
