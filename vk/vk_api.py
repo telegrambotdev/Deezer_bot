@@ -12,7 +12,7 @@ import config
 from var import var
 from utils import download_file, get_file, request_get, vk_add_tags
 from AttrDict import AttrDict
-from server_methods import vk_search as alt_search
+from _server_methods import vk_search as alt_search
 
 
 HEADERS = {"user-agent": "VKAndroidApp/5.11.1-2316"}
