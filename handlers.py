@@ -81,12 +81,14 @@ async def search_handler(message):
         return await bot.send_message(
             chat_id=message.chat.id,
             text=message.text + ':',
-            reply_markup=sc_keyboards.search_results_keyboard(search_results, 1),
+            reply_markup=sc_keyboards.search_results_keyboard(
+                search_results, 1, 7),
             reply_to_message_id=message.message_id)
     else:
         await bot.send_message(
             chat_id=message.chat.id,
             text=message.text + ':',
-            reply_markup=dz_keyboards.search_results_keyboard(search_results, 1),
+            reply_markup=dz_keyboards.search_results_keyboard(
+                search_results, 1, 7),
             reply_to_message_id=message.message_id)
     db_utils.add_user(message.from_user)

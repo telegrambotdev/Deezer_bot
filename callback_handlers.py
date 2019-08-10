@@ -55,17 +55,17 @@ async def pages_handler(callback):
     if mode == 'page':
         search_results = await deezer_api.search(q=q)
         keyboard = dz_keyboards.search_results_keyboard(
-            search_results, int(page))
+            search_results, int(page), 7)
     elif mode == 'sc_page':
         await callback.answer()
         search_results = await soundcloud_api.search(q=q)
         keyboard = sc_keyboards.search_results_keyboard(
-            search_results, int(page))
+            search_results, int(page), 7)
     elif mode == 'vk_page':
         await callback.answer()
         search_results = await vk_api.search(q)
         keyboard = vk_keyboards.search_results_keyboard(
-            search_results, int(page))
+            search_results, int(page), 7)
 
     with suppress(exceptions.MessageNotModified):
         return await bot.edit_message_reply_markup(
