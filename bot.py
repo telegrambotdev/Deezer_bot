@@ -29,12 +29,22 @@ async def on_startup(app):
         await bot.set_webhook(WEBHOOK_URL)
 
 
+async def on_shutdown(app):
+    var.db.commit()
+    var.db.close()
+    await var.conn.close()
+    logging.cancel()
+    await var.session.close()
+    await asyncio.sleep(0)
+
+
 try:
     bot = Bot(token=config.bot_token, loop=loop)
     storage = MemoryStorage()
     dp = Dispatcher(bot, storage=storage)
     app = get_new_configured_app(dp, WEBHOOK_URL_PATH)
     app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
     var.downloading = {}
     var.vk_tracks = {}
     var.session = aiohttp.ClientSession(raise_for_status=True)

@@ -24,19 +24,10 @@ def import_handlers():
     import error_handlers
 
 
-async def close():
-    var.db.commit()
-    var.db.close()
-    await var.conn.close()
-    logging.cancel()
-    await var.session.close()
-
-
 if __name__ == '__main__':
     with suppress(FileNotFoundError):
         shutil.rmtree('downloads')
     logging = asyncio.ensure_future(update_logging_files())
     import_handlers()
     web.run_app(app, port=8081)
-    loop.run_until_complete(close())
     loop.close()
