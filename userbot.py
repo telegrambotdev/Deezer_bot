@@ -9,7 +9,7 @@ import db_utils
 
 async def start():
     client = pyrogram.Client(
-        f"Bot_{config.bot_token.split(':')[0]}",
+        f"{__name__}_Bot_{config.bot_token.split(':')[0]}",
         api_id=config.client_api_id,
         api_hash=config.client_api_hash, bot_token=config.bot_token)
     await client.start()
