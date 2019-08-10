@@ -1,4 +1,4 @@
-from aiorgam import exceptions
+from aiogram import exceptions
 from aiogram.utils.markdown import escape_md
 
 from bot import bot
