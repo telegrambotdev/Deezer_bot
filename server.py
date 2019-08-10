@@ -13,7 +13,7 @@ from userbot import post_large_track
 from var import var
 
 loop = asyncio.get_event_loop()
-bot = Bot(config.token, loop=loop)
+bot = Bot(config.bot_token, loop=loop)
 app = web.Application(loop=loop)
 routes = web.RouteTableDef()
 session = None

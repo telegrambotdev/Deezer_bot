@@ -10,7 +10,7 @@ from . import keyboards
 
 
 async def send_track(track, chat_id, Redownload=False):
-    var.session.post(
+    await var.session.post(
         'localhost:8082/deezer/send.track', json={
             'track_id': track.id, 'chat_id': chat_id
         })
@@ -38,7 +38,7 @@ async def send_album(album, chat_id, pic=True, send_all=False):
                          f'\u2013 {escape_md(album.title)}'),
                 reply_markup=markup)
     if send_all:
-        var.session.post(
+        await var.session.post(
             'localhost:8082/deezer/send.album', json={
                 'album_id': album.id, 'chat_id': chat_id
             })
