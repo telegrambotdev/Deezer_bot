@@ -19,7 +19,7 @@ routes = web.RouteTableDef()
 session = None
 
 
-async def on_startup():
+async def on_startup(app):
     global session
     await deezer_api.getCSRFToken()
     session = ClientSession(raise_for_status=True)
@@ -29,7 +29,7 @@ async def on_startup():
     var.loop = loop
 
 
-async def on_shutdown():
+async def on_shutdown(app):
     await session.close()
     await asyncio.sleep(0)
 
