@@ -36,9 +36,8 @@ async def on_shutdown(app):
 
 @routes.post('/deezer/send.track')
 async def deezer_send(request):
-    data = await request.json()
-    track_id = data.get('track_id')
-    chat_id = data.get('chat_id')
+    track_id = request.query.get('track_id')
+    chat_id = request.query.get('chat_id')
     if track_id and chat_id:
         track = await deezer_api.gettrack(track_id)
         asyncio.create_task(await deezer_methods.send_track(track, chat_id))
@@ -49,9 +48,8 @@ async def deezer_send(request):
 
 @routes.post('/deezer/send.album')
 async def deezer_album_send(request):
-    data = await request.json()
-    album_id = data.get('album_id')
-    chat_id = data.get('chat_id')
+    album_id = request.query.get('album_id')
+    chat_id = request.query.get('chat_id')
     if album_id and chat_id:
         album = await deezer_api.getalbum(album_id)
         asyncio.create_task(deezer_methods.send_album(album, chat_id))
@@ -62,9 +60,8 @@ async def deezer_album_send(request):
 
 @routes.post('/deezer/send.playlist')
 async def deezer_playlist_send(request):
-    data = await request.json()
-    playlist_id = data.get('playlist_id')
-    chat_id = data.get('chat_id')
+    playlist_id = request.query.get('playlist_id')
+    chat_id = request.query.get('chat_id')
     if playlist_id and chat_id:
         tracks = await deezer_api.getplaylist_tracks(playlist_id)
         asyncio.create_task(deezer_methods.send_playlist(tracks, chat_id))
