@@ -21,7 +21,7 @@ async def spotify_handler(message, track_id):
         return await bot.send_message(
             message.chat.id, 'Sorry, track is not found on Deezer')
     print(search_results[0])
-    await dz_methods.send_track(search_results[0], message.chat)
+    await dz_methods.send_track(search_results[0], message.chat.id)
 
 
 @dp.message_handler(filters.SpotifyPlaylistFilter)
@@ -34,7 +34,7 @@ async def spotify_playlist_handler(message, playlist_id):
                 re.match(r'[^\(\[\-]+', track.name).group(0))
             search_results = await deezer_api.search(q=search_query)
             if search_results:
-                await dz_methods.send_track(search_results[0], message.chat)
+                await dz_methods.send_track(search_results[0], message.chat.id)
             else:
                 await bot.send_message(
                     chat_id=message.chat.id,

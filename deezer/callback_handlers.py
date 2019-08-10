@@ -7,6 +7,7 @@ from aiogram.dispatcher.filters import Text
 from . import deezer_api, keyboards, methods
 from bot import bot, dp
 from utils import parse_callback, already_downloading
+from var import var
 
 
 @dp.callback_query_handler(Text(startswith='dz_playlist'))
@@ -16,10 +17,10 @@ async def deezer_playlist(callback):
         with suppress(exceptions.MessageNotModified):
             await callback.message.edit_reply_markup()
         await callback.answer('Playlist download started', show_alert=True)
-        tracks = await deezer_api.getplaylist_tracks(obj_id)
-        for track in tracks:
-            await methods.send_track(track, callback.message.chat)
-            await sleep(.1)
+        var.session.post(
+            'localhost:8082/deezer/send.playlist', json={
+                'playlist_id': obj_id, 'chat_id': callback.message.chat.id
+            })
 
 
 @dp.callback_query_handler(Text(startswith='dz_artist'))
@@ -98,4 +99,4 @@ async def deezer_track(callback):
     else:
         await callback.answer('downloading...')
         track = await deezer_api.gettrack(obj_id)
-        await methods.send_track(track, callback.message.chat)
+        await methods.send_track(track, callback.message.chat.id)

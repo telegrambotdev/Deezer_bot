@@ -16,16 +16,16 @@ async def redownload_handler(message: types.Message):
         obj_id = message.text.split('/')[-1]
         if obj_type == 'track':
             track = await deezer_api.gettrack(obj_id)
-            await methods.send_track(track, message.chat, Redownload=True)
+            await methods.send_track(track, message.chat.id, Redownload=True)
         else:
             album = await deezer_api.getalbum(obj_id)
             for track in await album.get_tracks():
-                await methods.send_track(track, message.chat, Redownload=True)
+                await methods.send_track(track, message.chat.id, Redownload=True)
     else:
         search = await deezer_api.search(q=message.text.strip('/re '))
         await methods.send_track(
             await deezer_api.gettrack(search[0].id),
-            message.chat, Redownload=True)
+            message.chat.id, Redownload=True)
 
 
 async def diskography_handler(message: types.Message):
@@ -111,5 +111,5 @@ async def track_handler(message, track_id):
     track = await deezer_api.gettrack(track_id)
     if utils.already_downloading(track.id):
         return
-    await methods.send_track(track, message.chat)
+    await methods.send_track(track, message.chat.id)
     db_utils.add_user(message.from_user)
