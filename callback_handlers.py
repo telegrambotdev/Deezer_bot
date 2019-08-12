@@ -77,8 +77,8 @@ async def pages_handler(callback):
 @dp.callback_query_handler(text='stats')
 async def stats_callback_handler(callback):
     await callback.answer()
-    sc_tracks_count = await var.conn.execute('get', 'tracks:soundcloud:total')
     dz_tracks_count = await var.conn.execute('get', 'tracks:deezer:total')
+    sc_tracks_count = await var.conn.execute('get', 'tracks:soundcloud:total')
     vk_tracks_count = await var.conn.execute('get', 'tracks:vk:total')
     all_users_count = db_utils.get_users_count()
     with suppress(exceptions.MessageNotModified):
