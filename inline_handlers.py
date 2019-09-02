@@ -105,7 +105,7 @@ async def tracks_search(query: types.InlineQuery):
     search_results = await deezer_api.search(q=q)
     inline_results = []
 
-    for result in search_results[offset:offset + 5]:
+    for result in search_results[offset:offset + 10]:
         file_id = await db_utils.get_track(result.id)
         if file_id:
             inline_results.append(types.InlineQueryResultCachedAudio(
@@ -119,8 +119,8 @@ async def tracks_search(query: types.InlineQuery):
                 audio_duration=30,
                 reply_markup=inline_keyboards.finish_download_keyboard))
 
-    if offset + 6 < len(search_results):
-        next_offset = str(offset + 5)
+    if offset + 11 < len(search_results):
+        next_offset = str(offset + 10)
     else:
         next_offset = 'done'
     await bot.answer_inline_query(
