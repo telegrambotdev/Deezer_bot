@@ -18,7 +18,7 @@ async def send_track(chat_id, track):
 
     return await var.session.post(
         'http://localhost:8082/soundcloud/send.track',
-        json={'track': track, 'chat_id': chat_id})
+        json={'track': track.data, 'chat_id': chat_id})
 
     path = await track.download()
     thumb = await track.get_thumb()
