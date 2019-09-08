@@ -67,7 +67,7 @@ async def api_call(obj_name, obj_id, method='', errcount=0, **params):
         new_id = str(r.url).split('/')[-1]
         return await api_call(obj_name, new_id, method, errcount + 1, **params)
 
-    if obj['data']:
+    if obj.get('data'):
         obj = obj['data']
         if not len(obj):
             return []
