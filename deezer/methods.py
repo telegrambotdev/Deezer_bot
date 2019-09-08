@@ -4,19 +4,23 @@ from aiogram.utils.markdown import escape_md
 from bot import bot
 from utils import get_album_cover_url
 from var import var
+import db_utils
 import config
 
 from . import keyboards
 
 
-async def send_track(track, chat_id, Redownload=False):
+async def send_track(chat_id, track, Redownload=False):
+    quality = await db_utils.get_quality_setting(chat_id)
+    file_id = await db_utils.get_track(track.id, quality)
+    if file_id:
+        return await bot.send_audio(chat_id, file_id)
     await var.session.post(
-        'http://localhost:8082/deezer/send.track', json={
-            'track_id': track.id, 'chat_id': chat_id
-        })
+        'http://localhost:8082/deezer/send.track',
+        json={'track': track.data, 'chat_id': chat_id})
 
 
-async def send_album(album, chat_id, pic=True, send_all=False):
+async def send_album(chat_id, album, pic=True, send_all=False):
     if pic:
         if not send_all:
             tracks = await album.get_tracks()
@@ -38,13 +42,13 @@ async def send_album(album, chat_id, pic=True, send_all=False):
                          f'\u2013 {escape_md(album.title)}'),
                 reply_markup=markup)
     if send_all:
+        tracks = await album.get_tracks()
         await var.session.post(
-            'http://localhost:8082/deezer/send.album', json={
-                'album_id': album.id, 'chat_id': chat_id
-            })
+            'http://localhost:8082/deezer/send.tracks',
+            json={'tracks': tracks, 'chat_id': chat_id})
 
 
-async def send_artist(artist, chat_id):
+async def send_artist(chat_id, artist):
     await bot.send_photo(
         chat_id=chat_id,
         photo=artist.picture_xl,
@@ -53,7 +57,7 @@ async def send_artist(artist, chat_id):
         reply_markup=keyboards.artist_keyboard(artist))
 
 
-async def send_playlist(playlist, tracks, chat_id):
+async def send_playlist(chat_id, playlist, tracks):
     try:
         await bot.send_photo(
             chat_id=chat_id, photo=playlist.picture_xl, caption=playlist.title,

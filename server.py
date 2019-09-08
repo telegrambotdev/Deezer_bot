@@ -7,6 +7,7 @@ from aiogram import Bot, types
 from aiohttp import web, ClientSession
 
 from deezer import deezer_api, server_methods as deezer_methods
+from soundcloud import soundcloud_api, server_methods as soundcloud_methods
 from vk import vk_api
 import config
 from userbot import post_large_track
@@ -35,41 +36,57 @@ async def on_shutdown(app):
 
 
 @routes.post('/deezer/send.track')
-async def deezer_send(request):
+async def deezer_send(request: web.Request):
     print(await request.read())
     print(request.query)
     data = await request.json()
-    track_id = data.get('track_id')
+    track = data.get('track')
     chat_id = data.get('chat_id')
-    if track_id and chat_id:
-        track = await deezer_api.gettrack(track_id)
-        asyncio.create_task(deezer_methods.send_track(track, chat_id))
+    if track and chat_id:
+        track = deezer_api.Track(track)
+        asyncio.create_task(deezer_methods.send_track(chat_id, track))
         return web.Response(text='OK')
     else:
         return web.Response(text='no data', status=404)
 
 
-@routes.post('/deezer/send.album')
-async def deezer_album_send(request):
+@routes.post('/deezer/send.tracks')
+async def deezer_send_many(request: web.Request):
     data = await request.json()
-    album_id = data.get('album_id')
+    tracks = data.get('tracks')
     chat_id = data.get('chat_id')
-    if album_id and chat_id:
-        album = await deezer_api.getalbum(album_id)
-        asyncio.create_task(deezer_methods.send_album(album, chat_id))
+    if tracks and chat_id:
+        tracks = [deezer_api.Track(track) for track in tracks]
+        asyncio.create_task(
+            deezer_methods.send_playlist(chat_id, tracks))
         return web.Response(text='OK')
     else:
         return web.Response(text='no data', status=404)
 
 
-@routes.post('/deezer/send.playlist')
-async def deezer_playlist_send(request):
+@routes.post('/soundcloud/send.track')
+async def soundcloud_send(request: web.Request):
     data = await request.json()
-    playlist_id = data.get('playlist_id')
+    track = data.get('track')
     chat_id = data.get('chat_id')
-    if playlist_id and chat_id:
-        tracks = await deezer_api.getplaylist_tracks(playlist_id)
-        asyncio.create_task(deezer_methods.send_playlist(tracks, chat_id))
+    if track and chat_id:
+        track = soundcloud_api.SoundCloudTrack(track)
+        asyncio.create_task(
+            soundcloud_methods.send_track(chat_id, track))
+        return web.Response(text='OK')
+    else:
+        return web.Response(text='no data', status=404)
+
+
+@routes.post('/soundcloud/send.tracks')
+async def soundcloud_send(request: web.Request):
+    data = await request.json()
+    tracks = data.get('tracks')
+    chat_id = data.get('chat_id')
+    if tracks and chat_id:
+        tracks = [soundcloud_api.SoundCloudTrack(track) for track in tracks]
+        asyncio.create_task(
+            soundcloud_methods.send_tracks(chat_id, tracks))
         return web.Response(text='OK')
     else:
         return web.Response(text='no data', status=404)

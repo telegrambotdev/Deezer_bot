@@ -67,8 +67,8 @@ async def api_call(obj_name, obj_id, method='', errcount=0, **params):
         new_id = str(r.url).split('/')[-1]
         return await api_call(obj_name, new_id, method, errcount + 1, **params)
 
-    if obj.data:
-        obj = obj.data
+    if obj['data']:
+        obj = obj['data']
         if not len(obj):
             return []
     if isinstance(obj, list):
@@ -224,12 +224,9 @@ class Album(AttrDict):
         super().__init__(json)
 
     async def get_tracks(self):
-        tracks = []
         r = await request_get(self.tracklist, data={'limit': -1})
         json = await r.json()
-        for track in json['data']:
-            tracks.append(Track(track))
-        return tracks
+        return [Track(track) for track in json['data']]
 
     def __hash__(self):
         return 39733 * self.id

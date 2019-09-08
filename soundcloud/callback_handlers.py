@@ -34,7 +34,7 @@ async def soundcloud_artist(callback):
         tracks = await artist.get_tracks()
         for track in tracks:
             try:
-                await methods.send_soundcloud_track(
+                await methods.send_track(
                     callback.message.chat.id, track)
                 await sleep(.3)
             except Exception as e:
@@ -48,7 +48,7 @@ async def soundcloud_artist(callback):
         likes = await artist.get_likes()
         for track in likes:
             try:
-                await methods.send_soundcloud_track(
+                await methods.send_track(
                     callback.message.chat.id, track)
                 await sleep(.3)
             except Exception as e:
@@ -71,15 +71,15 @@ async def soundcloud_playlist(callback):
     playlist = await soundcloud_api.get_playlist(obj_id)
 
     if method == 'send':
-        return await methods.send_soundcloud_playlist(
+        return await methods.send_playlist(
             callback.message.chat.id, playlist)
 
     elif method == 'download':
-        return await methods.send_soundcloud_playlist(
+        return await methods.send_playlist(
             callback.message.chat.id, playlist, pic=False, send_all=True)
 
     elif method == 'post':
-        return await methods.send_soundcloud_playlist(
+        return await methods.send_playlist(
             -1001171972924, playlist, send_all=True)
 
 
@@ -93,5 +93,5 @@ async def soundcloud_track(callback):
     else:
         await callback.answer('downloading...')
         track = await soundcloud_api.get_track(obj_id)
-        await methods.send_soundcloud_track(
+        await methods.send_track(
             callback.message.chat.id, track)

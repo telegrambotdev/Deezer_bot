@@ -17,10 +17,10 @@ async def deezer_playlist(callback):
             await callback.message.edit_reply_markup()
         await query_answer(
             callback, 'Playlist download started', show_alert=True)
+        tracks = await deezer_api.getplaylist_tracks(obj_id)
         await var.session.post(
-            'http://localhost:8082/deezer/send.playlist', json={
-                'playlist_id': obj_id, 'chat_id': callback.message.chat.id
-            })
+            'http://localhost:8082/deezer/send.tracks',
+            json={'tracks': tracks, 'chat_id': callback.message.chat.id})
 
 
 @dp.callback_query_handler(Text(startswith='dz_artist'))
@@ -77,17 +77,17 @@ async def deezer_album(callback):
         await query_answer(callback)
         album = await deezer_api.getalbum(obj_id)
         return await methods.send_album(
-            album, callback.message.chat.id, pic=False, send_all=True)
+            callback.message.chat.id, album, pic=False, send_all=True)
 
     elif method == 'post':
         await query_answer(callback)
         album = await deezer_api.getalbum(obj_id)
-        await methods.send_album(album, -1001171972924, send_all=True)
+        await methods.send_album(-1001171972924, album, send_all=True)
 
     elif method == 'send':
         await query_answer(callback, 'downloading')
         album = await deezer_api.getalbum(obj_id)
-        return await methods.send_album(album, callback.message.chat.id)
+        return await methods.send_album(callback.message.chat.id, album)
 
 
 @dp.callback_query_handler(Text(startswith='dz_track'))
@@ -98,4 +98,4 @@ async def deezer_track(callback):
     else:
         await query_answer(callback, 'downloading...')
         track = await deezer_api.gettrack(obj_id)
-        await methods.send_track(track, callback.message.chat.id)
+        await methods.send_track(callback.message.chat.id, track)

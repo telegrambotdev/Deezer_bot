@@ -16,16 +16,17 @@ async def redownload_handler(message: types.Message):
         obj_id = message.text.split('/')[-1]
         if obj_type == 'track':
             track = await deezer_api.gettrack(obj_id)
-            await methods.send_track(track, message.chat.id, Redownload=True)
+            await methods.send_track(message.chat.id, track, Redownload=True)
         else:
             album = await deezer_api.getalbum(obj_id)
             for track in await album.get_tracks():
-                await methods.send_track(track, message.chat.id, Redownload=True)
+                await methods.send_track(message.chat.id, track, Redownload=True)
     else:
         search = await deezer_api.search(q=message.text.strip('/re '))
         await methods.send_track(
+            message.chat.id,
             await deezer_api.gettrack(search[0].id),
-            message.chat.id, Redownload=True)
+            Redownload=True)
 
 
 async def diskography_handler(message: types.Message):
@@ -83,26 +84,26 @@ async def diskography_handler(message: types.Message):
 async def artist_search_handler(message):
     artist = (await deezer_api.search(
         message.text.strip(message.get_command()), 'artist'))[0]
-    await methods.send_artist(artist, message.chat.id)
+    await methods.send_artist(message.chat.id, artist)
 
 
 @dp.message_handler(filters.DeezerArtistFilter)
 async def artist_handler(message, artist_id):
     artist = await deezer_api.getartist(artist_id)
-    await methods.send_artist(artist, message.chat.id)
+    await methods.send_artist(message.chat.id, artist)
 
 
 @dp.message_handler(filters.DeezerAlbumFilter)
 async def album_handler(message, album_id):
     album = await deezer_api.getalbum(album_id)
-    await methods.send_album(album, message.chat.id)
+    await methods.send_album(message.chat.id, album)
 
 
 @dp.message_handler(filters.DeezerPlaylistFilter)
 async def playlist_handler(message, playlist_id):
     playlist = await deezer_api.getplaylist(playlist_id)
     tracks = await deezer_api.getplaylist_tracks(playlist_id)
-    await methods.send_playlist(playlist, tracks, message.chat.id)
+    await methods.send_playlist(message.chat.id, playlist, tracks)
 
 
 @dp.message_handler(filters.DeezerFilter)
@@ -111,5 +112,5 @@ async def track_handler(message, track_id):
     track = await deezer_api.gettrack(track_id)
     if utils.already_downloading(track.id):
         return
-    await methods.send_track(track, message.chat.id)
+    await methods.send_track(message.chat.id, track)
     db_utils.add_user(message.from_user)

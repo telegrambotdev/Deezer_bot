@@ -10,7 +10,7 @@ from logger import sent_message_logger
 # import server_methods
 
 
-async def send_track(track, chat_id, Redownload=False):
+async def send_track(chat_id, track, Redownload=False):
     quality = await db_utils.get_quality_setting(chat_id)
     if not already_downloading(track.id):
         var.downloading[track.id] = int(time())
@@ -66,16 +66,16 @@ async def send_track(track, chat_id, Redownload=False):
     return True
 
 
-async def send_album(album, chat_id):
+async def send_album(chat_id, album):
     for track in await album.get_tracks():
         print(track.title)
-        await send_track(track, chat_id)
+        await send_track(chat_id, track)
 
 
-async def send_playlist(tracks, chat_id):
+async def send_playlist(chat_id, tracks):
     for track in tracks:
         try:
-            await send_track(track, chat_id)
+            await send_track(chat_id, track)
         except Exception:
             pass
 

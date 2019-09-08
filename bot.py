@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import asyncio
+import logging
 
 import aiohttp
 import aioredis
@@ -14,7 +15,7 @@ from sql import database
 from var import var
 
 loop = asyncio.get_event_loop()
-WEBHOOK_HOST = 'yessir-whatever.tk/app'
+WEBHOOK_HOST = 'yessirwhatever.xyz/deezer'
 WEBHOOK_URL_PATH = f'/webhook/{config.bot_token}'
 
 WEBHOOK_URL = f"https://{WEBHOOK_HOST}{WEBHOOK_URL_PATH}"

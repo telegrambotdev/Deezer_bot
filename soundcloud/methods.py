@@ -1,20 +1,25 @@
-import os
 import shutil
 
-from aiogram import exceptions, types
+from aiogram import exceptions
 
 import config
 import db_utils
 from bot import bot
 from userbot import post_large_track
+from var import var
 
 from . import keyboards
 
 
-async def send_soundcloud_track(chat_id, track):
+async def send_track(chat_id, track):
     file_id = await db_utils.get_sc_track(track.id)
     if file_id:
         return await bot.send_audio(chat_id, file_id)
+
+    return await var.session.post(
+        'http://localhost:8082/soundcloud/send.track',
+        json={'track': track, 'chat_id': chat_id})
+
     path = await track.download()
     thumb = await track.get_thumb()
     await post_large_track(path, track, provider='soundcloud', thumb=thumb)
@@ -23,7 +28,7 @@ async def send_soundcloud_track(chat_id, track):
     shutil.rmtree(path.rsplit('/', 1)[0])
 
 
-async def send_soundcloud_artist(chat_id, artist):
+async def send_artist(chat_id, artist):
     await bot.send_photo(
         chat_id=chat_id,
         photo=artist.avatar_url,
@@ -32,7 +37,7 @@ async def send_soundcloud_artist(chat_id, artist):
         reply_markup=keyboards.artist_keyboard(artist))
 
 
-async def send_soundcloud_playlist(chat_id, playlist, pic=True, send_all=False):
+async def send_playlist(chat_id, playlist, pic=True, send_all=False):
     if pic:
         if not send_all:
             markup = keyboards.playlist_keyboard(
@@ -48,11 +53,7 @@ async def send_soundcloud_playlist(chat_id, playlist, pic=True, send_all=False):
                 chat_id, playlist.tracks[0].artwork_url, reply_markup=markup,
                 caption=f'{playlist.user.username} \u2013 {playlist.title}')
     if send_all:
-        for track in playlist.tracks:
-            try:
-                print(track.title)
-                await send_soundcloud_track(chat_id, track)
-            except Exception:
-                print(e)
-                await bot.send_message(
-                    chat_id, f'track {track.title} is not available')
+
+        await var.session.post(
+            'http://localhost:8082/soundcloud/send.tracks',
+            json={'tracks': playlist.tracks, 'chat_id': chat_id})
