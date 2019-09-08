@@ -19,7 +19,7 @@ async def send_track(chat_id, track):
         file_id = msg.audio.file_id
     else:
         file_id = await post_large_track()
-    db_utils.add_sc_track(track.id, file_id)
+    await db_utils.add_sc_track(track.id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
     await bot.send_audio(-1001246220493, file_id)
 
