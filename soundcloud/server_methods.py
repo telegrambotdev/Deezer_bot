@@ -2,6 +2,8 @@ import os
 import shutil
 import traceback
 
+from aiogram.types import InputFile
+
 from bot import bot
 from userbot import post_large_track
 import db_utils
@@ -12,7 +14,7 @@ async def send_track(chat_id, track):
     thumb = await track.get_thumb()
     if os.path.getsize(path) >> 20 < 49:
         msg = await bot.send_audio(
-            chat_id=chat_id, audio=path, thumb=thumb,
+            chat_id=chat_id, audio=InputFile(path), thumb=thumb,
             performer=track.artist, title=track.title)
         file_id = msg.audio.file_id
     else:
