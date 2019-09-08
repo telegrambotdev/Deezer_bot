@@ -20,7 +20,7 @@ async def deezer_playlist(callback):
         tracks = await deezer_api.getplaylist_tracks(obj_id)
         await var.session.post(
             'http://localhost:8082/deezer/send.tracks',
-            json={'tracks': tracks, 'chat_id': callback.message.chat.id})
+            json={'tracks': [track.data for track in tracks], 'chat_id': callback.message.chat.id})
 
 
 @dp.callback_query_handler(Text(startswith='dz_artist'))
