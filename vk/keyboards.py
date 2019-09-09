@@ -49,6 +49,7 @@ def playlist_keyboard(playlist, show_artists=False, post=False):
                 f'{i}. {track.title}',
                 callback_data=new_callback(
                     'vk_track', track.full_id, 'send')))
+
     kb.insert(InlineKeyboardButton(
         'Get all tracks', callback_data=new_callback(
             'vk_playlist', playlist.full_id, 'download')))

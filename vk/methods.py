@@ -20,15 +20,9 @@ async def send_track(chat_id, track):
     if file_id:
         return await bot.send_audio(chat_id, file_id)
 
-    path = await track.download()
-    thumb = await track.get_thumb()
-    await bot.send_chat_action(chat_id, 'upload_audio')
-    await post_large_track(path, track, provider='vk', thumb=thumb)
-    file_id = await db_utils.get_vk_track(track.full_id)
-    await bot.send_audio(chat_id, file_id)
-    shutil.rmtree(path.rsplit('/', 1)[0])
-    var.downloading.pop(track.full_id)
-    var.vk_tracks.pop(track.full_id)
+    return await var.session.post(
+        'http://localhost:8082/vk/send.track',
+        json={'track': track.data, 'chat_id': chat_id})
 
 
 async def send_playlist(chat_id, playlist, pic=True, send_all=False):
@@ -55,6 +49,6 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
             raise
 
     if send_all:
-        for track in playlist.tracks:
-            print(track.title)
-            await send_track(chat_id, track)
+        return await var.session.post(
+            'http://localhost:8082/vk/send.playlist',
+            json={'playlist': playlist.data, 'chat_id': chat_id})

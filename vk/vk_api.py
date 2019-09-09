@@ -295,6 +295,8 @@ class Playlist:
         else:
             self.full_id = f'{self.owner_id}_{self.id}_'
 
+        self.data = mapping
+
 
 async def login(force_reauth=False):
     auth = await autorization(

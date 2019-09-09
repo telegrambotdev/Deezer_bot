@@ -8,7 +8,7 @@ from aiohttp import web, ClientSession
 
 from deezer import deezer_api, server_methods as deezer_methods
 from soundcloud import soundcloud_api, server_methods as soundcloud_methods
-from vk import vk_api
+from vk import vk_api, server_methods as vk_methods
 import config
 from userbot import post_large_track
 from var import var
@@ -77,7 +77,7 @@ async def soundcloud_send(request: web.Request):
 
 
 @routes.post('/soundcloud/send.tracks')
-async def soundcloud_send(request: web.Request):
+async def soundcloud_send_many(request: web.Request):
     data = await request.json()
     tracks = data.get('tracks')
     chat_id = data.get('chat_id')
@@ -85,6 +85,34 @@ async def soundcloud_send(request: web.Request):
         tracks = [soundcloud_api.SoundCloudTrack(track) for track in tracks]
         asyncio.create_task(
             soundcloud_methods.send_tracks(chat_id, tracks))
+        return web.Response(text='OK')
+    else:
+        return web.Response(text='no data', status=404)
+
+
+@routes.post('/vk/send.track')
+async def vk_send(request: web.Request):
+    data = await request.json()
+    track = data.get('track')
+    chat_id = data.get('chat_id')
+    if track and chat_id:
+        track = vk_api.Track(track)
+        asyncio.create_task(
+            vk_methods.send_track(chat_id, track))
+        return web.Response(text='OK')
+    else:
+        return web.Response(text='no data', status=404)
+
+
+@routes.post('/vk/send.playlist')
+async def vk_send_many(request: web.Request):
+    data = await request.json()
+    playlist = data.get('playlist')
+    chat_id = data.get('chat_id')
+    if playlist and chat_id:
+        playlist = vk_api.Playlist(playlist)
+        asyncio.create_task(
+            vk_methods.send_playlist(chat_id, playlist))
         return web.Response(text='OK')
     else:
         return web.Response(text='no data', status=404)
