@@ -1,6 +1,4 @@
-import os
 import asyncio
-import shutil
 
 import aioredis
 from aiogram import Bot, types
@@ -10,7 +8,6 @@ from deezer import deezer_api, server_methods as deezer_methods
 from soundcloud import soundcloud_api, server_methods as soundcloud_methods
 from vk import vk_api, server_methods as vk_methods
 import config
-from userbot import post_large_track
 from var import var
 
 loop = asyncio.get_event_loop()
