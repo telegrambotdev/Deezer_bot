@@ -32,6 +32,13 @@ async def on_shutdown(app):
     await asyncio.sleep(0)
 
 
+async def create_task(task):
+    try:
+        await asyncio.wait_for(task, 50)
+    except TimeoutError as exc:
+        print(exc)
+
+
 @routes.post('/deezer/send.track')
 async def deezer_send(request: web.Request):
     data = await request.json()
@@ -39,7 +46,7 @@ async def deezer_send(request: web.Request):
     chat_id = data.get('chat_id')
     if track and chat_id:
         track = deezer_api.Track(track)
-        asyncio.create_task(deezer_methods.send_track(chat_id, track))
+        create_task(deezer_methods.send_track(chat_id, track))
         return web.Response(text='OK')
     else:
         return web.Response(text='no data', status=404)
@@ -52,7 +59,7 @@ async def deezer_send_many(request: web.Request):
     chat_id = data.get('chat_id')
     if tracks and chat_id:
         tracks = [deezer_api.Track(track) for track in tracks]
-        asyncio.create_task(
+        create_task(
             deezer_methods.send_playlist(chat_id, tracks))
         return web.Response(text='OK')
     else:
@@ -66,7 +73,7 @@ async def soundcloud_send(request: web.Request):
     chat_id = data.get('chat_id')
     if track and chat_id:
         track = soundcloud_api.SoundCloudTrack(track)
-        asyncio.create_task(
+        create_task(
             soundcloud_methods.send_track(chat_id, track))
         return web.Response(text='OK')
     else:
@@ -80,7 +87,7 @@ async def soundcloud_send_many(request: web.Request):
     chat_id = data.get('chat_id')
     if tracks and chat_id:
         tracks = [soundcloud_api.SoundCloudTrack(track) for track in tracks]
-        asyncio.create_task(
+        create_task(
             soundcloud_methods.send_tracks(chat_id, tracks))
         return web.Response(text='OK')
     else:
@@ -94,7 +101,7 @@ async def vk_send(request: web.Request):
     chat_id = data.get('chat_id')
     if track and chat_id:
         track = vk_api.Track(track)
-        asyncio.create_task(
+        create_task(
             vk_methods.send_track(chat_id, track))
         return web.Response(text='OK')
     else:
@@ -108,7 +115,7 @@ async def vk_send_many(request: web.Request):
     chat_id = data.get('chat_id')
     if playlist and chat_id:
         playlist = vk_api.Playlist(playlist)
-        asyncio.create_task(
+        create_task(
             vk_methods.send_playlist(chat_id, playlist))
         return web.Response(text='OK')
     else:
