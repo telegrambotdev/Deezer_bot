@@ -56,4 +56,4 @@ async def send_playlist(chat_id, playlist, pic=True, send_all=False):
 
         await var.session.post(
             'http://localhost:8082/soundcloud/send.tracks',
-            json={'tracks': playlist.tracks, 'chat_id': chat_id})
+            json={'tracks': [track.data for track in playlist.tracks], 'chat_id': chat_id})
