@@ -32,5 +32,6 @@ async def send_tracks(chat_id, tracks):
             print('didnt send sc track', exc)
             print(''.join(traceback.format_tb(exc.__traceback__)))
             await bot.send_message(
+                chat_id,
                 '🚫This track is not available '
                 f'{track.artist} - {track.title}')
