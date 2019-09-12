@@ -1,7 +1,7 @@
 import asyncio
 
 import aioredis
-from aiogram import Bot, types
+from aiogram import Bot
 from aiohttp import web, ClientSession
 
 from deezer import deezer_api, server_methods as deezer_methods
@@ -35,7 +35,7 @@ async def on_shutdown(app):
 async def timeout(task):
     try:
         await asyncio.wait_for(task, 50)
-    except TimeoutError as exc:
+    except asyncio.TimeoutError as exc:
         print(exc)
 
 
