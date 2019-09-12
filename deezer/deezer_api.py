@@ -11,7 +11,7 @@ import utils
 from AttrDict import AttrDict
 from config import deezer_private_cookies, deezer_private_headers
 from logger import file_download_logger
-from utils import request_get, request_post
+from utils import request_get, request_post, get_album_cover_url
 from var import var
 
 from . import decrypt
@@ -194,7 +194,7 @@ class Track(AttrDict):
         return await download_track(self.id, quality)
 
     async def get_max_size_cover(self, album):
-        url = album.cover_xl
+        url = album.cover_xl or await get_album_cover_url(album.id)
         r = await request_get(url)
         res = await r.content.read()
         if len(res) < 100:
