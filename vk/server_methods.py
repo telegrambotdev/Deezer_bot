@@ -24,7 +24,6 @@ async def send_track(chat_id, track):
 
 
 async def send_playlist(chat_id, playlist):
-    if send_all:
-        for track in playlist.tracks:
-            print(track.title)
-            await send_track(chat_id, track)
+    for track in playlist.tracks:
+        print(track.title)
+        await send_track(chat_id, track)

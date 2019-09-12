@@ -45,7 +45,9 @@ async def send_album(chat_id, album, pic=True, send_all=False):
         tracks = await album.get_tracks()
         await var.session.post(
             'http://localhost:8082/deezer/send.tracks',
-            json={'tracks': [track.data for track in tracks], 'chat_id': chat_id})
+            json={
+                'tracks': [track.data for track in tracks],
+                'chat_id': chat_id})
 
 
 async def send_artist(chat_id, artist):
