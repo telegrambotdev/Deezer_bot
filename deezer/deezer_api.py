@@ -224,7 +224,9 @@ class Album(AttrDict):
         super().__init__(json)
 
     async def get_tracks(self):
-        r = await request_get(self.url + '/tracks', data={'limit': -1})
+        r = await request_get(
+            f'https://api.deezer.com/album/{self.id}/tracks',
+            data={'limit': -1})
         json = await r.json()
         return [Track(track) for track in json['data']]
 
