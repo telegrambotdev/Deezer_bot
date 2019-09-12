@@ -207,7 +207,8 @@ class Track(AttrDict):
         os.makedirs(f'downloads/{self.id}', exist_ok=True)
         filepath = f'downloads/{self.id}/thumb.jpg'
         track = await gettrack(self.id)
-        return await utils.download_file(track.album.cover_small, filepath)
+        thumb_url = await utils.get_album_cover_url(track.album.id, '120x120')
+        return await utils.download_file(thumb_url, filepath)
 
     def __repr__(self):
         with suppress(AttributeError):
