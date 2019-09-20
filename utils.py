@@ -211,7 +211,7 @@ def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
         tag.lyrics.set(lyrics)
     if image:
         tag.images.set(type_=3, img_data=image, mime_type=image_mimetype)
-    tag.save()
+    tag.save(encoding='utf-8')
 
 
 def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpg'):
