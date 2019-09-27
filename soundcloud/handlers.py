@@ -16,6 +16,7 @@ async def soundcloud_link_handler(message: types.Message):
     except ValueError:
         await bot.send_message(
             message.chat.id, '🚫 this item is not available')
+        raise
     if result.kind == 'track':
         await methods.send_track(message.chat.id, result)
     elif result.kind == 'user':
