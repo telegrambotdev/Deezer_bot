@@ -48,7 +48,7 @@ async def send_track(chat_id, track, Redownload=False):
     if os.path.getsize(path) >> 20 < 49:
         msg = await bot.send_audio(
             chat_id=chat_id, audio=InputFile(path), thumb=thumb,
-            performer=track.artist, title=track.title)
+            performer=track.artist.name, title=track.title)
         file_id = msg.audio.file_id
     else:
         file_id = await post_large_track(path, track, quality, thumb=thumb)
