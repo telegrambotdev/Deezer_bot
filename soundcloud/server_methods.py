@@ -12,8 +12,16 @@ import db_utils
 
 @calling_queue(4)
 async def send_track(chat_id, track):
-    path = await track.download()
-    thumb = await track.get_thumb()
+    try:
+        path = await track.download()
+        thumb = await track.get_thumb()
+    except ValueError:
+        await bot.send_message(
+            chat_id,
+            "🚫This track is not available "
+            f"({track.artist} - {track.title})")
+        raise
+
     if os.path.getsize(path) >> 20 < 49:
         msg = await bot.send_audio(
             chat_id=chat_id, audio=InputFile(path), thumb=thumb,

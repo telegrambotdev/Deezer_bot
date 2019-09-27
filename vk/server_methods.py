@@ -13,8 +13,16 @@ import config
 
 @calling_queue(4)
 async def send_track(chat_id, track):
-    path = await track.download()
-    thumb = await track.get_thumb()
+    try:
+        path = await track.download()
+        thumb = await track.get_thumb()
+    except ValueError:
+        await bot.send_message(
+            chat_id,
+            "🚫This track is not available "
+            f"({track.artist} - {track.title})")
+        raise
+
     await bot.send_chat_action(chat_id, 'upload_audio')
     await post_large_track(path, track, provider='vk', thumb=thumb)
     file_id = await db_utils.get_vk_track(track.full_id)
