@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher.filters import Text
 
-from bot import dp
+from bot import dp, bot
 import utils
 from . import soundcloud_api
 from . import methods
@@ -11,7 +11,11 @@ from . import methods
 @dp.channel_post_handler(Text(contains='soundcloud.com/'))
 async def soundcloud_link_handler(message: types.Message):
     url = utils.clear_link(message)
-    result = await soundcloud_api.resolve(url)
+    try:
+        result = await soundcloud_api.resolve(url)
+    except ValueError:
+        await bot.send_message(
+            message.chat.id, '🚫 this item is not available')
     if result.kind == 'track':
         await methods.send_track(message.chat.id, result)
     elif result.kind == 'user':
