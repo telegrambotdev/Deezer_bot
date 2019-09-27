@@ -1,7 +1,6 @@
 import asyncio
 import os
 import random
-from io import BytesIO
 from contextlib import suppress
 
 from asyncache import cached
@@ -122,7 +121,8 @@ async def download_track(track_id, quality='MP3_320'):
         ext = 'mp3'
 
     print(
-        f'[Deezer] Start downloading: {track.id} | {track.artist.name} - {track.title} ')
+        f'[Deezer] Start downloading: {track.id} '
+        f'| {track.artist.name} - {track.title} ')
     track_url = decrypt.get_dl_url(private_track, quality_n)
     os.makedirs(f'downloads/{track.id}', exist_ok=True)
     filepath = f'downloads/{track.id}/{track.filename_safe}.{ext}'
@@ -131,7 +131,8 @@ async def download_track(track_id, quality='MP3_320'):
     cover = await track.get_max_size_cover(album)
     utils.add_tags(filepath, track, album, cover, lyrics)
     print(
-        f'[Deezer] Finished downloading: {track.id} | {track.artist.name} - {track.title} ')
+        f'[Deezer] Finished downloading: {track.id} '
+        f'| {track.artist.name} - {track.title} ')
     file_download_logger.info(f'[downloaded track {track.id}] {track}')
     return filepath
 

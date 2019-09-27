@@ -6,9 +6,11 @@ from aiogram.types import InputFile
 
 from bot import bot
 from userbot import post_large_track
+from utils import calling_queue
 import db_utils
 
 
+@calling_queue(4)
 async def send_track(chat_id, track):
     path = await track.download()
     thumb = await track.get_thumb()

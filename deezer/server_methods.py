@@ -1,15 +1,19 @@
+import os
 from time import time
 import shutil
+
+from aiogram.types import InputFile
 
 import db_utils
 from bot import bot
 from userbot import post_large_track
-from utils import already_downloading
+from utils import already_downloading, calling_queue
 from var import var
 from logger import sent_message_logger
 # import server_methods
 
 
+@calling_queue(4)
 async def send_track(chat_id, track, Redownload=False):
     quality = await db_utils.get_quality_setting(chat_id)
     if not already_downloading(track.id):
@@ -24,21 +28,6 @@ async def send_track(chat_id, track, Redownload=False):
             sent_message_logger.info(
                 f'[send track {track.id} to {chat_id}] {track}')
             return True
-
-    # try:
-    #     print(
-    #         f'[Deezer_server] Start downloading: {track.id} |'
-    #         f' {track.artist.name} - {track.title} ')
-    #     await server_methods.send_track(track, chat_id, quality)
-    #     var.downloading.pop(track.id)
-    #     print(
-    #         f'[Deezer_server] Finished downloading: {track.id} '
-    #         f'| {track.artist.name} - {track.title} ')
-    #     sent_message_logger.info(
-    #         f'[send track {track.id} to {chat_id}] {track}')
-    #     return True
-    # except Exception:
-    #     pass
 
     try:
         if quality == 'mp3':
@@ -56,8 +45,14 @@ async def send_track(chat_id, track, Redownload=False):
     await bot.send_chat_action(chat_id, 'upload_audio')
 
     thumb = await track.get_thumb()
-    await post_large_track(path, track, quality, thumb=thumb)
-    file_id = await db_utils.get_track(track.id, quality)
+    if os.path.getsize(path) >> 20 < 49:
+        msg = await bot.send_audio(
+            chat_id=chat_id, audio=InputFile(path), thumb=thumb,
+            performer=track.artist, title=track.title)
+        file_id = msg.audio.file_id
+    else:
+        file_id = await post_large_track(path, track, quality, thumb=thumb)
+
     await bot.send_audio(chat_id, file_id)
     shutil.rmtree(path.rsplit('/', 1)[0])
     var.downloading.pop(track.id)

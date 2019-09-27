@@ -6,11 +6,12 @@ from time import time
 import db_utils
 from userbot import post_large_track
 from var import var
-from utils import already_downloading
+from utils import already_downloading, calling_queue
 from . import keyboards
 import config
 
 
+@calling_queue(4)
 async def send_track(chat_id, track):
     path = await track.download()
     thumb = await track.get_thumb()
