@@ -50,6 +50,7 @@ async def send_track(chat_id, track, Redownload=False):
             chat_id=chat_id, audio=InputFile(path), thumb=thumb,
             performer=track.artist.name, title=track.title)
         file_id = msg.audio.file_id
+        await db_utils.add_track(track.id, file_id, quality)
     else:
         file_id = await post_large_track(path, track, quality, thumb=thumb)
 
