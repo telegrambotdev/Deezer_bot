@@ -25,11 +25,16 @@ AUTH_HEADER = {'Authorization': f"Basic {AUTH}"}
 REDIRECT_URL = 'https://' + WEBHOOK_HOST + '/spotify_auth'
 
 
-async def authorize(code=None, user_id=None):
+async def authorize(code=None, user_id=None, refresh=False):
     if code and user_id:
+        if refresh:
+            grant_type = 'refresh_token'
+        else:
+            grant_type = 'authorization_code'
+
         data = {
             'code': code,
-            'grant_type': 'authorization_code',
+            'grant_type': grant_type,
             'redirect_uri': REDIRECT_URL,
             'state': user_id}
     else:
@@ -71,7 +76,7 @@ async def get_token(user_id):
 async def refresh_token(user_id):
     code = await get_spotify_refresh_token(user_id)
     if code:
-        await authorize(code, user_id)
+        await authorize(code, user_id, refresh=True)
 
 
 @cached(TTLCache(100, 600))
