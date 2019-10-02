@@ -8,10 +8,7 @@ from utils import parse_callback, already_downloading, query_answer
 from var import var
 
 
-bot, dp = var.bot, var.dp
-
-
-@dp.callback_query_handler(Text(startswith='dz_playlist'))
+@var.dp.callback_query_handler(Text(startswith='dz_playlist'))
 async def deezer_playlist(callback):
     _, obj_id, method = parse_callback(callback.data)
     if method == 'download':
@@ -25,7 +22,7 @@ async def deezer_playlist(callback):
             json={'tracks': [track.data for track in tracks], 'chat_id': callback.message.chat.id})
 
 
-@dp.callback_query_handler(Text(startswith='dz_artist'))
+@var.dp.callback_query_handler(Text(startswith='dz_artist'))
 async def deezer_artist(callback):
     await query_answer(callback)
     _, obj_id, method = parse_callback(callback.data)
@@ -51,7 +48,7 @@ async def deezer_artist(callback):
         keyboard = keyboards.artist_keyboard(artist)
 
     elif method == 'send':
-        return await bot.send_photo(
+        return await var.bot.send_photo(
             chat_id=callback.message.chat.id,
             photo=artist.picture_xl,
             caption=f'[{artist.name}]({artist.share})',
@@ -60,18 +57,18 @@ async def deezer_artist(callback):
 
     elif method == 'wiki':
         artist = await deezer_api.getartist(obj_id)
-        r = await bot.session.get(
+        r = await var.bot.session.get(
             f'https://wikipedia.org/w/index.php?search={artist.name}')
-        return await bot.send_message(
+        return await var.bot.send_message(
             callback.message.chat.id, r.url)
 
-    return await bot.edit_message_reply_markup(
+    return await var.bot.edit_message_reply_markup(
         chat_id=callback.message.chat.id,
         message_id=callback.message.message_id,
         reply_markup=keyboard)
 
 
-@dp.callback_query_handler(Text(startswith='dz_album'))
+@var.dp.callback_query_handler(Text(startswith='dz_album'))
 async def deezer_album(callback):
     _, obj_id, method = parse_callback(callback.data)
 
@@ -92,7 +89,7 @@ async def deezer_album(callback):
         return await methods.send_album(callback.message.chat.id, album)
 
 
-@dp.callback_query_handler(Text(startswith='dz_track'))
+@var.dp.callback_query_handler(Text(startswith='dz_track'))
 async def deezer_track(callback):
     obj_id = parse_callback(callback.data)[1]
     if already_downloading(int(obj_id)):

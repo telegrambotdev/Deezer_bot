@@ -9,8 +9,6 @@ from . import methods
 import filters
 import utils
 
-bot, dp = var.bot, var.dp
-
 
 async def redownload_handler(message: types.Message):
     if 'com/' in message.text:
@@ -22,7 +20,8 @@ async def redownload_handler(message: types.Message):
         else:
             album = await deezer_api.getalbum(obj_id)
             for track in await album.get_tracks():
-                await methods.send_track(message.chat.id, track, Redownload=True)
+                await methods.send_track(
+                    message.chat.id, track, Redownload=True)
     else:
         search = await deezer_api.search(q=message.text.strip('/re '))
         await methods.send_track(
@@ -49,7 +48,7 @@ async def diskography_handler(message: types.Message):
 
     text = f'{artist.name}\n\nskipped ({skipped}/{total})'
 
-    await bot.send_message(message.chat.id, text)
+    await var.bot.send_message(message.chat.id, text)
 
     for track in tracks:
         try:
@@ -57,8 +56,8 @@ async def diskography_handler(message: types.Message):
             await sleep(0)
         except Exception as e:
             print(e)
-            await bot.send_message(message.chat.id, e)
-    await bot.send_message(message.chat.id, f'{artist.name} done')
+            await var.bot.send_message(message.chat.id, e)
+    await var.bot.send_message(message.chat.id, f'{artist.name} done')
 
     for artist in (await artist.related())[:5]:
         try:
@@ -72,14 +71,15 @@ async def diskography_handler(message: types.Message):
                 await sleep(3)
                 continue
             text = f'{artist.name}\n\nskipped ({skipped}/{total})'
-            await bot.send_message(message.chat.id, text)
+            await var.bot.send_message(message.chat.id, text)
             for track in tracks:
                 await methods.cache(track)
-            await bot.send_message(message.chat.id, f'{artist.name} done')
+            await var.bot.send_message(message.chat.id, f'{artist.name} done')
 
         except Exception as e:
             print(e)
-            await bot.send_message(message.chat.id, f'{artist.name}\n\n{e}')
+            await var.bot.send_message(
+                message.chat.id, f'{artist.name}\n\n{e}')
 
 
 @dp.message_handler(commands=['a', 'artist'])
