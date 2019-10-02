@@ -136,3 +136,26 @@ async def get_artist(artist_id):
         return AttrDict(json)
     else:
         raise ValueError('Error getting artist: ' + json.get('error'))
+
+
+@cached(LRUCache(5000))
+async def match_track(spotify_track_id):
+    sp_track = await spotify_api.get_track(spotify_track_id)
+    search_query = f'{sp_track.artists[0].name} {sp_track.name}'
+    tracks = await deezer_api.search(search_query)
+    return tracks and tracks[0]
+
+
+@cached(LRUCache(5000))
+async def match_album(spotify_album_id):
+    sp_album = await spotify_api.get_album(spotify_album_id)
+    search_query = f'{sp_album.artists[0].name} {sp_album.name}'
+    albums = await deezer_api.search(search_query, 'album')
+    return albums and albums[0]
+
+
+@cached(LRUCache(5000))
+async def match_artist(spotify_artist_id):
+    sp_artist = await spotify_api.get_artist(spotify_artist_id)
+    artists = await deezer_api.search(sp_artist.name, 'artist')
+    return artists and artists[0]

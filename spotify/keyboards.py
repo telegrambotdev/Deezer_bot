@@ -1,0 +1,29 @@
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+
+def current_track_keyboard(track):
+    markup = InlineKeyboardMarkup(2)
+    markup.row(InlineKeyboardButton(
+        text='Open track', url=track.external_urls.spotify))
+    markup.row(InlineKeyboardButton(
+        text='Download track',
+        callback_data=f'spotify:download_track:{track.id}'))
+    markup.row(
+        InlineKeyboardButton(
+            text='Album',
+            callback_data=f'spotify:album:{track.album.id}'),
+        InlineKeyboardButton(
+            text='Artist',
+            callback_data=f'spotify:artist:{track.artists[0].id}'))
+    markup.row(
+        InlineKeyboardButton(
+            text='◀️',
+            callback_data=f'spotify:previous_track'),
+        InlineKeyboardButton(
+            text='️️▶️',
+            callback_data=f'spotify:next_track'))
+    markup.row(InlineKeyboardButton(
+        text='Update', callback_data='spotify:update_current'))
+    markup.row(InlineKeyboardButton(
+        text='Close', callback_data='delete'))
+    return markup

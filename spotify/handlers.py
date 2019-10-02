@@ -11,6 +11,7 @@ from spotify import spotify_api
 from .spotify_api import get_token, REDIRECT_URL
 from bot import bot, dp
 import filters
+from .keyboards import current_track_keyboard
 from db_utils import unset_spotify_token
 from config import spotify_client
 from utils import request_get, print_traceback
@@ -56,28 +57,13 @@ async def now_playing(message: types.Message):
             message.chat.id,
             f'Play something in Spotify and try again',
             reply_to_message_id=message.message_id)
-    markup = types.InlineKeyboardMarkup(2)
-    markup.row(types.InlineKeyboardButton(
-        text='Open track', url=track.external_urls.spotify))
-    markup.row(types.InlineKeyboardButton(
-        text='Download track',
-        callback_data=f'spotify:download_track:{track.id}'))
-    markup.row(
-        types.InlineKeyboardButton(
-            text='Album',
-            callback_data=f'spotify:album:{track.album.id}'),
-        types.InlineKeyboardButton(
-            text='Artist',
-            callback_data=f'spotify:artist:{track.artists[0].id}'))
-    markup.row(types.InlineKeyboardButton(
-        text='Close', callback_data='delete'))
 
     return SendMessage(
         message.chat.id,
         'Currently playing track:\n' +
         f'{track.artists[0].name} - {track.name}'
         f'<a href="{track.album.images[0].url}">&#8203;</a>',
-        reply_markup=markup, parse_mode='HTML')
+        reply_markup=current_track_keyboard(track), parse_mode='HTML')
 
 
 @dp.message_handler(filters.SpotifyFilter)
