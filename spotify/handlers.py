@@ -2,6 +2,7 @@ import re
 from asyncio import sleep
 
 from aiogram import types
+from aiogram.utils.markdown import escape_md
 from aiogram.dispatcher.webhook import SendMessage
 from yarl import URL
 
@@ -70,8 +71,10 @@ async def now_playing(message: types.Message):
 
     return SendMessage(
         message.chat.id,
-        f'Currently playing track:\n{track.artists[0].name} - {track.name}',
-        reply_markup=markup)
+        f'[]({track.album.images[0].url})'
+        'Currently playing track:\n' +
+        f'{track.artists[0].name} - {track.name}',
+        reply_markup=markup, parse_mode='markdown')
 
 
 @dp.message_handler(filters.SpotifyFilter)
