@@ -57,8 +57,7 @@ async def get_artist(query: types.CallbackQuery):
 async def get_lyrics(query: types.CallbackQuery):
     await query_answer(query)
     track_id = query.data.split(':')[2]
-    track = await spotify_api.get_track(track_id)
-    result = await genius_api.spotify_match(track)
+    result = await genius_api.spotify_match(track_id)
 
     if not result:
         return SendMessage(
