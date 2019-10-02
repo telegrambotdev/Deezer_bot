@@ -41,11 +41,9 @@ async def on_shutdown(app):
 
 
 try:
-    bot = Bot(token=config.bot_token, loop=loop)
-    var.bot = bot
+    bot = var.bot = Bot(token=config.bot_token, loop=loop)
     storage = MemoryStorage()
-    dp = Dispatcher(bot, storage=storage)
-    var.dp = dp
+    dp = var.dp = Dispatcher(bot, storage=storage)
     app = get_new_configured_app(dp, WEBHOOK_URL_PATH)
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
