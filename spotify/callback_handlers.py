@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import types
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.webhook import SendMessage
@@ -125,6 +127,7 @@ async def next_track(query: types.CallbackQuery):
         'https://api.spotify.com/v1/me/player/next',
         headers={'Authorization': f'Bearer {token}'})
 
+    await asyncio.sleep(.7)
     req = await request_get(
         'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
