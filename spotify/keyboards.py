@@ -19,7 +19,7 @@ def auth_keyboard(user_id):
         'https://accounts.spotify_api.com/authorize'
         f'?client_id={spotify_client}'
         '&response_type=code'
-        'redirect_uri=https%3A%2F%2Fstatic.138.197.203.116.clients.'
+        '&redirect_uri=https%3A%2F%2Fstatic.138.197.203.116.clients.'
         'your-server.de%2Fdeezer%2Fspotify_auth'
         '&scope=user-read-currently-playing%20user-modify-playback-state'
         f'&state={user_id}')
