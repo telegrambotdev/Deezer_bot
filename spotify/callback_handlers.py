@@ -7,7 +7,7 @@ from AttrDict import AttrDict
 from deezer import methods
 from .keyboards import current_track_keyboard, auth_keyboard
 from . import spotify_api
-from utils import query_answer, request_get, print_traceback
+from utils import query_answer, request_get, request_post, print_traceback
 
 
 @dp.callback_query_handler(Text(startswith='spotify:download_track'))
@@ -57,6 +57,74 @@ async def update_current(query: types.CallbackQuery):
         return SendMessage(
             query.from_user.id, 'Please authorize',
             reply_markup=auth_keyboard(query.from_user.id))
+    req = await request_get(
+        'https://api.spotify.com/v1/me/player/currently-playing',
+        headers={'Authorization': f'Bearer {token}'})
+    try:
+        json = await req.json()
+        track = AttrDict(json['item'])
+    except Exception as e:
+        print_traceback(e)
+        return SendMessage(
+            query.message.chat.id,
+            f'Play something in Spotify and try again',
+            reply_to_message_id=query.message.message_id)
+
+    await bot.edit_message_text(
+        text='Currently playing track:\n' +
+        f'{track.artists[0].name} - {track.name}'
+        f'<a href="{track.album.images[0].url}">&#8203;</a>',
+        chat_id=query.message.chat.id, message_id=query.message.message_id,
+        reply_markup=current_track_keyboard(track), parse_mode='HTML')
+
+
+@dp.callback_query_handler(text='spotify:previous_track')
+async def previous_track(query: types.CallbackQuery):
+    await query_answer(query)
+    token = await spotify_api.get_token(query.from_user.id)
+    if not token:
+        return SendMessage(
+            query.from_user.id, 'Please authorize',
+            reply_markup=auth_keyboard(query.from_user.id))
+
+    await request_post(
+        'https://api.spotify.com/v1/me/player/previous',
+        headers={'Authorization': f'Bearer {token}'})
+
+    req = await request_get(
+        'https://api.spotify.com/v1/me/player/currently-playing',
+        headers={'Authorization': f'Bearer {token}'})
+    try:
+        json = await req.json()
+        track = AttrDict(json['item'])
+    except Exception as e:
+        print_traceback(e)
+        return SendMessage(
+            query.message.chat.id,
+            f'Play something in Spotify and try again',
+            reply_to_message_id=query.message.message_id)
+
+    await bot.edit_message_text(
+        text='Currently playing track:\n' +
+        f'{track.artists[0].name} - {track.name}'
+        f'<a href="{track.album.images[0].url}">&#8203;</a>',
+        chat_id=query.message.chat.id, message_id=query.message.message_id,
+        reply_markup=current_track_keyboard(track), parse_mode='HTML')
+
+
+@dp.callback_query_handler(text='spotify:next_track')
+async def next_track(query: types.CallbackQuery):
+    await query_answer(query)
+    token = await spotify_api.get_token(query.from_user.id)
+    if not token:
+        return SendMessage(
+            query.from_user.id, 'Please authorize',
+            reply_markup=auth_keyboard(query.from_user.id))
+
+    await request_post(
+        'https://api.spotify.com/v1/me/player/next',
+        headers={'Authorization': f'Bearer {token}'})
+
     req = await request_get(
         'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
