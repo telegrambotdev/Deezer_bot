@@ -1,12 +1,32 @@
 from var import var
 
 
+async def set_spotify_token(user_id, token, refresh_token=None):
+    await var.conn.execute(
+        'set', f'user:{user_id}:spotify_token', token, EX=3599)
+    if refresh_token:
+        await var.conn.execute(
+            'set', f'user:{user_id}:spotify_refresh_token', refresh_token)
+
+
+async def get_spotify_token(user_id):
+    return await var.conn.execute(
+        'get', f'user:{user_id}:spotify_token')
+
+
+async def get_spotify_refresh_token(user_id):
+    return await var.conn.execute(
+        'get', f'user:{user_id}:spotify_refresh_token')
+
+
 async def get_track(track_id, quality='mp3'):
-    return await var.conn.execute('get', f'track:deezer:{track_id}:{quality}')
+    return await var.conn.execute(
+        'get', f'track:deezer:{track_id}:{quality}')
 
 
 async def add_track(track_id, file_id, quality='mp3'):
-    await var.conn.execute('set', f'track:deezer:{track_id}:{quality}', file_id)
+    await var.conn.execute(
+        'set', f'track:deezer:{track_id}:{quality}', file_id)
     await var.conn.execute('incr', 'tracks:deezer:total')
     print(f'dz:{track_id} - {file_id}')
 
