@@ -75,7 +75,9 @@ async def authorize(code, user_id):
 
     req = await request_post(
         'https://accounts.spotify.com/api/token',
-        data=data, headers=AUTH_HEADER)
+        data=data, headers={
+            **AUTH_HEADER,
+            'Content-Type': 'application/x-www-form-urlencoded'})
     resp = await req.json()
 
     access_token = resp.get('access_token')
