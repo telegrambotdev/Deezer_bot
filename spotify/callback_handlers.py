@@ -6,7 +6,7 @@ from cachetools import LRUCache
 
 from bot import dp
 from deezer import deezer_api, methods
-import spotify_api
+from . import spotify_api
 from utils import query_answer
 
 
