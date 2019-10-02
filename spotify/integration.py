@@ -16,7 +16,7 @@ routes = web.RouteTableDef()
 AUTH = urlsafe_b64encode(
     f'{spotify_client}:{spotify_secret}'.encode()).decode()
 AUTH_HEADER = {'Authorization': f"Basic {AUTH}"}
-REDIRECT_URL = 'https://' + WEBHOOK_HOST + '/spotify_auth/'
+REDIRECT_URL = 'https://' + WEBHOOK_HOST + '/spotify_auth'
 
 
 @dp.message_handler(commands='spotify_auth')
