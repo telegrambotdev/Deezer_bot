@@ -10,7 +10,7 @@ async def unset_spotify_token(user_id):
 
 async def set_spotify_token(user_id, token, refresh_token=None):
     await var.conn.execute(
-        'setex', f'user:{user_id}:spotify_token', 10, token)
+        'setex', f'user:{user_id}:spotify_token', 3599, token)
     if refresh_token:
         await var.conn.execute(
             'set', f'user:{user_id}:spotify_refresh_token', refresh_token)
