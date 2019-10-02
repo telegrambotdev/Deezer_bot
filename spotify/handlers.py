@@ -37,7 +37,7 @@ async def now_playing(message: types.Message):
     print(message)
     token = await get_token(message.from_user.id)
     if not token:
-        return SendMessage(
+        return await bot.send_message(
             message.chat.id, 'Please authorize',
             reply_markup=auth_keyboard(message.from_user.id))
     req = await request_get(
