@@ -1,11 +1,62 @@
 import re
 from asyncio import sleep
 
+from aiogram import types
+from aiogram.dispatcher.webhook import SendMessage
+from yarl import URL
+
 from deezer import deezer_api
 from deezer import methods as dz_methods
+from integration import get_token, REDIRECT_URL
 from bot import bot, dp
 from var import var
 import filters
+from config import spotify_client
+from utils import request_get, print_traceback
+from AttrDict import AttrDict
+
+
+@dp.message_handler(commands='spotify_auth')
+async def spotify_auth(message: types.Message):
+    params = {
+        'client_id': spotify_client,
+        'response_type': 'code',
+        'redirect_uri': REDIRECT_URL,
+        'scope': 'user-read-currently-playing user-modify-playback-state',
+        'state': message.from_user.id}
+    url = URL('https://accounts.spotify.com/authorize').with_query(params)
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton(text='Authorize', url=str(url)))
+    return SendMessage(
+        message.chat.id, 'Please authorize', reply_markup=markup)
+
+
+@dp.message_handler(commands='spotify_now')
+async def now_playing(message: types.Message):
+    token = await get_token(message.from_user.id)
+    if not token:
+        return await spotify_auth(message)
+    req = await request_get(
+        'https://api.spotify.com/v1/me/player/currently-playing',
+        headers={'Authorization': f'Bearer {token}'})
+    try:
+        json = await req.json()
+        track = AttrDict(json['item'])
+    except Exception as e:
+        print_traceback(e)
+        return SendMessage(
+            message.chat.id,
+            f'Play something in Spotify and try again')
+    markup = types.InlineKeyboardMarkup(1)
+    markup.add(types.InlineKeyboardButton(
+        text='Open track', url=track.external_urls.spotify))
+    markup.add(types.InlineKeyboardButton(
+        text='Download track',
+        callback_data=f'spotify:download_track:{track.id}'))
+    return SendMessage(
+        message.chat.id,
+        f'Currently playing track:\n{track.artists[0].name} - {track.name}',
+        reply_markup=markup)
 
 
 @dp.message_handler(filters.SpotifyFilter)
