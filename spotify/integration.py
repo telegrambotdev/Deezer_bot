@@ -50,7 +50,7 @@ async def now_playing(message: types.Message):
         reply_markup=markup)
 
 
-@routes.post('/spotify_auth')
+@routes.get('/spotify_auth')
 async def auth_redirect(request: web.Request):
     auth_code = request.query.get('code')
     user_id = request.query.get('state')
