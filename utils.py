@@ -2,6 +2,7 @@ import asyncio
 import glob
 import random
 import string
+import traceback
 from asyncio import sleep
 from collections import namedtuple
 from concurrent.futures._base import TimeoutError
@@ -29,6 +30,10 @@ def sign(args):
 def check_sign(data: dict):
     input_sign = data.pop('sign', None)
     return sign(data.values(), config.request_sign) == input_sign
+
+
+def print_traceback(exc):
+    print(''.join(traceback.format_tb(exc.__traceback__)))
 
 
 async def query_answer(query, *args, **kwargs):

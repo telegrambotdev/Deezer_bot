@@ -6,7 +6,7 @@ from aiogram.dispatcher.webhook import SendMessage
 from yarl import URL
 
 from AttrDict import AttrDict
-from utils import request_post, request_get
+from utils import request_post, request_get, print_traceback
 from config import spotify_client, spotify_secret
 from bot import dp, bot, app, WEBHOOK_HOST
 from db_utils import get_spotify_token, set_spotify_token, \
@@ -41,8 +41,10 @@ async def now_playing(message: types.Message):
         'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
     try:
-        track = AttrDict(await req.json())
-    except Exception:
+        json = await req.json()
+        track = AttrDict(json)
+    except Exception as e:
+        print_traceback(e)
         return SendMessage(
             message.chat.id,
             f'Play something in Spotify and try again')
