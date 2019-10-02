@@ -2,11 +2,32 @@ import asyncio
 from bs4 import BeautifulSoup
 
 from asyncache import cached
-from cachetools import TTLCache
+from cachetools import TTLCache, LRUCache
 
 from AttrDict import AttrDict
 from utils import request_get
 from config import genius_token
+
+
+@cached(LRUCache(1000))
+async def deezer_match(track):
+    search_query = f'{track.artist.name} {track.name}'\
+        .lower().split('(f')[0]
+    results = await search(search_query)
+    for result in results:
+        if result.primary_artist.name == track.artist.name:
+            return result
+
+
+@cached(LRUCache(1000))
+async def spotify_match(track):
+    search_query = f'{track.artists[0].name} {track.name}'\
+        .lower().split('(f')[0]
+    results = await search(search_query)
+    for result in results:
+        if result.primary_artist.name in [
+                artist.name for artist in track.artists]:
+            return result
 
 
 @cached(TTLCache(500, 600))

@@ -9,6 +9,7 @@ import utils
 from bot import bot, dp
 from deezer import deezer_api, keyboards as dz_keyboards
 from soundcloud import soundcloud_api, keyboards as sc_keyboards
+from genius import genius_api
 from vk import vk_api, keyboards as vk_keyboards
 from var import var
 
@@ -30,6 +31,31 @@ async def start_command_handler(message: types.Message):
         disable_web_page_preview=True,
         parse_mode=types.ParseMode.MARKDOWN,
         reply_markup=inline_keyboards.start_keyboard)
+
+
+@dp.message_handler(Command('lyrics'))
+async def get_lyrics(message: types.Message):
+    if not message.reply_to_message or not message.reply_to_message.audio:
+        return await bot.send_message(message.chat.id, 'Reply to a song')
+
+    audio = message.reply_to_message.audio
+    query = f'{audio.performer} {audio.title}'\
+        .lower().split('(f')[0]
+
+    results = await genius_api.search(query)
+    for track in results:
+        if track.primary_artist.name == track.artist.name:
+            result = track
+            break
+
+    if not result:
+        return SendMessage(
+            query.message.chat.id,
+            f'Didn\'t found lyrics for this song',
+            reply_to_message_id=query.message.message_id)
+
+    for text in split_string(await result.get_lyrics()):
+        await bot.send_message(query.message.chat.id, text)
 
 
 @dp.message_handler(Command('stats'))
