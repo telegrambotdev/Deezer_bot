@@ -274,6 +274,8 @@ async def request_post(url, *args, **kwargs):
         except Exception as err:
             retries_count += 1
             if retries_count > 3:
+                print(
+                    f'url=\n{url}\nargs={args}\nkwargs={kwargs}')
                 raise ValueError("Number of retries exceeded") from err
         else:
             return result
