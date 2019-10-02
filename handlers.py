@@ -41,7 +41,7 @@ async def get_lyrics(message: types.Message):
             and message.from_user not in config.donated_users:
         return await bot.send_message(
             message.chat.id,
-            'This feature works only for donated users'
+            'This feature works only for donated users\n'
             'please /donate and help developer')
 
     audio = message.reply_to_message.audio
@@ -99,6 +99,11 @@ async def quality_setting_handler(message: types.Message):
         return await bot.send_message(
             message.chat.id, 'Select quality (applies only for Deezer)',
             reply_markup=dz_keyboards.quality_settings_keyboard(current))
+    else:
+        return await bot.send_message(
+            message.chat.id,
+            'This feature works only for donated users\n'
+            'please /donate and help developer')
 
 
 @dp.message_handler(Command('donate'))
