@@ -8,9 +8,9 @@ from yarl import URL
 
 from deezer import deezer_api
 from deezer import methods as dz_methods
+import spotify
 from .integration import get_token, REDIRECT_URL
 from bot import bot, dp
-from var import var
 import filters
 from db_utils import unset_spotify_token
 from config import spotify_client
@@ -80,7 +80,7 @@ async def now_playing(message: types.Message):
 @dp.message_handler(filters.SpotifyFilter)
 @dp.channel_post_handler(filters.SpotifyFilter)
 async def spotify_handler(message, track_id):
-    spotify_song = await var.spot.get_track(track_id)
+    spotify_song = await spotify.get_track(track_id)
     print(track_id)
     search_query = '%s %s' % (
         spotify_song.artists[0].name,
@@ -95,7 +95,7 @@ async def spotify_handler(message, track_id):
 
 @dp.message_handler(filters.SpotifyPlaylistFilter)
 async def spotify_playlist_handler(message, playlist_id):
-    spotify_playlist = await var.spot.get_playlist(playlist_id)
+    spotify_playlist = await spotify.get_playlist(playlist_id)
     for track in spotify_playlist:
         try:
             search_query = '{} {}'.format(
@@ -115,7 +115,7 @@ async def spotify_playlist_handler(message, playlist_id):
 
 @dp.message_handler(filters.SpotifyAlbumFilter)
 async def spotify_album_handler(message, album_id):
-    spotify_album = await var.spot.get_album(album_id)
+    spotify_album = await spotify.get_album(album_id)
     search_results = await deezer_api.search(
         f'{spotify_album.artists[0].name} {spotify_album.name}', 'album')
     if not search_results:
@@ -127,6 +127,6 @@ async def spotify_album_handler(message, album_id):
 
 @dp.message_handler(filters.SpotifyArtistFilter)
 async def spotify_artist_handler(message, artist_id):
-    spotify_artist = await var.spot.get_artist(artist_id)
+    spotify_artist = await spotify.get_artist(artist_id)
     search_results = await deezer_api.search(spotify_artist.name, 'artist')
     await dz_methods.send_artist(message.chat.id, search_results[0])
