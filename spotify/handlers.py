@@ -54,7 +54,8 @@ async def now_playing(message: types.Message):
         print_traceback(e)
         return SendMessage(
             message.chat.id,
-            f'Play something in Spotify and try again')
+            f'Play something in Spotify and try again',
+            reply_to_message_id=message.message_id)
     markup = types.InlineKeyboardMarkup(1)
     markup.add(types.InlineKeyboardButton(
         text='Open track', url=track.external_urls.spotify))
@@ -67,6 +68,8 @@ async def now_playing(message: types.Message):
     markup.add(types.InlineKeyboardButton(
         text='Get artist',
         callback_data=f'spotify:artist:{track.artists[0].id}'))
+    markup.add(types.InlineKeyboardButton(
+        text='Close', callback_data='delete'))
 
     return SendMessage(
         message.chat.id,
