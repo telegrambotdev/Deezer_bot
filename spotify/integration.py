@@ -4,7 +4,7 @@ from aiohttp import web
 
 from config import spotify_client, spotify_secret
 from bot import bot, app, WEBHOOK_HOST
-from spotify import authorize
+from spotify_api import authorize
 from db_utils import get_spotify_token, set_spotify_token, \
     get_spotify_refresh_token
 
