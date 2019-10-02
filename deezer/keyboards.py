@@ -68,6 +68,9 @@ def artist_keyboard(artist):
     kb.insert(InlineKeyboardButton(
         'Search on Last.Fm',
         url=str(URL(f'https://www.last.fm/search?q={artist.name}'))))
+    kb.insert(InlineKeyboardButton(
+        text='Close', callback_data='delete'))
+
     return kb
 
 
