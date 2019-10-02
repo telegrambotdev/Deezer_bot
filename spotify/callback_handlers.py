@@ -52,7 +52,7 @@ async def get_artist(query: types.CallbackQuery):
 @dp.callback_query_handler(text='spotify:update_current')
 async def update_current(query: types.CallbackQuery):
     await query_answer(query)
-    token = await spotify_api.get_token(query.message.from_user.id)
+    token = await spotify_api.get_token(query.from_user.id)
     if not token:
         return SendMessage(
             query.from_user.id, 'Please authorize',
