@@ -8,16 +8,24 @@ from utils import encode_url
 
 
 def auth_keyboard(user_id):
-    url = URL('https://accounts.spotify_api.com/authorize').update_query({
-        'client_id': spotify_client,
-        'response_type': 'code',
-        'redirect_uri': quote(REDIRECT_URL),
-        'scope': 'user-read-currently-playing%20user-modify-playback-state',
-        'state': user_id
-    })
+    # url = URL('https://accounts.spotify_api.com/authorize').with_query({
+    #     'client_id': spotify_client,
+    #     'response_type': 'code',
+    #     'redirect_uri': quote(REDIRECT_URL),
+    #     'scope': 'user-read-currently-playing%20user-modify-playback-state',
+    #     'state': user_id
+    # })
+    url = (
+        'https://accounts.spotify_api.com/authorize'
+        f'?client_id={spotify_client}'
+        '&response_type=code'
+        'https%3A%2F%2Fstatic.138.197.203.116.clients.'
+        'your-server.de%2Fdeezer%2Fspotify_auth'
+        '&scope=user-read-currently-playing%20user-modify-playback-state',
+        f'&state={user_id}')
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(
-        text='Authorize', url=str(url)))
+        text='Authorize', url=url))
     return markup
 
 
