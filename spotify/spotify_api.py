@@ -93,8 +93,8 @@ async def get_track(track_id):
     r = await request_get(
         f'https://api.spotify.com/v1/tracks/{track_id}',
         headers={'Authorization': f'Bearer {var.spotify_token}'})
-    print(r.url)
     json = await r.json()
+    print(json)
     if not json.get('error'):
         return AttrDict(json)
     else:
