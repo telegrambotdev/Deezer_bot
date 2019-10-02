@@ -12,7 +12,7 @@ def auth_keyboard(user_id):
         'client_id': spotify_client,
         'response_type': 'code',
         'redirect_uri': quote(REDIRECT_URL),
-        'scope': 'user-read-currently-playing user-modify-playback-state',
+        'scope': 'user-read-currently-playing%20user-modify-playback-state',
         'state': user_id
     })
     markup = InlineKeyboardMarkup()
