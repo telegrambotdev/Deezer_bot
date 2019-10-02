@@ -15,8 +15,18 @@ from db_utils import get_telegraph_url, add_telegraph_url
 
 
 telegraph = Telegraph()
-with open('telegraph_lyrics_template.html', 'r') as f:
-    page_template = f.read()
+page_template = '''<img src="{img_url}">
+
+<p><h3>{title}</h3></p>
+<br>
+<p><h4>{artist}</h4></p>
+<br>
+<p><h4>From {album}</h4></p>
+<br>
+<br>
+<p>
+{lyrics_body}
+</p>'''
 
 
 async def telegraph_track(chat_id, track):
