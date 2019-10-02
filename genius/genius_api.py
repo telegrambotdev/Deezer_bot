@@ -51,7 +51,7 @@ async def telegraph_track(chat_id, track):
 async def deezer_match(track_id):
     track = deezer_api.gettrack(track_id)
     search_query = f'{track.artist.name} {track.name}'\
-        .lower().split('(f')[0]
+        .lower().split('(f')[0].split('feat.')[0].split('ft.')[0]
     results = await search(search_query)
     for result in results:
         if result.primary_artist.name == track.artist.name:
@@ -62,7 +62,7 @@ async def deezer_match(track_id):
 async def spotify_match(track_id):
     track = await spotify_api.get_track(track_id)
     search_query = f'{track.artists[0].name} {track.name}'\
-        .lower().split('(f')[0]
+        .lower().split('(f')[0].split('feat.')[0].split('ft.')[0]
     results = await search(search_query)
     for result in results:
         if result.primary_artist.name in [
