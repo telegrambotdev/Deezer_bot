@@ -13,7 +13,7 @@ from db_utils import get_spotify_token, set_spotify_token, \
     get_spotify_refresh_token
 
 routes = web.RouteTableDef()
-AUTH = urlsafe_b64encode(f'{spotify_client}:{spotify_secret}')
+AUTH = urlsafe_b64encode(f'{spotify_client}:{spotify_secret}'.encode())
 AUTH_HEADER = {'Authorization': f"Basic {AUTH}"}
 
 
