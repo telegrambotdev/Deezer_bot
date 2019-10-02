@@ -14,6 +14,7 @@ def auth_keyboard(user_id):
         'state': user_id}
     url = URL('https://accounts.spotify_api.com/authorize').with_query(params)
     markup = InlineKeyboardMarkup()
+    print(str(url))
     markup.add(InlineKeyboardButton(text='Authorize', url=str(url)))
     return markup
 
