@@ -27,7 +27,7 @@ async def download_track(query: types.CallbackQuery):
 async def get_album(query: types.CallbackQuery):
     await query_answer(query)
     album_id = query.data.split(':')[2]
-    album = match_album(album_id)
+    album = await match_album(album_id)
     if album:
         await methods.send_album(query.message.chat.id, album)
     else:
@@ -40,7 +40,7 @@ async def get_album(query: types.CallbackQuery):
 async def get_artist(query: types.CallbackQuery):
     await query_answer(query)
     artist_id = query.data.split(':')[2]
-    artist = match_artist(artist_id)
+    artist = await match_artist(artist_id)
     if artist:
         await methods.send_artist(query.message.chat.id, artist)
     else:
