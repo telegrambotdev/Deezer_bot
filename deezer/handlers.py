@@ -2,7 +2,7 @@ from asyncio import sleep
 
 from aiogram import types
 
-from var import var
+from bot import dp, bot
 import db_utils
 from . import deezer_api
 from . import methods
@@ -48,7 +48,7 @@ async def diskography_handler(message: types.Message):
 
     text = f'{artist.name}\n\nskipped ({skipped}/{total})'
 
-    await var.bot.send_message(message.chat.id, text)
+    await bot.send_message(message.chat.id, text)
 
     for track in tracks:
         try:
@@ -56,8 +56,8 @@ async def diskography_handler(message: types.Message):
             await sleep(0)
         except Exception as e:
             print(e)
-            await var.bot.send_message(message.chat.id, e)
-    await var.bot.send_message(message.chat.id, f'{artist.name} done')
+            await bot.send_message(message.chat.id, e)
+    await bot.send_message(message.chat.id, f'{artist.name} done')
 
     for artist in (await artist.related())[:5]:
         try:
@@ -71,45 +71,45 @@ async def diskography_handler(message: types.Message):
                 await sleep(3)
                 continue
             text = f'{artist.name}\n\nskipped ({skipped}/{total})'
-            await var.bot.send_message(message.chat.id, text)
+            await bot.send_message(message.chat.id, text)
             for track in tracks:
                 await methods.cache(track)
-            await var.bot.send_message(message.chat.id, f'{artist.name} done')
+            await bot.send_message(message.chat.id, f'{artist.name} done')
 
         except Exception as e:
             print(e)
-            await var.bot.send_message(
+            await bot.send_message(
                 message.chat.id, f'{artist.name}\n\n{e}')
 
 
-@var.dp.message_handler(commands=['a', 'artist'])
+@dp.message_handler(commands=['a', 'artist'])
 async def artist_search_handler(message):
     artist = (await deezer_api.search(
         message.text.strip(message.get_command()), 'artist'))[0]
     await methods.send_artist(message.chat.id, artist)
 
 
-@var.dp.message_handler(filters.DeezerArtistFilter)
+@dp.message_handler(filters.DeezerArtistFilter)
 async def artist_handler(message, artist_id):
     artist = await deezer_api.getartist(artist_id)
     await methods.send_artist(message.chat.id, artist)
 
 
-@var.dp.message_handler(filters.DeezerAlbumFilter)
+@dp.message_handler(filters.DeezerAlbumFilter)
 async def album_handler(message, album_id):
     album = await deezer_api.getalbum(album_id)
     await methods.send_album(message.chat.id, album)
 
 
-@var.dp.message_handler(filters.DeezerPlaylistFilter)
+@dp.message_handler(filters.DeezerPlaylistFilter)
 async def playlist_handler(message, playlist_id):
     playlist = await deezer_api.getplaylist(playlist_id)
     tracks = await deezer_api.getplaylist_tracks(playlist_id)
     await methods.send_playlist(message.chat.id, playlist, tracks)
 
 
-@var.dp.message_handler(filters.DeezerFilter)
-@var.dp.channel_post_handler(filters.DeezerFilter)
+@dp.message_handler(filters.DeezerFilter)
+@dp.channel_post_handler(filters.DeezerFilter)
 async def track_handler(message, track_id):
     track = await deezer_api.gettrack(track_id)
     if utils.already_downloading(track.id):
