@@ -255,6 +255,7 @@ async def request_get(url, params=None, json=None, *args, **kwargs):
                 print(
                     f'url=\n{url}\nparams={params}\n'
                     f'args={args}\nkwargs={kwargs}')
+                print_traceback(err)
                 raise ValueError("Number of retries exceeded") from err
         else:
             return result
