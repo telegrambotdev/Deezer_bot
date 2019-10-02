@@ -29,7 +29,7 @@ async def spotify_auth(message: types.Message):
     url = URL('https://accounts.spotify.com/authorize').with_query(params)
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text='Authorize', url=url))
-    return await SendMessage(
+    return SendMessage(
         message.chat.id, 'Please authorize', reply_markup=markup)
 
 
@@ -43,7 +43,7 @@ async def now_playing(message: types.Message):
     markup = types.InlineKeyboardMarkup(1)
     markup.add(types.InlineKeyboardButton(
         text='Open track', url=track.external_urls.spotify))
-    await SendMessage(
+    return SendMessage(
         message.chat.id,
         f'Currently playing track:\n{track.artists[0].name} - {track.name}',
         reply_markup=markup)
