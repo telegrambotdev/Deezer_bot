@@ -20,7 +20,7 @@ def auth_keyboard(user_id):
 
 
 def current_track_keyboard(track):
-    markup = InlineKeyboardMarkup(2)
+    markup = InlineKeyboardMarkup(3)
     markup.row(InlineKeyboardButton(
         text='Open track', url=track.external_urls.spotify))
     markup.row(InlineKeyboardButton(
