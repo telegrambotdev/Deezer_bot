@@ -7,7 +7,7 @@ from yarl import URL
 
 from deezer import deezer_api
 from deezer import methods as dz_methods
-from integration import get_token, REDIRECT_URL
+from .integration import get_token, REDIRECT_URL
 from bot import bot, dp
 from var import var
 import filters
