@@ -157,7 +157,7 @@ async def match_track(spotify_track_id):
     sp_track = await get_track(spotify_track_id)
     search_query = f'{sp_track.artists[0].name} {sp_track.name}'
     search_query2 = f'{sp_track.artists[0].name} {sp_track.name}'\
-        .lower().split('(f')[0]
+        .lower().split('(f')[0].split('feat.')[0].split('ft.')[0]
 
     tracks = await deezer_api.search(search_query)
     if not tracks:
