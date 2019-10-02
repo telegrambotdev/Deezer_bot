@@ -1,4 +1,6 @@
 from aiogram.dispatcher.filters import Text
+from asyncache import cached
+from cachetools import LRUCache
 
 from bot import dp
 from var import var
@@ -10,7 +12,13 @@ from utils import query_answer
 async def download_track(query):
     await query_answer(query)
     track_id = query.data.split(':')[2]
-    sp_track = await var.spot.get_track(track_id)
+    track = await match_track(track_id)
+    await methods.send_track(query.message.chat.id, track)
+
+
+@cached(LRUCache(5000))
+async def match_track(spotify_track_id):
+    sp_track = await var.spot.get_track(spotify_track_id)
     search_query = f'{sp_track.artists[0].name} {sp_track.name}'
     tracks = await deezer_api.search(search_query)
-    await methods.send_track(query.message.chat.id, tracks[0])
+    return tracks[0]
