@@ -42,7 +42,7 @@ async def now_playing(message: types.Message):
         headers={'Authorization': f'Bearer {token}'})
     try:
         json = await req.json()
-        track = AttrDict(json)
+        track = AttrDict(json['item'])
     except Exception as e:
         print_traceback(e)
         return SendMessage(
