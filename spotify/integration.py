@@ -8,7 +8,7 @@ from yarl import URL
 from AttrDict import AttrDict
 from utils import request_post, request_get
 from config import spotify_client, spotify_secret
-from bot import dp, app, WEBHOOK_HOST
+from bot import dp, bot, app, WEBHOOK_HOST
 from db_utils import get_spotify_token, set_spotify_token, \
     get_spotify_refresh_token
 
@@ -59,6 +59,10 @@ async def auth_redirect(request: web.Request):
 
     await authorize(auth_code, user_id)
 
+    await bot.send_message(
+        int(user_id),
+        'You successfuly authorized to use spotify,'
+        'send /spotify_now to get info about currently playing track')
     return web.HTTPFound('tg://resolve/?domain=DeezerMusicBot')
 
 
