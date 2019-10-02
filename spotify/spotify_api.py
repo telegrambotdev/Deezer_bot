@@ -27,16 +27,18 @@ REDIRECT_URL = 'https://' + WEBHOOK_HOST + '/spotify_auth'
 
 async def authorize(code=None, user_id=None, refresh=False):
     if code and user_id:
+        data = {}
         if refresh:
             grant_type = 'refresh_token'
+            data['refresh_token'] = code
         else:
             grant_type = 'authorization_code'
+            data['code'] = code
 
-        data = {
-            'code': code,
+        data.update({
             'grant_type': grant_type,
             'redirect_uri': REDIRECT_URL,
-            'state': user_id}
+            'state': user_id})
     else:
         data = {'grant_type': 'client_credentials'}
 
