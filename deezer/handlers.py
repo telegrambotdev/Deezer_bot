@@ -82,34 +82,34 @@ async def diskography_handler(message: types.Message):
                 message.chat.id, f'{artist.name}\n\n{e}')
 
 
-@dp.message_handler(commands=['a', 'artist'])
+@var.dp.message_handler(commands=['a', 'artist'])
 async def artist_search_handler(message):
     artist = (await deezer_api.search(
         message.text.strip(message.get_command()), 'artist'))[0]
     await methods.send_artist(message.chat.id, artist)
 
 
-@dp.message_handler(filters.DeezerArtistFilter)
+@var.dp.message_handler(filters.DeezerArtistFilter)
 async def artist_handler(message, artist_id):
     artist = await deezer_api.getartist(artist_id)
     await methods.send_artist(message.chat.id, artist)
 
 
-@dp.message_handler(filters.DeezerAlbumFilter)
+@var.dp.message_handler(filters.DeezerAlbumFilter)
 async def album_handler(message, album_id):
     album = await deezer_api.getalbum(album_id)
     await methods.send_album(message.chat.id, album)
 
 
-@dp.message_handler(filters.DeezerPlaylistFilter)
+@var.dp.message_handler(filters.DeezerPlaylistFilter)
 async def playlist_handler(message, playlist_id):
     playlist = await deezer_api.getplaylist(playlist_id)
     tracks = await deezer_api.getplaylist_tracks(playlist_id)
     await methods.send_playlist(message.chat.id, playlist, tracks)
 
 
-@dp.message_handler(filters.DeezerFilter)
-@dp.channel_post_handler(filters.DeezerFilter)
+@var.dp.message_handler(filters.DeezerFilter)
+@var.dp.channel_post_handler(filters.DeezerFilter)
 async def track_handler(message, track_id):
     track = await deezer_api.gettrack(track_id)
     if utils.already_downloading(track.id):
