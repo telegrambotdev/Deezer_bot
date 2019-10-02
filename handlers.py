@@ -55,7 +55,7 @@ async def get_lyrics(message: types.Message):
             reply_to_message_id=message.message_id)
 
     telegraph_url = await genius_api.telegraph_track(
-        query.message.chat.id, result)
+        message.chat.id, result)
     await bot.send_message(message.chat.id, telegraph_url)
 
 
