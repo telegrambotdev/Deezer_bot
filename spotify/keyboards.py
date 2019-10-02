@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from yarl import URL
+from urllib.parse import quote
 
 from config import spotify_client
 from .spotify_api import REDIRECT_URL
@@ -7,13 +8,13 @@ from utils import encode_url
 
 
 def auth_keyboard(user_id):
-    params = {
+    url = URL('https://accounts.spotify_api.com/authorize').update_query({
         'client_id': spotify_client,
         'response_type': 'code',
-        'redirect_uri': REDIRECT_URL,
+        'redirect_uri': quote(REDIRECT_URL),
         'scope': 'user-read-currently-playing user-modify-playback-state',
-        'state': user_id}
-    url = URL('https://accounts.spotify_api.com/authorize').update_query(params)
+        'state': user_id
+    })
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(
         text='Authorize', url=str(url)))
