@@ -5,7 +5,7 @@ from aiogram.dispatcher.webhook import SendMessage
 from bot import dp, bot
 from AttrDict import AttrDict
 from deezer import methods
-from handlers import spotify_auth
+# from handlers import spotify_auth
 from .keyboards import current_track_keyboard
 from . import spotify_api
 from utils import query_answer, request_get, print_traceback
