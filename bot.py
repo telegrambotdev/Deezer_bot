@@ -52,6 +52,7 @@ try:
     print('created session')
     var.CSRFToken = None
     var.spotify_token = None
+    var.spotify_token_expires = 0
     var.loop = loop
 
     var.db = database('db.sqlite')
