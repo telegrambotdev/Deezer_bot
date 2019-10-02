@@ -1,13 +1,15 @@
 from aiogram import exceptions
 from aiogram.utils.markdown import escape_md
 
-from var import bot
+from var import var
 from utils import get_album_cover_url
 from var import var
 import db_utils
 import config
 
 from . import keyboards
+
+bot = var.bot
 
 
 async def send_track(chat_id, track, Redownload=False):
