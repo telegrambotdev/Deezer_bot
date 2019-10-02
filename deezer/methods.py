@@ -1,7 +1,7 @@
 from aiogram import exceptions
 from aiogram.utils.markdown import escape_md
 
-from bot import bot
+from var import bot
 from utils import get_album_cover_url
 from var import var
 import db_utils

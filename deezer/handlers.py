@@ -2,7 +2,7 @@ from asyncio import sleep
 
 from aiogram import types
 
-from bot import bot, dp
+from var.var import bot, dp
 import db_utils
 from . import deezer_api
 from . import methods

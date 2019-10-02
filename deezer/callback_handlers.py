@@ -4,7 +4,7 @@ from aiogram import exceptions
 from aiogram.dispatcher.filters import Text
 
 from . import deezer_api, keyboards, methods
-from bot import bot, dp
+from var.var import bot, dp
 from utils import parse_callback, already_downloading, query_answer
 from var import var
 
