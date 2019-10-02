@@ -34,7 +34,6 @@ async def spotify_auth(message: types.Message):
 
 @dp.message_handler(commands='spotify_now')
 async def now_playing(message: types.Message):
-    print(message)
     token = await get_token(message.from_user.id)
     if not token:
         return await bot.send_message(
