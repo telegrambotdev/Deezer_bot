@@ -73,8 +73,8 @@ async def now_playing(message: types.Message):
         message.chat.id,
         'Currently playing track:\n' +
         f'{track.artists[0].name} - {track.name}'
-        f'[]({track.album.images[0].url})',
-        reply_markup=markup, parse_mode='markdown')
+        f'<a href="{track.album.images[0].url}">&#8203;</a>',
+        reply_markup=markup, parse_mode='HTML')
 
 
 @dp.message_handler(filters.SpotifyFilter)
