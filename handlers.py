@@ -49,12 +49,12 @@ async def get_lyrics(message: types.Message):
             break
 
     if not result:
-        return SendMessage(
+        return await bot.send_message(
             query.message.chat.id,
             f'Didn\'t found lyrics for this song',
             reply_to_message_id=query.message.message_id)
 
-    for text in split_string(await result.get_lyrics()):
+    for text in utils.split_string(await result.get_lyrics()):
         await bot.send_message(query.message.chat.id, text)
 
 
