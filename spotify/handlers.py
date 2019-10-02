@@ -2,14 +2,13 @@ import re
 from asyncio import sleep
 
 from aiogram import types
-from aiogram.utils.markdown import escape_md
 from aiogram.dispatcher.webhook import SendMessage
 from yarl import URL
 
-# from deezer import deezer_api
-# from deezer import methods as dz_methods
+from deezer import deezer_api
+from deezer import methods as dz_methods
 import spotify
-from .integration import get_token, REDIRECT_URL
+from .spotify_api import get_token, REDIRECT_URL
 from bot import bot, dp
 import filters
 from db_utils import unset_spotify_token

@@ -1,5 +1,3 @@
-from base64 import urlsafe_b64encode
-
 from aiohttp import web
 
 from bot import bot, app
