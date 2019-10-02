@@ -93,6 +93,7 @@ async def previous_track(query: types.CallbackQuery):
         'https://api.spotify.com/v1/me/player/previous',
         headers={'Authorization': f'Bearer {token}'})
 
+    await asyncio.sleep(.7)
     req = await request_get(
         'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
