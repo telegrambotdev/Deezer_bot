@@ -40,7 +40,12 @@ async def now_playing(message: types.Message):
     req = await request_get(
         'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
-    track = AttrDict(await req.json())
+    try:
+        track = AttrDict(await req.json())
+    except Exception:
+        return SendMessage(
+            message.chat.id,
+            f'Play something in Spotify and try again')
     markup = types.InlineKeyboardMarkup(1)
     markup.add(types.InlineKeyboardButton(
         text='Open track', url=track.external_urls.spotify))
