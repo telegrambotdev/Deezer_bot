@@ -1,6 +1,16 @@
 from var import var
 
 
+async def add_telegraph_url(track_id, url):
+    return await var.conn.execute(
+        'set', f'genius:telegraph:{track_id}', url)
+
+
+async def get_telegraph_url(track_id):
+    return await var.conn.execute(
+        'get', f'genius:telegraph:{track_id}')
+
+
 async def unset_spotify_token(user_id):
     await var.conn.execute(
         'del', f'user:{user_id}:spotify_token')

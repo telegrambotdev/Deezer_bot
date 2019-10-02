@@ -65,8 +65,9 @@ async def get_lyrics(query: types.CallbackQuery):
             f'Didn\'t found lyrics for this song',
             reply_to_message_id=query.message.message_id)
 
-    for text in split_string(await result.get_lyrics()):
-        await bot.send_message(query.message.chat.id, text)
+    telegraph_url = await genius_api.telegraph_track(
+        query.message.chat.id, result)
+    return SendMessage(query.message.chat.id, telegraph_url)
 
 
 @dp.callback_query_handler(text='spotify:update_current')

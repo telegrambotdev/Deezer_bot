@@ -1,14 +1,40 @@
+import re
 import asyncio
 from bs4 import BeautifulSoup
 
 from asyncache import cached
+from aiograph import Telegraph
 from cachetools import TTLCache, LRUCache
 
 from AttrDict import AttrDict
 from utils import request_get
 from deezer import deezer_api
 from spotify import spotify_api
-from config import genius_token
+from config import genius_token, telegraph_token
+from db_utils import get_telegraph_url, add_telegraph_url
+
+
+telegraph = Telegraph()
+with open('telegraph_lyrics_template.html', 'r') as f:
+    page_template = f.read()
+
+
+async def telegraph_track(chat_id, track):
+    in_db_url = await get_telegraph_url(track.id)
+    if in_db_url:
+        in_db_url
+    lyrics = await track.get_lyrics(False)
+    page = await telegraph.create_page(
+        f'{track.primary_artist.name} \u2013 {track.title}',
+        page_template.format(
+            img_url=track.album.cover_art_url if track.album else track.song_art_image_url,
+            artist=track.primary_artist.name,
+            album=track.album.name if track.album else track.title,
+            title=track.title, lyrics_body=lyrics),
+        access_token=telegraph_token)
+
+    await add_telegraph_url(track.id, page.url)
+    return page.url
 
 
 @cached(LRUCache(1000))
@@ -94,12 +120,15 @@ class Song(AttrDict):
         except KeyError:
             raise ValueError('Song id is not valid')
 
-    async def get_lyrics(self):
-        r = await request_get(self.url)
+    async def get_lyrics(self, text_only=True):
+        r = await request_get.get(self.url)
         soup = BeautifulSoup(await r.text(), 'html.parser')
-        lyrics = soup.find(
-            'div', {'class': 'song_body-lyrics'}).text.split('More on Genius')[0]
-        return lyrics.replace('\n\n\n', '\n')
+        if text_only:
+            return soup.find(class_='lyrics').text
+        lyrics = str(soup.find(class_='lyrics'))
+        converted_lyrics = re.sub(
+            r'</?(a|div|p|!--sse--)[^>]*>', '', lyrics, flags=re.S)
+        return converted_lyrics
 
     @property
     def spotify(self):
