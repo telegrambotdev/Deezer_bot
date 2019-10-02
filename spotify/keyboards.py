@@ -24,6 +24,7 @@ def auth_keyboard(user_id):
         '&scope=user-read-currently-playing%20user-modify-playback-state'
         f'&state={user_id}')
     markup = InlineKeyboardMarkup()
+    print(url)
     markup.add(InlineKeyboardButton(
         text='Authorize', url=url))
     return markup
