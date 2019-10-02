@@ -1,6 +1,13 @@
 from var import var
 
 
+async def unset_spotify_token(user_id):
+    await var.conn.execute(
+        'del', f'user:{user_id}:spotify_token')
+    await var.conn.execute(
+        'del', f'user:{user_id}:spotify_refresh_token')
+
+
 async def set_spotify_token(user_id, token, refresh_token=None):
     await var.conn.execute(
         'setex', f'user:{user_id}:spotify_token', 3599, token)

@@ -11,9 +11,17 @@ from .integration import get_token, REDIRECT_URL
 from bot import bot, dp
 from var import var
 import filters
+from db_utils import unset_spotify_token
 from config import spotify_client
 from utils import request_get, print_traceback
 from AttrDict import AttrDict
+
+
+@dp.message_handler(commands='spotify_logout')
+async def spotify_logout(message: types.Message):
+    await unset_spotify_token(message.from_user.id)
+    return SendMessage(
+        message.chat.id, 'You are successfully logged out')
 
 
 @dp.message_handler(commands='spotify_auth')
@@ -33,7 +41,6 @@ async def spotify_auth(message: types.Message):
 
 @dp.message_handler(commands='spotify_now')
 async def now_playing(message: types.Message):
-    print(message)
     token = await get_token(message.from_user.id)
     if not token:
         return await spotify_auth(message)
