@@ -58,7 +58,7 @@ async def update_current(query: types.CallbackQuery):
             query.from_user.id, 'Please authorize',
             reply_markup=auth_keyboard(query.from_user.id))
     req = await request_get(
-        'https://api.spotify_api.com/v1/me/player/currently-playing',
+        'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
     try:
         json = await req.json()

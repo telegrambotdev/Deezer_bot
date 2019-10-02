@@ -40,7 +40,7 @@ async def now_playing(message: types.Message):
             message.chat.id, 'Please authorize',
             reply_markup=auth_keyboard(message.from_user.id))
     req = await request_get(
-        'https://api.spotify_api.com/v1/me/player/currently-playing',
+        'https://api.spotify.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
     try:
         json = await req.json()
