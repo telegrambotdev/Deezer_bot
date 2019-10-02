@@ -3,8 +3,12 @@ from base64 import urlsafe_b64encode
 import re
 from time import time
 
+from asyncache import cached
+from cachetools import TTLCache, LRUCache
+
 from AttrDict import AttrDict
 from bot import WEBHOOK_HOST
+from deezer import deezer_api
 from utils import encode_url, request_get, request_post, print_traceback
 from db_utils import set_spotify_token, get_spotify_token, \
     get_spotify_refresh_token
@@ -71,6 +75,7 @@ async def refresh_token(user_id):
         await authorize(code, user_id)
 
 
+@cached(TTLCache(100, 600))
 async def search(query, obj_type='track', limit=5):
     if not var.spotify_token or time() > var.spotify_token_expires:
         await authorize()
@@ -82,6 +87,7 @@ async def search(query, obj_type='track', limit=5):
     return [AttrDict(track) for track in json['tracks']['items']]
 
 
+@cached(TTLCache(100, 600))
 async def get_track(track_id):
     if not var.spotify_token or time() > var.spotify_token_expires:
         await authorize()
@@ -96,6 +102,7 @@ async def get_track(track_id):
         raise ValueError('Cannot get track')
 
 
+@cached(TTLCache(100, 600))
 async def get_playlist(playlist_id):
     if not var.spotify_token or time() > var.spotify_token_expires:
         await authorize()
@@ -110,6 +117,7 @@ async def get_playlist(playlist_id):
         raise ValueError('Error getting playlist: ' + json.get('error'))
 
 
+@cached(TTLCache(100, 600))
 async def get_album(album_id):
     if not var.spotify_token or time() > var.spotify_token_expires:
         await authorize()
@@ -124,6 +132,7 @@ async def get_album(album_id):
         raise ValueError('Error getting albums: ' + json.get('error'))
 
 
+@cached(TTLCache(100, 600))
 async def get_artist(artist_id):
     if not var.spotify_token or time() > var.spotify_token_expires:
         await authorize()
@@ -140,7 +149,7 @@ async def get_artist(artist_id):
 
 @cached(LRUCache(5000))
 async def match_track(spotify_track_id):
-    sp_track = await spotify_api.get_track(spotify_track_id)
+    sp_track = await get_track(spotify_track_id)
     search_query = f'{sp_track.artists[0].name} {sp_track.name}'
     tracks = await deezer_api.search(search_query)
     return tracks and tracks[0]
@@ -148,7 +157,7 @@ async def match_track(spotify_track_id):
 
 @cached(LRUCache(5000))
 async def match_album(spotify_album_id):
-    sp_album = await spotify_api.get_album(spotify_album_id)
+    sp_album = await get_album(spotify_album_id)
     search_query = f'{sp_album.artists[0].name} {sp_album.name}'
     albums = await deezer_api.search(search_query, 'album')
     return albums and albums[0]
@@ -156,6 +165,6 @@ async def match_album(spotify_album_id):
 
 @cached(LRUCache(5000))
 async def match_artist(spotify_artist_id):
-    sp_artist = await spotify_api.get_artist(spotify_artist_id)
+    sp_artist = await get_artist(spotify_artist_id)
     artists = await deezer_api.search(sp_artist.name, 'artist')
     return artists and artists[0]
