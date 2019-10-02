@@ -3,7 +3,7 @@ from var import var
 
 async def set_spotify_token(user_id, token, refresh_token=None):
     await var.conn.execute(
-        'set', f'user:{user_id}:spotify_token', token, EX=3599)
+        'setex', f'user:{user_id}:spotify_token', 3599, token)
     if refresh_token:
         await var.conn.execute(
             'set', f'user:{user_id}:spotify_refresh_token', refresh_token)
