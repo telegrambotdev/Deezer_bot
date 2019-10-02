@@ -24,7 +24,7 @@ async def spotify_auth(message: types.Message):
     params = {
         'client_id': spotify_client,
         'response_type': 'code',
-        'redirect_uri': REDIRECT_URL',
+        'redirect_uri': REDIRECT_URL,
         'scope': 'user-read-currently-playing user-modify-playback-state',
         'state': message.from_user.id}
     url = URL('https://accounts.spotify.com/authorize').with_query(params)
@@ -66,7 +66,7 @@ async def authorize(code, user_id):
     data = {
         'code': code,
         'grant_type': 'authorization_code',
-        'redirect_uri': REDIRECT_URL'}
+        'redirect_uri': REDIRECT_URL}
 
     req = await request_post(
         'https://accounts.spotify.com/api/token',
