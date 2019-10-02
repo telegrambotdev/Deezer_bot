@@ -3,6 +3,7 @@ from yarl import URL
 
 from config import spotify_client
 from .spotify_api import REDIRECT_URL
+from utils import encode_url
 
 
 def auth_keyboard(user_id):
@@ -14,8 +15,8 @@ def auth_keyboard(user_id):
         'state': user_id}
     url = URL('https://accounts.spotify_api.com/authorize').with_query(params)
     markup = InlineKeyboardMarkup()
-    print(str(url))
-    markup.add(InlineKeyboardButton(text='Authorize', url=str(url)))
+    markup.add(InlineKeyboardButton(
+        text='Authorize', url=encode_url(str(url))))
     return markup
 
 
