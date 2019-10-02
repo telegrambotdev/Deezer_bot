@@ -90,7 +90,8 @@ async def spotify_playlist_handler(message, playlist_id):
             else:
                 await bot.send_message(
                     chat_id=message.chat.id,
-                    text=f'Sorry, track {track.artists[0].name} - {track.name} is not found on Deezer')
+                    text=f'Sorry, track {track.artists[0].name} -'
+                    f' {track.name} is not found on Deezer')
         except Exception as e:
             print(e)
         await sleep(.5)

@@ -17,8 +17,9 @@ async def auth_redirect(request: web.Request):
 
     await bot.send_message(
         int(user_id),
-        'You successfuly authorized to use spotify,'
-        'send /spotify_now to get info about currently playing track')
+        'You successfuly authorized to use spotify, '
+        'send /spotify_now to get info about currently playing track\n'
+        'send /spotify_logout to logout from current account')
     return web.HTTPFound('tg://resolve/?domain=DeezerMusicBot')
 
 
