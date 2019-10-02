@@ -37,6 +37,12 @@ async def start_command_handler(message: types.Message):
 async def get_lyrics(message: types.Message):
     if not message.reply_to_message or not message.reply_to_message.audio:
         return await bot.send_message(message.chat.id, 'Reply to a song')
+    if message.from_user not in config.admins \
+            and message.from_user not in config.donated_users:
+        return await bot.send_message(
+            message.chat.id,
+            'This feature works only for donated users'
+            'please /donate and help developer')
 
     audio = message.reply_to_message.audio
     query = f'{audio.performer} {audio.title}'\
