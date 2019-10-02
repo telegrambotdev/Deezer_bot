@@ -61,6 +61,9 @@ async def now_playing(message: types.Message):
     markup.add(types.InlineKeyboardButton(
         text='Download track',
         callback_data=f'spotify:download_track:{track.id}'))
+    markup.add(types.InlineKeyboardButton(
+        text='Get album',
+        callback_data=f'spotify:album:{track.album.id}'))
     return SendMessage(
         message.chat.id,
         f'Currently playing track:\n{track.artists[0].name} - {track.name}',
