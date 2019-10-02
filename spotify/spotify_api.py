@@ -1,4 +1,3 @@
-import requests
 from base64 import urlsafe_b64encode
 import re
 from time import time

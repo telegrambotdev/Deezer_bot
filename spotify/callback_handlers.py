@@ -1,8 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.webhook import SendMessage
-from asyncache import cached
-from cachetools import LRUCache
 
 from bot import dp, bot
 from AttrDict import AttrDict
