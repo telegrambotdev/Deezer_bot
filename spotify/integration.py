@@ -2,11 +2,8 @@ from base64 import urlsafe_b64encode
 
 from aiohttp import web
 
-from config import spotify_client, spotify_secret
-from bot import bot, app, WEBHOOK_HOST
-from spotify_api import authorize
-from db_utils import get_spotify_token, set_spotify_token, \
-    get_spotify_refresh_token
+from bot import bot, app
+from .spotify_api import authorize
 
 routes = web.RouteTableDef()
 
