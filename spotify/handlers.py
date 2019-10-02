@@ -72,8 +72,8 @@ async def now_playing(message: types.Message):
     return SendMessage(
         message.chat.id,
         'Currently playing track:\n' +
-        f'{track.artists[0].name} - {track.name}',
-        f'[]({track.album.images[0].url})'
+        f'{track.artists[0].name} - {track.name}'
+        f'[]({track.album.images[0].url})',
         reply_markup=markup, parse_mode='markdown')
 
 
