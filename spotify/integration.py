@@ -28,7 +28,7 @@ async def spotify_auth(message: types.Message):
         'state': message.from_user.id}
     url = URL('https://accounts.spotify.com/authorize').with_query(params)
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton(text='Authorize', url=url))
+    markup.add(types.InlineKeyboardButton(text='Authorize', url=str(url)))
     return SendMessage(
         message.chat.id, 'Please authorize', reply_markup=markup)
 
