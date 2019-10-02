@@ -35,7 +35,7 @@ def current_track_keyboard(track):
             callback_data=f'spotify:artist:{track.artists[0].id}'),
         InlineKeyboardButton(
             text='Lyrics',
-            callback_data=f'spotify:lyrics:{track.artists[0].id}'))
+            callback_data=f'spotify:lyrics:{track.id}'))
 
     '⏯'
     markup.row(
