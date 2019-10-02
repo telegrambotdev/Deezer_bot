@@ -131,7 +131,7 @@ class Song(AttrDict):
             raise ValueError('Song id is not valid')
 
     async def get_lyrics(self, text_only=True):
-        r = await request_get.get(self.url)
+        r = await request_get(self.url)
         soup = BeautifulSoup(await r.text(), 'html.parser')
         if text_only:
             return soup.find(class_='lyrics').text
