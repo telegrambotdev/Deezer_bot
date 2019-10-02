@@ -66,7 +66,8 @@ async def authorize(code, user_id):
     data = {
         'code': code,
         'grant_type': 'authorization_code',
-        'redirect_uri': REDIRECT_URL}
+        'redirect_uri': REDIRECT_URL,
+        'state': user_id}
 
     req = await request_post(
         'https://accounts.spotify.com/api/token',
