@@ -7,7 +7,7 @@ from yarl import URL
 
 from deezer import deezer_api
 from deezer import methods as dz_methods
-import spotify
+from spotify import spotify_api
 from .spotify_api import get_token, REDIRECT_URL
 from bot import bot, dp
 import filters
@@ -32,7 +32,7 @@ async def spotify_auth(message: types.Message):
         'redirect_uri': REDIRECT_URL,
         'scope': 'user-read-currently-playing user-modify-playback-state',
         'state': message.from_user.id}
-    url = URL('https://accounts.spotify.com/authorize').with_query(params)
+    url = URL('https://accounts.spotify_api.com/authorize').with_query(params)
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(text='Authorize', url=str(url)))
     return SendMessage(
@@ -45,7 +45,7 @@ async def now_playing(message: types.Message):
     if not token:
         return await spotify_auth(message)
     req = await request_get(
-        'https://api.spotify.com/v1/me/player/currently-playing',
+        'https://api.spotify_api.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
     try:
         json = await req.json()
@@ -83,7 +83,7 @@ async def now_playing(message: types.Message):
 @dp.message_handler(filters.SpotifyFilter)
 @dp.channel_post_handler(filters.SpotifyFilter)
 async def spotify_handler(message, track_id):
-    spotify_song = await spotify.get_track(track_id)
+    spotify_song = await spotify_api.get_track(track_id)
     print(track_id)
     search_query = '%s %s' % (
         spotify_song.artists[0].name,
@@ -98,7 +98,7 @@ async def spotify_handler(message, track_id):
 
 @dp.message_handler(filters.SpotifyPlaylistFilter)
 async def spotify_playlist_handler(message, playlist_id):
-    spotify_playlist = await spotify.get_playlist(playlist_id)
+    spotify_playlist = await spotify_api.get_playlist(playlist_id)
     for track in spotify_playlist:
         try:
             search_query = '{} {}'.format(
@@ -118,7 +118,7 @@ async def spotify_playlist_handler(message, playlist_id):
 
 @dp.message_handler(filters.SpotifyAlbumFilter)
 async def spotify_album_handler(message, album_id):
-    spotify_album = await spotify.get_album(album_id)
+    spotify_album = await spotify_api.get_album(album_id)
     search_results = await deezer_api.search(
         f'{spotify_album.artists[0].name} {spotify_album.name}', 'album')
     if not search_results:
@@ -130,6 +130,6 @@ async def spotify_album_handler(message, album_id):
 
 @dp.message_handler(filters.SpotifyArtistFilter)
 async def spotify_artist_handler(message, artist_id):
-    spotify_artist = await spotify.get_artist(artist_id)
+    spotify_artist = await spotify_api.get_artist(artist_id)
     search_results = await deezer_api.search(spotify_artist.name, 'artist')
     await dz_methods.send_artist(message.chat.id, search_results[0])
