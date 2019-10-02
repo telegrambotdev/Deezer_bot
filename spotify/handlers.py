@@ -13,7 +13,7 @@ from bot import bot, dp
 import filters
 from .keyboards import current_track_keyboard, auth_keyboard
 from db_utils import unset_spotify_token
-from config import spotify_client
+from config import spotify_client, admins, donated_users
 from utils import request_get, print_traceback
 from AttrDict import AttrDict
 
@@ -25,15 +25,15 @@ async def spotify_logout(message: types.Message):
         message.chat.id, 'You are successfully logged out')
 
 
-@dp.message_handler(commands='spotify_auth')
-async def spotify_auth(message: types.Message):
-    return SendMessage(
-        message.chat.id, 'Please authorize',
-        reply_markup=auth_keyboard(message.from_user.id))
-
-
 @dp.message_handler(commands='spotify_now')
 async def now_playing(message: types.Message):
+    if message.from_user.id not in admins \
+            and message.from_user.id not in donated_users:
+        return await bot.send_message(
+            message.chat.id,
+            'This feature works only for donated users\n'
+            'please /donate and help developer')
+
     token = await get_token(message.from_user.id)
     if not token:
         return await bot.send_message(

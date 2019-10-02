@@ -11,7 +11,7 @@ from genius import genius_api
 from .keyboards import current_track_keyboard, auth_keyboard
 from . import spotify_api
 from utils import query_answer, request_get, request_post, \
-    print_traceback, split_string
+    print_traceback
 
 
 @dp.callback_query_handler(Text(startswith='spotify:download_track'))
