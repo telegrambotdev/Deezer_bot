@@ -252,7 +252,9 @@ async def request_get(url, params=None, json=None, *args, **kwargs):
         except Exception as err:
             retries_count += 1
             if retries_count > 3:
-                print(url)
+                print(
+                    f'url=\n{url}\nparams={params}\n'
+                    f'args={args}\nkwargs={kwargs}')
                 raise ValueError("Number of retries exceeded") from err
         else:
             return result
