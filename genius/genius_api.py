@@ -10,7 +10,7 @@ from config import genius_token
 
 
 @cached(TTLCache(500, 600))
-async def search(self, query):
+async def search(query):
     data = {
         'access_token': genius_token,
         'q': query}
@@ -20,7 +20,7 @@ async def search(self, query):
 
 
 @cached(TTLCache(500, 600))
-async def get_track(self, song_id):
+async def get_track(song_id):
     r = await request_get(
         f'https://api.genius.com/songs/{song_id}',
         params={'access_token': genius_token})
@@ -29,7 +29,7 @@ async def get_track(self, song_id):
 
 
 @cached(TTLCache(500, 600))
-async def get_album(self, album_id):
+async def get_album(album_id):
     r = await request_get(
         f'https://api.genius.com/albums/{album_id}',
         params={'access_token': genius_token})
@@ -38,14 +38,14 @@ async def get_album(self, album_id):
 
 
 @cached(TTLCache(500, 600))
-async def get_artist(self, artist_id):
+async def get_artist(artist_id):
     r = await request_get(
         f'https://api.genius.com/artists/{artist_id}',
         params={'access_token': genius_token})
     return Song(await r.json())
 
 
-async def request(self, method, id, **params):
+async def request(method, id, **params):
     r = request_get(
         f'https://api.genius.com/{method}/{id}',
         params={**params, 'access_token': genius_token})
