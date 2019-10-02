@@ -16,7 +16,7 @@ async def search(query):
         'q': query}
     r = await request_get('https://api.genius.com/search', params=data)
     search_obj = AttrDict(await r.json())
-    return [Song(r['result']) for r in search_obj.response.hits]
+    return [Song(r.result) for r in search_obj.response.hits]
 
 
 @cached(TTLCache(500, 600))
