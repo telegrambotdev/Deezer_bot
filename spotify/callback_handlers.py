@@ -63,7 +63,7 @@ async def get_lyrics(query: types.CallbackQuery):
     search = await genius_api.search(search_query)
     for track in search:
         if track.primary_artist.name in [
-                artist.name for artist in track.artists]:
+                artist.name for artist in sp_track.artists]:
             result = track
             break
     else:
