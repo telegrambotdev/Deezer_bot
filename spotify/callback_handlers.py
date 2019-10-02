@@ -7,9 +7,11 @@ from aiogram.dispatcher.webhook import SendMessage
 from bot import dp, bot
 from AttrDict import AttrDict
 from deezer import methods
+from genius import genius_api
 from .keyboards import current_track_keyboard, auth_keyboard
 from . import spotify_api
-from utils import query_answer, request_get, request_post, print_traceback
+from utils import query_answer, request_get, request_post, \
+    print_traceback, split_string
 
 
 @dp.callback_query_handler(Text(startswith='spotify:download_track'))
@@ -49,6 +51,28 @@ async def get_artist(query: types.CallbackQuery):
         return SendMessage(
             query.message.chat.id,
             'Artist is not found on Deezer, try manual search')
+
+
+@dp.callback_query_handler(Text(startswith='spotify:lyrics'))
+async def get_lyrics(query: types.CallbackQuery):
+    await query_answer(query)
+    track_id = query.data.split(':')[2]
+    track = await spotify_api.get_track(track_id)
+    search_query = f'{sp_track.artists[0].name} {sp_track.name}'\
+        .lower().split('(f')[0]
+    search = await genius_api.search(search_query)
+    for track in search:
+        if track.primary_artist.name in (artist.name for artist in track.artists):
+            result = track
+            break
+    else:
+        return SendMessage(
+            query.message.chat.id,
+            f'Didn\'t found lyrics for this song',
+            reply_to_message_id=query.message.message_id)
+
+    for text in split_string(await result.get_lyrics()):
+        await bot.send_message(query.message.chat.id, text)
 
 
 @dp.callback_query_handler(text='spotify:update_current')
