@@ -56,19 +56,20 @@ async def now_playing(message: types.Message):
             message.chat.id,
             f'Play something in Spotify and try again',
             reply_to_message_id=message.message_id)
-    markup = types.InlineKeyboardMarkup(1)
-    markup.add(types.InlineKeyboardButton(
+    markup = types.InlineKeyboardMarkup(2)
+    markup.row(types.InlineKeyboardButton(
         text='Open track', url=track.external_urls.spotify))
-    markup.add(types.InlineKeyboardButton(
+    markup.row(types.InlineKeyboardButton(
         text='Download track',
         callback_data=f'spotify:download_track:{track.id}'))
-    markup.add(types.InlineKeyboardButton(
-        text='Get album',
-        callback_data=f'spotify:album:{track.album.id}'))
-    markup.add(types.InlineKeyboardButton(
-        text='Get artist',
-        callback_data=f'spotify:artist:{track.artists[0].id}'))
-    markup.add(types.InlineKeyboardButton(
+    markup.row(
+        types.InlineKeyboardButton(
+            text='Album',
+            callback_data=f'spotify:album:{track.album.id}'),
+        types.InlineKeyboardButton(
+            text='Artist',
+            callback_data=f'spotify:artist:{track.artists[0].id}'))
+    markup.row(types.InlineKeyboardButton(
         text='Close', callback_data='delete'))
 
     return SendMessage(
