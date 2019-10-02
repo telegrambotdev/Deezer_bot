@@ -33,6 +33,7 @@ def current_track_keyboard(track):
         InlineKeyboardButton(
             text='Artist',
             callback_data=f'spotify:artist:{track.artists[0].id}'))
+    '⏯'
     markup.row(
         InlineKeyboardButton(
             text='◀️',
