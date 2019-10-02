@@ -11,7 +11,7 @@ from spotify import spotify_api
 from .spotify_api import get_token, REDIRECT_URL
 from bot import bot, dp
 import filters
-from .keyboards import current_track_keyboard
+from .keyboards import current_track_keyboard, auth_keyboard
 from db_utils import unset_spotify_token
 from config import spotify_client
 from utils import request_get, print_traceback
@@ -27,24 +27,18 @@ async def spotify_logout(message: types.Message):
 
 @dp.message_handler(commands='spotify_auth')
 async def spotify_auth(message: types.Message):
-    params = {
-        'client_id': spotify_client,
-        'response_type': 'code',
-        'redirect_uri': REDIRECT_URL,
-        'scope': 'user-read-currently-playing user-modify-playback-state',
-        'state': message.from_user.id}
-    url = URL('https://accounts.spotify_api.com/authorize').with_query(params)
-    markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton(text='Authorize', url=str(url)))
     return SendMessage(
-        message.chat.id, 'Please authorize', reply_markup=markup)
+        message.chat.id, 'Please authorize',
+        reply_markup=auth_keyboard(message.from_user.id))
 
 
 @dp.message_handler(commands='spotify_now')
 async def now_playing(message: types.Message):
     token = await get_token(message.from_user.id)
     if not token:
-        return await spotify_auth(message)
+        return SendMessage(
+            message.chat.id, 'Please authorize',
+            reply_markup=auth_keyboard(message.from_user.id))
     req = await request_get(
         'https://api.spotify_api.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})

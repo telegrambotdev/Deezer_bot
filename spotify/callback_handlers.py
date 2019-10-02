@@ -5,8 +5,7 @@ from aiogram.dispatcher.webhook import SendMessage
 from bot import dp, bot
 from AttrDict import AttrDict
 from deezer import methods
-# from handlers import spotify_auth
-from .keyboards import current_track_keyboard
+from .keyboards import current_track_keyboard, auth_keyboard
 from . import spotify_api
 from utils import query_answer, request_get, print_traceback
 
@@ -55,7 +54,9 @@ async def update_current(query: types.CallbackQuery):
     await query_answer(query)
     token = await spotify_api.get_token(query.message.from_user.id)
     if not token:
-        return await spotify_auth(query.message)
+        return SendMessage(
+            query.from_user.id, 'Please authorize',
+            reply_markup=auth_keyboard(query.from_user.id))
     req = await request_get(
         'https://api.spotify_api.com/v1/me/player/currently-playing',
         headers={'Authorization': f'Bearer {token}'})
