@@ -6,11 +6,14 @@ from cachetools import TTLCache, LRUCache
 
 from AttrDict import AttrDict
 from utils import request_get
+from deezer import deezer_api
+from spotify import spotify_api
 from config import genius_token
 
 
 @cached(LRUCache(1000))
-async def deezer_match(track):
+async def deezer_match(track_id):
+    track = deezer_api.gettrack(track_id)
     search_query = f'{track.artist.name} {track.name}'\
         .lower().split('(f')[0]
     results = await search(search_query)
@@ -20,7 +23,8 @@ async def deezer_match(track):
 
 
 @cached(LRUCache(1000))
-async def spotify_match(track):
+async def spotify_match(track_id):
+    track = await spotify_api.get_track(track_id)
     search_query = f'{track.artists[0].name} {track.name}'\
         .lower().split('(f')[0]
     results = await search(search_query)
