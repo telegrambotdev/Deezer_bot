@@ -13,10 +13,10 @@ def auth_keyboard(user_id):
         'redirect_uri': REDIRECT_URL,
         'scope': 'user-read-currently-playing user-modify-playback-state',
         'state': user_id}
-    url = URL('https://accounts.spotify_api.com/authorize').with_query(params)
+    url = URL('https://accounts.spotify_api.com/authorize').update_query(params)
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(
-        text='Authorize', url=encode_url(str(url))))
+        text='Authorize', url=str(url)))
     return markup
 
 
