@@ -2,12 +2,14 @@ from asyncio import sleep
 
 from aiogram import types
 
-from var.var import bot, dp
+from var import var
 import db_utils
 from . import deezer_api
 from . import methods
 import filters
 import utils
+
+bot, dp = var.bot, var.dp
 
 
 async def redownload_handler(message: types.Message):

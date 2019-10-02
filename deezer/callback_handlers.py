@@ -4,9 +4,11 @@ from aiogram import exceptions
 from aiogram.dispatcher.filters import Text
 
 from . import deezer_api, keyboards, methods
-from var.var import bot, dp
 from utils import parse_callback, already_downloading, query_answer
 from var import var
+
+
+bot, dp = var.bot, var.dp
 
 
 @dp.callback_query_handler(Text(startswith='dz_playlist'))
