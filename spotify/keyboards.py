@@ -21,7 +21,7 @@ def auth_keyboard(user_id):
         '&response_type=code'
         'https%3A%2F%2Fstatic.138.197.203.116.clients.'
         'your-server.de%2Fdeezer%2Fspotify_auth'
-        '&scope=user-read-currently-playing%20user-modify-playback-state',
+        '&scope=user-read-currently-playing%20user-modify-playback-state'
         f'&state={user_id}')
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(
