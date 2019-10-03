@@ -29,14 +29,14 @@ async def spotify_logout(message: types.Message):
 async def now_playing(message: types.Message):
     if message.from_user.id not in admins \
             and message.from_user.id not in donated_users:
-        return await bot.send_message(
+        return SendMessage(
             message.chat.id,
             'This feature works only for donated users\n'
             'please /donate and help developer')
 
     token = await get_token(message.from_user.id)
     if not token:
-        return await bot.send_message(
+        return SendMessage(
             message.chat.id, 'Please authorize',
             reply_markup=auth_keyboard(message.from_user.id))
     req = await request_get(
@@ -57,7 +57,8 @@ async def now_playing(message: types.Message):
         'Currently playing track:\n' +
         f'{track.artists[0].name} - {track.name}'
         f'<a href="{track.album.images[0].url}">&#8203;</a>',
-        reply_markup=current_track_keyboard(track), parse_mode='HTML')
+        reply_markup=current_track_keyboard(track), parse_mode='HTML',
+        reply_to_message_id=message.message_id)
 
 
 @dp.message_handler(filters.SpotifyFilter)
