@@ -49,6 +49,7 @@ async def get_lyrics(message: types.Message):
         .lower().split('(f')[0]
 
     results = await genius_api.search(query)
+    result = None
     for track in results:
         if track.primary_artist.name == audio.performer:
             result = track
