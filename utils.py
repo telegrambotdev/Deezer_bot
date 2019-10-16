@@ -3,9 +3,8 @@ import glob
 import random
 import string
 import traceback
-from asyncio import sleep
+from asyncio import sleep, TimeoutError
 from collections import namedtuple
-from concurrent.futures._base import TimeoutError
 from datetime import date
 from functools import wraps
 from time import time
@@ -129,8 +128,12 @@ def calling_queue(size):
         @wraps(coro)
         async def decorator(*args, **kwargs):
             async with sem:
-                result = await coro(*args, **kwargs)
-            return result
+                try:
+                    result = asyncio.wait_for(coro(*args, **kwargs))
+                except TimeoutError as exc:
+                    print_traceback(exc)
+                else:
+                    return result
 
         return decorator
 
@@ -310,23 +313,23 @@ async def upload_track(bot, path, title, performer, duration=None, tries=0):
     return msg
 
 
-async def launch_with_timeout(size):
-    def wrapper(coro, timeout, on_error="raise"):
-        @wraps(coro)
-        async def decorator(*args, **kwargs):
-            task = asyncio.create_task(coro)
-            try:
-                result = await asyncio.wait_for(task, timeout)
-                return result
-            except TimeoutError as exc:
-                if on_error == "raise":
-                    raise
-                elif on_error == "print":
-                    print_traceback(exc)
+# async def launch_with_timeout(size):
+#     def wrapper(coro, timeout, on_error="raise"):
+#         @wraps(coro)
+#         async def decorator(*args, **kwargs):
+#             task = asyncio.create_task(coro)
+#             try:
+#                 result = await asyncio.wait_for(task, timeout)
+#                 return result
+#             except TimeoutError as exc:
+#                 if on_error == "raise":
+#                     raise
+#                 elif on_error == "print":
+#                     print_traceback(exc)
 
-        return decorator
+#         return decorator
 
-    return wrapper
+#     return wrapper
 
 
 async def answer_empty_inline_query(query: types.InlineQuery, text: str):
