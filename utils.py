@@ -129,7 +129,7 @@ def calling_queue(size):
         async def decorator(*args, **kwargs):
             async with sem:
                 try:
-                    result = asyncio.wait_for(coro(*args, **kwargs), 100)
+                    result = await asyncio.wait_for(coro(*args, **kwargs), 100)
                 except TimeoutError as exc:
                     print_traceback(exc)
                 else:
