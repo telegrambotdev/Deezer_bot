@@ -6,11 +6,12 @@ from aiogram.types import InputFile
 
 from bot import bot
 from userbot import post_large_track
-from utils import calling_queue
+from utils import calling_queue, launch_with_timeout
 import db_utils
 
 
 @calling_queue(4)
+@launch_with_timeout(20)
 async def send_track(chat_id, track):
     try:
         path = await track.download()

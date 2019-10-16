@@ -1,6 +1,12 @@
 from var import var
 
 
+def trial_mode_times(user_id, feature):
+    times = await var.conn.execute('get', f'user:{user_id}:trial_{feature}')
+    await var.conn.execute('incr', f'user:{user_id}:trial_{feature}')
+    return times
+
+
 async def add_telegraph_url(track_id, url):
     return await var.conn.execute(
         'set', f'genius:telegraph:{track_id}', url)

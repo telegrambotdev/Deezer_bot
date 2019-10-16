@@ -86,6 +86,10 @@ def already_downloading(track_id):
     return True
 
 
+def donated_user(user_id):
+    return user_id in config.admins or user_id in config.donated_users
+
+
 def islink(text):
     return "https://" in text or "http://" in text
 

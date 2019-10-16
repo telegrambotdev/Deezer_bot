@@ -12,7 +12,7 @@ from .spotify_api import get_token, REDIRECT_URL
 from bot import bot, dp
 import filters
 from .keyboards import current_track_keyboard, auth_keyboard
-from db_utils import unset_spotify_token
+from db_utils import unset_spotify_token, trial_mode_times
 from config import spotify_client, admins, donated_users
 from utils import request_get, print_traceback
 from AttrDict import AttrDict
@@ -29,10 +29,16 @@ async def spotify_logout(message: types.Message):
 async def now_playing(message: types.Message):
     if message.from_user.id not in admins \
             and message.from_user.id not in donated_users:
-        return SendMessage(
-            message.chat.id,
-            'This feature works only for donated users\n'
-            'please /donate and help developer')
+        trial_mode = True
+        times = int(await trial_mode_times(
+            message.from_user.id, 'spotify'))
+        if times > 10:
+            return SendMessage(
+                message.chat.id,
+                'This feature works only for donated users\n'
+                'please /donate and help developer')
+    else:
+        trial_mode = False
 
     token = await get_token(message.from_user.id)
     if not token:
@@ -51,6 +57,13 @@ async def now_playing(message: types.Message):
             message.chat.id,
             f'Play something in Spotify and try again',
             reply_to_message_id=message.message_id)
+
+    if trial_mode:
+        await bot.send_message(
+            message.chat.id,
+            f'You can use this feature {10-times} more times'
+            'to enable this and many other features '
+            'permanently, please /donate')
 
     return SendMessage(
         message.chat.id,
@@ -106,7 +119,8 @@ async def spotify_album_handler(message, album_id):
     if not search_results:
         return await bot.send_message(
             chat_id=message.chat.id,
-            text=f'Sorry, album {spotify_album.name} by {spotify_album.artists[0].name} is not found on Deezer')
+            text=f'Sorry, album {spotify_album.name} by '
+            f'{spotify_album.artists[0].name} is not found on Deezer')
     await dz_methods.send_album(message.chat.id, search_results[0])
 
 

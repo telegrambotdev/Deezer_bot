@@ -1,17 +1,14 @@
 import shutil
-from aiogram.utils.markdown import escape_md
 
 from bot import bot
-from time import time
 import db_utils
 from userbot import post_large_track
 from var import var
-from utils import already_downloading, calling_queue
-from . import keyboards
-import config
+from utils import already_downloading, calling_queue, launch_with_timeout
 
 
 @calling_queue(4)
+@launch_with_timeout(20)
 async def send_track(chat_id, track):
     try:
         path = await track.download()

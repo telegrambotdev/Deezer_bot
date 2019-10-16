@@ -7,12 +7,13 @@ from aiogram.types import InputFile
 import db_utils
 from bot import bot
 from userbot import post_large_track
-from utils import already_downloading, calling_queue
+from utils import already_downloading, calling_queue, launch_with_timeout
 from var import var
 from logger import sent_message_logger
 
 
 @calling_queue(4)
+@launch_with_timeout(20)
 async def send_track(chat_id, track, Redownload=False):
     quality = await db_utils.get_quality_setting(chat_id)
     if not already_downloading(track.id):
