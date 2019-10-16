@@ -11,7 +11,6 @@ import db_utils
 
 
 @calling_queue(4)
-@launch_with_timeout(20)
 async def send_track(chat_id, track):
     try:
         path = await track.download()

@@ -13,7 +13,6 @@ from logger import sent_message_logger
 
 
 @calling_queue(4)
-@launch_with_timeout(20)
 async def send_track(chat_id, track, Redownload=False):
     quality = await db_utils.get_quality_setting(chat_id)
     if not already_downloading(track.id):

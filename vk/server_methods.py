@@ -8,7 +8,6 @@ from utils import already_downloading, calling_queue, launch_with_timeout
 
 
 @calling_queue(4)
-@launch_with_timeout(20)
 async def send_track(chat_id, track):
     try:
         path = await track.download()
