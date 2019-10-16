@@ -310,16 +310,23 @@ async def upload_track(bot, path, title, performer, duration=None, tries=0):
     return msg
 
 
-async def launch_with_timeout(coro, timeout, on_error="raise"):
-    task = asyncio.create_task(coro)
-    try:
-        result = await asyncio.wait_for(task, timeout)
-        return result
-    except TimeoutError as exc:
-        if on_error == "raise":
-            raise
-        elif on_error == "print":
-            print(exc)
+async def launch_with_timeout(size):
+    def wrapper(coro, timeout, on_error="raise"):
+        @wraps(coro)
+        async def decorator(*args, **kwargs):
+            task = asyncio.create_task(coro)
+            try:
+                result = await asyncio.wait_for(task, timeout)
+                return result
+            except TimeoutError as exc:
+                if on_error == "raise":
+                    raise
+                elif on_error == "print":
+                    print_traceback(exc)
+
+        return decorator
+
+    return wrapper
 
 
 async def answer_empty_inline_query(query: types.InlineQuery, text: str):
