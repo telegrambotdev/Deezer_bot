@@ -1,12 +1,13 @@
 import os
 import shutil
 import traceback
+import asyncio
 
 from aiogram.types import InputFile
 
 from bot import bot
 from userbot import post_large_track
-from utils import calling_queue
+from utils import calling_queue, delete_later
 import db_utils
 
 
@@ -14,6 +15,7 @@ import db_utils
 async def send_track(chat_id, track):
     try:
         path = await track.download()
+        asyncio.create_task(delete_later(path))
         thumb = await track.get_thumb()
     except ValueError:
         await bot.send_message(

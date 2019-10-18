@@ -1,16 +1,18 @@
 import shutil
+import asyncio
 
 from bot import bot
 import db_utils
 from userbot import post_large_track
 from var import var
-from utils import already_downloading, calling_queue
+from utils import already_downloading, calling_queue, delete_later
 
 
 @calling_queue(4)
 async def send_track(chat_id, track):
     try:
         path = await track.download()
+        asyncio.create_task(delete_later(path))
         thumb = await track.get_thumb()
     except ValueError:
         await bot.send_message(

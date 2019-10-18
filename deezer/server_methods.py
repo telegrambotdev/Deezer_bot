@@ -1,13 +1,14 @@
 import os
 from time import time
 import shutil
+import asyncio
 
 from aiogram.types import InputFile
 
 import db_utils
 from bot import bot
 from userbot import post_large_track
-from utils import already_downloading, calling_queue
+from utils import already_downloading, calling_queue, delete_later
 from var import var
 from logger import sent_message_logger
 
@@ -33,6 +34,7 @@ async def send_track(chat_id, track, Redownload=False):
             path = await track.download('MP3_320')
         elif quality == 'flac':
             path = await track.download('FLAC')
+        asyncio.create_task(delete_later(path))
     except ValueError as e:
         print(e)
         await bot.send_message(

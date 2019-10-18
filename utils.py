@@ -2,6 +2,7 @@ import asyncio
 import glob
 import random
 import string
+import shutil
 import traceback
 from asyncio import sleep, TimeoutError
 from collections import namedtuple
@@ -9,6 +10,7 @@ from datetime import date
 from functools import wraps
 from time import time
 from hashlib import sha256
+from contextlib import suppress
 
 import aiofiles
 import aiohttp
@@ -343,3 +345,9 @@ async def answer_empty_inline_query(query: types.InlineQuery, text: str):
     else:
         return False
     return True
+
+
+async def delete_later(path: str, delay: int = 100):
+    await asyncio.sleep(delay)
+    with suppress(FileNotFoundError):
+        shutil.rmtree(path.rsplit('/', 1)[0])
