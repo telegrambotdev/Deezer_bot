@@ -354,6 +354,3 @@ async def delete_later(path: str, delay: int = 100):
     await asyncio.sleep(delay)
     with suppress(FileNotFoundError):
         shutil.rmtree(path.rsplit('/', 1)[0])
-
-
-async def upload_track
