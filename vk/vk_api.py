@@ -2,6 +2,7 @@ import os
 import json
 import asyncio
 import random
+import shutil
 from time import time
 from hashlib import md5
 
@@ -10,7 +11,8 @@ from cachetools import TTLCache
 
 import config
 from var import var
-from utils import download_file, get_file, request_get, vk_add_tags
+from utils import download_file, get_file, request_get, \
+    vk_add_tags, print_traceback
 from AttrDict import AttrDict
 from _server_methods import vk_search as alt_search
 
@@ -264,15 +266,20 @@ class Track(AttrDict):
         print(
             f'[VK] Start downloading: {self.full_id} '
             f' | {self.artist} - {self.title}')
-        await download_file(self.url, path)
-        cover = None
-        if self.album and self.album.thumb and self.album.thumb.photo_600:
-            cover = await get_file(self.album.thumb.photo_600)
-        vk_add_tags(path, self, cover)
-        print(
-            f'[VK] Finished downloading: {self.full_id} '
-            f' | {self.artist} - {self.title}')
-        return path
+        try:
+            await download_file(self.url, path)
+            cover = None
+            if self.album and self.album.thumb and self.album.thumb.photo_600:
+                cover = await get_file(self.album.thumb.photo_600)
+            vk_add_tags(path, self, cover)
+            print(
+                f'[VK] Finished downloading: {self.full_id} '
+                f' | {self.artist} - {self.title}')
+        except Exception as exc:
+            print_traceback(exc)
+            shutil.rmtree(path.rsplit('/', 1)[0])
+        else:
+            return path
 
     async def get_thumb(self):
         if self.album and self.album.thumb and self.album.thumb.photo_135:

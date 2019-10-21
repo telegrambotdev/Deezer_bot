@@ -1,6 +1,7 @@
 import asyncio
 import os
 import random
+import shutil
 from contextlib import suppress
 
 from asyncache import cached
@@ -10,7 +11,8 @@ import utils
 from AttrDict import AttrDict
 from config import deezer_private_cookies, deezer_private_headers
 from logger import file_download_logger
-from utils import request_get, request_post, get_album_cover_url
+from utils import request_get, request_post, \
+    get_album_cover_url, print_traceback
 from var import var
 
 from . import decrypt
@@ -126,15 +128,20 @@ async def download_track(track_id, quality='MP3_320'):
     track_url = decrypt.get_dl_url(private_track, quality_n)
     os.makedirs(f'downloads/{track.id}', exist_ok=True)
     filepath = f'downloads/{track.id}/{track.filename_safe}.{ext}'
-    stream = await utils.get_file(track_url)
-    await decrypt.decrypt_track(stream, private_track, filepath)
-    cover = await track.get_max_size_cover(album)
-    utils.add_tags(filepath, track, album, cover, lyrics)
-    print(
-        f'[Deezer] Finished downloading: {track.id} '
-        f'| {track.artist.name} - {track.title} ')
-    file_download_logger.info(f'[downloaded track {track.id}] {track}')
-    return filepath
+    try:
+        stream = await utils.get_file(track_url)
+        await decrypt.decrypt_track(stream, private_track, filepath)
+        cover = await track.get_max_size_cover(album)
+        utils.add_tags(filepath, track, album, cover, lyrics)
+        print(
+            f'[Deezer] Finished downloading: {track.id} '
+            f'| {track.artist.name} - {track.title} ')
+        file_download_logger.info(f'[downloaded track {track.id}] {track}')
+    except Exception as exc:
+        print_traceback(exc)
+        shutil.rmtree(filepath.rsplit('/', 1)[0])
+    else:
+        return filepath
 
 
 @cached(TTLCache(100, 600))
