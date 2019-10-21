@@ -292,13 +292,16 @@ async def request_post(url, *args, **kwargs):
 
 
 @calling_queue(3)
-async def upload_track(bot, path, title, performer, duration=None, tries=0):
+async def upload_track(bot, path, thumb_path, title,
+                       performer, duration=None, tries=0):
     if tries > 3:
+        shutil.rmtree(path.rsplit('/', 1)[0])
         raise RuntimeError("can't upload track")
     try:
         msg = await bot.send_audio(
             chat_id=-1001246220493,
             audio=types.InputFile(path),
+            thumb=types.InputFile(thumb_path),
             title=title,
             performer=performer,
             duration=duration,
@@ -351,3 +354,6 @@ async def delete_later(path: str, delay: int = 100):
     await asyncio.sleep(delay)
     with suppress(FileNotFoundError):
         shutil.rmtree(path.rsplit('/', 1)[0])
+
+
+async def upload_track

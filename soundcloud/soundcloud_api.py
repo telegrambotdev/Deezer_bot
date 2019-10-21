@@ -1,12 +1,14 @@
 import re
 import os
+import shutil
 
 from asyncache import cached
 from cachetools import TTLCache
 
 from AttrDict import AttrDict
 from config import soundcloud_client
-from utils import download_file, get_file, sc_add_tags, request_get
+from utils import download_file, get_file, sc_add_tags, \
+    request_get, print_traceback
 
 api = 'https://api.soundcloud.com'
 api_v2 = 'https://api-v2.soundcloud.com'
@@ -36,25 +38,30 @@ class SoundCloudTrack(AttrDict):
         return r.url
 
     async def download(self, filepath=None):
-        if not filepath:
-            os.makedirs(f'downloads/{self.id}', exist_ok=True)
-            filepath = \
-                f'downloads/{self.id}/ ' + \
-                f'{self.user.username} - {self.title}' \
-                .replace('/', '_').strip()[:97] + '.mp3'
-        else:
-            os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
+        try:
+            if not filepath:
+                os.makedirs(f'downloads/{self.id}', exist_ok=True)
+                filepath = \
+                    f'downloads/{self.id}/ ' + \
+                    f'{self.user.username} - {self.title}' \
+                    .replace('/', '_').strip()[:97] + '.mp3'
+            else:
+                os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
 
-        print(
-            f'[Soundcloud] Start downloading: {self.id}'
-            f' | {self.artist} - {self.title}')
-        await download_file(await self.download_url(), filepath)
-        cover = await get_file(self.artwork_url) if self.artwork_url else None
-        sc_add_tags(filepath, self, cover)
-        print(
-            f'[Soundcloud] Finished downloading: {self.id}'
-            f' | {self.artist} - {self.title}')
-        return filepath
+            print(
+                f'[Soundcloud] Start downloading: {self.id}'
+                f' | {self.artist} - {self.title}')
+            await download_file(await self.download_url(), filepath)
+            cover = await get_file(self.artwork_url) if self.artwork_url else None
+            sc_add_tags(filepath, self, cover)
+            print(
+                f'[Soundcloud] Finished downloading: {self.id}'
+                f' | {self.artist} - {self.title}')
+        except Exception as exc:
+            print_traceback(exc)
+            shutil.rmtree(filepath.rsplit('/', 1)[0])
+        else:
+            return filepath
 
     async def get_thumb(self):
         if self.thumb_url:

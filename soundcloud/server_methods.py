@@ -15,9 +15,9 @@ import db_utils
 async def send_track(chat_id, track):
     try:
         path = await track.download()
-        asyncio.create_task(delete_later(path))
         thumb = await track.get_thumb()
     except ValueError:
+        shutil.rmtree(path.rsplit('/', 1)[0])
         await bot.send_message(
             chat_id,
             "🚫This track is not available "

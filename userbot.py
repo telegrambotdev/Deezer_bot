@@ -19,8 +19,10 @@ async def start():
 
 
 async def upload(path, attrs):
+    timeout = int(attrs.get('duration', 3600)) / 60
     try:
-        msg = await client.send_audio(-1001246220493, path, **attrs)
+        msg = await asyncio.wait_for(
+            client.send_audio(-1001246220493, path, **attrs), timeout)
     except FloodWait as exc:
         await asyncio.sleep(exc.x + 1)
         return await upload(path, attrs)
