@@ -23,14 +23,9 @@ from var import var
 import config
 
 
-def sign(args):
+def sign_request(args):
     sign_str = ':'.join(str(arg) for arg in args) + config.request_sign
     sha256(sign_str.encode('ascii'))
-
-
-def check_sign(data: dict):
-    input_sign = data.pop('sign', None)
-    return sign(data.values(), config.request_sign) == input_sign
 
 
 def print_traceback(exc):

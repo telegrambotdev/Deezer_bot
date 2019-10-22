@@ -17,6 +17,21 @@ async def get_telegraph_url(track_id):
         'get', f'genius:telegraph:{track_id}')
 
 
+async def unset_lastfm_token(user_id):
+    await var.conn.execute(
+        'del', f'user:{user_id}:lastfm_token')
+
+
+async def set_lastfm_token(user_id, token):
+    await var.conn.execute(
+        'set', f'user:{user_id}:lastfm_token', token)
+
+
+async def get_lastfm_token(user_id):
+    return await var.conn.execute(
+        'get', f'user:{user_id}:lastfm_token')
+
+
 async def unset_spotify_token(user_id):
     await var.conn.execute(
         'del', f'user:{user_id}:spotify_token')

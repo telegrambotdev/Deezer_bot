@@ -18,6 +18,7 @@ def import_handlers():
     from spotify import handlers, integration, callback_handlers
     from vk import handlers, callback_handlers
     from soundcloud import handlers, callback_handlers
+    from lastfm import handlers, integration
     import handlers
     import inline_handlers
     import callback_handlers
