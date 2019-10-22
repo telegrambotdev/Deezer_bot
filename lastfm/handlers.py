@@ -41,7 +41,9 @@ async def love(message: types.Message):
         return SendMessage(message.chat.id, 'Reply to a song')
     print('OK')
     sk = await get_lastfm_token(message.from_user.id)
+    print(sk)
     if not sk:
+        print('nosk')
         return SendMessage(
             message.chat.id, 'Please authorize',
             reply_markup=auth_keyboard(message.from_user.id))
