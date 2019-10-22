@@ -23,7 +23,7 @@ from var import var
 import config
 
 
-def sign_request(args):
+def sign_request(*args):
     sign_str = ':'.join(str(arg) for arg in args) + config.request_sign
     sha256(sign_str.encode('ascii'))
 
