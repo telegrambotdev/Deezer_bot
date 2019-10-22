@@ -15,7 +15,7 @@ async def auth_redirect(request: web.Request):
     token = request.query.get('token')
     if not token or not user_id or not sign or \
             sign != sign_request(user_id):
-        return False
+        return web.HTTPForbidden()
 
     session = await api_request('auth.getSession', token=token)
     await set_lastfm_token(session.session.key)
