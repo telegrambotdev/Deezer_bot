@@ -1,8 +1,7 @@
 from hashlib import md5
 
-from var import var
 from AttrDict import AttrDict
-from utils import request_get
+from utils import request_get, request_post
 from config import lastfm_api, lastfm_secret
 
 
@@ -17,7 +16,7 @@ def sign(method, **params):
         .encode('utf-8')).hexdigest()
 
 
-async def api_request(method, need_sign=True, **args):
+async def api_request(request_method, method, need_sign=True, **args):
     params = {
         'method': method,
         'api_key': lastfm_api,
@@ -25,6 +24,9 @@ async def api_request(method, need_sign=True, **args):
         **args}
     if need_sign:
         params['api_sig'] = sign(method, **args)
-    req = await request_get(api_url, params=params)
+    if request_method == 'POST':
+        req = await request_post(api_url, params=params)
+    elif request_method == 'GET':
+        req = await request_get(api_url, params=params)
     resp = await req.json()
     return AttrDict(resp)

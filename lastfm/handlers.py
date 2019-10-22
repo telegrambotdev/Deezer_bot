@@ -29,7 +29,7 @@ async def scrobble(message: types.Message):
 
     track = message.reply_to_message.audio
     resp = await api_request(
-        'track.scrobble', artist=track.performer,
+        'POST', 'track.scrobble', artist=track.performer,
         track=track.title, timestamp=int(time()), sk=sk)
 
     return SendMessage(message.chat.id, pformat(resp.data))
