@@ -9,6 +9,7 @@ api_url = 'https://ws.audioscrobbler.com/2.0/'
 
 
 def sign(method, **params):
+    params.pop('sk')
     data = ''.join(f"{key}{val}" for key, val in params.items())
     return md5(
         f"api_key{lastfm_api}method{method}"
