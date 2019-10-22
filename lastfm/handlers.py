@@ -39,6 +39,7 @@ async def scrobble(message: types.Message):
 async def love(message: types.Message):
     if not message.reply_to_message or not message.reply_to_message.audio:
         return SendMessage(message.chat.id, 'Reply to a song')
+    print('OK')
     sk = await get_lastfm_token(message.from_user.id)
     if not sk:
         return SendMessage(
