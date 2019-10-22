@@ -10,8 +10,11 @@ routes = web.RouteTableDef()
 
 @routes.get('/lastfm')
 async def auth_redirect(request: web.Request):
-    user_id = request.query.get('user_id')
-    sign = request.query.get('sign')
+    data = request.query.get('data')
+    if data:
+        data = data.split('AAA', 1)
+        if len(data) == 2:
+            user_id, sign = data
     token = request.query.get('token')
     if not token or not user_id or not sign or \
             sign != sign_request(user_id):
