@@ -18,7 +18,8 @@ def sign(method, **params):
 
 
 async def api_request(request_method, method, need_sign=True, **args):
-    params_for_sign = args.pop('sk', None)
+    params_for_sign = args.copy()
+    del params_for_sign['sk']
     params = {
         'method': method,
         **args,
