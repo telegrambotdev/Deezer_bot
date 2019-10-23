@@ -20,7 +20,7 @@ async def auth_redirect(request: web.Request):
             sign != sign_request(user_id):
         return web.HTTPForbidden()
 
-    session = await api_request('auth.getSession', token=token)
+    session = await api_request('GET', 'auth.getSession', token=token)
     await set_lastfm_token(user_id, session.session.key)
 
     await bot.send_message(

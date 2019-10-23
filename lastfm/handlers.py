@@ -52,7 +52,8 @@ async def love(message: types.Message):
 
     track = message.reply_to_message.audio
     resp = await api_request(
-        'track.love', artist=track.performer, track=track.title, sk=sk)
+        'POST', 'track.love', artist=track.performer,
+        track=track.title, sk=sk)
     print(resp)
 
     return SendMessage(message.chat.id, pformat(resp.data))

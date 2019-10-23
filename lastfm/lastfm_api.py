@@ -8,6 +8,10 @@ from config import lastfm_api, lastfm_secret
 api_url = 'https://ws.audioscrobbler.com/2.0/'
 
 
+def encode_params(params):
+    return {key: val.encode('utf-8') for key, val in params.items()}
+
+
 def sign(method, **params):
     params.pop('sk')
     data = ''.join(f"{key}{val}" for key, val in params.items())
@@ -23,6 +27,7 @@ async def api_request(request_method, method, need_sign=True, **args):
         'api_key': lastfm_api,
         'format': 'json',
         **args}
+    params = encode_params(params)
     if need_sign:
         params['api_sig'] = sign(method, **args)
     if request_method == 'POST':
