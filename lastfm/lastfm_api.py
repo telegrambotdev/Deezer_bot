@@ -9,7 +9,8 @@ api_url = 'https://ws.audioscrobbler.com/2.0/'
 
 
 def encode_params(params):
-    return {key: str(val.encode('utf-8')) for key, val in params.items()}
+    return {key: val.encode('utf-8').decode('unicode_escape')
+            for key, val in params.items()}
 
 
 def sign(method, **params):
