@@ -18,13 +18,16 @@ def sign(method, **params):
 
 
 async def api_request(request_method, method, need_sign=True, **args):
+    sk = args.pop('sk', None)
     params = {
         'method': method,
+        **args,
         'api_key': lastfm_api,
-        'format': 'json',
-        **args}
+        'format': 'json'}
     if need_sign:
         params['api_sig'] = sign(method, **args)
+    if sk:
+        params['sk'] = sk
     if request_method == 'POST':
         req = await request_post(api_url, params=params)
     elif request_method == 'GET':
