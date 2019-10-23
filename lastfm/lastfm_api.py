@@ -13,7 +13,7 @@ def encode_params(params):
 
 
 def sign(method, **params):
-    params.pop('sk')
+    params.pop('sk', None)
     data = ''.join(f"{key}{val}" for key, val in params.items())
     return md5(
         f"api_key{lastfm_api}method{method}"
