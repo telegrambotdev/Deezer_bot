@@ -19,10 +19,10 @@ async def api_request(request_method, method, need_sign=True, **args):
     params = {
         'method': method,
         **args,
-        'api_key': lastfm_api,
-        'format': 'json'}
+        'api_key': lastfm_api}
     if need_sign:
         params['api_sig'] = sign(params)
+    params['format'] = 'json'
     if request_method == 'POST':
         req = await request_post(api_url, params=params)
     elif request_method == 'GET':
