@@ -32,7 +32,11 @@ async def scrobble(message: types.Message):
         'POST', 'track.scrobble', artist=track.performer,
         track=track.title, timestamp=int(time()), sk=sk)
 
-    return SendMessage(message.chat.id, pformat(resp.data))
+    scrobble = resp.scrobbles.scrobble
+
+    return SendMessage(
+        message.chat.id,
+        f"{scrobble.artist['#text']} - {scrobble.track['#text']} scrobbled")
 
 
 @dp.message_handler(commands='lastfm_love')
