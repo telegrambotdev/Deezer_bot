@@ -1,5 +1,4 @@
 from time import time
-from pprint import pformat
 
 from aiogram import types
 from aiogram.dispatcher.webhook import SendMessage
@@ -43,21 +42,18 @@ async def scrobble(message: types.Message):
 async def love(message: types.Message):
     if not message.reply_to_message or not message.reply_to_message.audio:
         return SendMessage(message.chat.id, 'Reply to a song')
-    print('OK')
     sk = await get_lastfm_token(message.from_user.id)
-    print(sk)
     if not sk:
         print('nosk')
         return SendMessage(
             message.chat.id, 'Please authorize',
             reply_markup=auth_keyboard(message.from_user.id))
 
-    print(sk)
-
     track = message.reply_to_message.audio
     resp = await api_request(
         'POST', 'track.love', artist=track.performer,
         track=track.title, sk=sk)
-    print(resp)
 
-    return SendMessage(message.chat.id, pformat(resp.data))
+    return SendMessage(
+        message.chat.id,
+        f'{track.performer} - {track.title} loved on your account')
