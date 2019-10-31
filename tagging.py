@@ -17,7 +17,8 @@ def add_tags(fileobj, track_format, track, album, cover, lyrics=None):
         track_n = str(track.track_position)
     else:
         track_n = '1'
-    genre = album.genres and album.genres.data and album.genres.data[0].name
+    genre = album.genres and album.genres.get('data')\
+        and album.genres['data'][0]['name']
 
     tags = {
         'title': track.title,
