@@ -28,9 +28,9 @@ def add_tags(fileobj, track_format, track, album, cover, lyrics=None):
         'track_n': track_n,
         'genre': genre or '',
         'year': track.release_date.split('-')[0],
-        'bpm': track.bpm or '',
+        'bpm': str(track.bpm) or '',
         'isrc': track.isrc or '',
-        'explicit': track.explicit_lyrics or ''
+        'explicit': str(int(track.explicit_lyrics)) or ''
     }
 
     if track_format == 'mp3':
