@@ -12,8 +12,9 @@ from cachetools import TTLCache
 
 import config
 from var import var
+from tagging import vk_add_tags
 from utils import download_file, get_file, request_get, \
-    vk_add_tags, print_traceback
+    print_traceback
 from AttrDict import AttrDict
 
 

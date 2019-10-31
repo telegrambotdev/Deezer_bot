@@ -7,8 +7,9 @@ from asyncache import cached
 from cachetools import TTLCache
 
 from AttrDict import AttrDict
+from tagging import sc_add_tags
 from config import soundcloud_client
-from utils import download_file, get_file, sc_add_tags, \
+from utils import download_file, get_file, \
     request_get, print_traceback
 
 api = 'https://api.soundcloud.com'
