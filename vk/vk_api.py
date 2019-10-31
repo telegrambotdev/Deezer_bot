@@ -15,7 +15,6 @@ from var import var
 from utils import download_file, get_file, request_get, \
     vk_add_tags, print_traceback
 from AttrDict import AttrDict
-from _server_methods import vk_search as alt_search
 
 
 HEADERS = {"user-agent": "VKAndroidApp/5.11.1-2316"}
@@ -189,13 +188,7 @@ async def search(query: str):
     param = {"access_token": var.vk_refresh_token,
              "v": VK_API_VERSION, "q": query}
 
-    if random.randint(0, 1):
-        results = await alt_search(query) \
-            or await call(HOST_API + "method/audio.search", param)
-    else:
-        results = await call(HOST_API + "method/audio.search", param) \
-            or await alt_search(query)
-
+    results = await call(HOST_API + "method/audio.search", param)
     if results:
         tracks = [Track(track) for track in results['items']]
         for track in tracks:
