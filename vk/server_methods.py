@@ -28,7 +28,7 @@ async def send_track(chat_id, track):
     msg = await bot.send_audio(
         chat_id=-1001246220493,
         audio=InputFile(stream, filename=filename),
-        thumb=InputFile(BytesIO(thumb, filename='thumb.jpg')),
+        thumb=InputFile(BytesIO(thumb), filename='thumb.jpg'),
         performer=track.artist,
         title=track.title, duration=track.duration)
 
