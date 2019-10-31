@@ -23,7 +23,7 @@ def add_tags(fileobj, track_format, track, album, cover, lyrics=None):
     tags = {
         'title': track.title,
         'artist': track.artist.name,
-        'album': track.album.name,
+        'album': track.album.title,
         'album_artist': album.artist.name,
         'track_n': track_n,
         'genre': genre or '',
