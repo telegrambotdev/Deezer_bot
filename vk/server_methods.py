@@ -1,5 +1,8 @@
 import shutil
 import asyncio
+from io import BytesIO
+
+from aiogram.types import InputFile
 
 from bot import bot
 import db_utils
@@ -11,9 +14,9 @@ from utils import already_downloading, calling_queue, delete_later
 @calling_queue(4)
 async def send_track(chat_id, track):
     try:
-        path = await track.download()
-        asyncio.create_task(delete_later(path))
+        stream = await track.download()
         thumb = await track.get_thumb()
+        filename = f"{track.artist} - {track.title}.mp3".replace('/', '_')
     except ValueError:
         await bot.send_message(
             chat_id,
@@ -22,10 +25,16 @@ async def send_track(chat_id, track):
         raise
 
     await bot.send_chat_action(chat_id, 'upload_audio')
-    await post_large_track(path, track, provider='vk', thumb=thumb)
-    file_id = await db_utils.get_vk_track(track.full_id)
+    msg = await bot.send_audio(
+        chat_id=-1001246220493,
+        audio=InputFile(stream, filename=filename),
+        thumb=InputFile(BytesIO(thumb, filename='thumb.jpg')),
+        performer=track.artist,
+        title=track.title, duration=track.duration)
+
+    file_id = msg.audio.file_id
+    await db_utils.add_vk_track(track.full_id, file_id)
     await bot.send_audio(chat_id, file_id)
-    shutil.rmtree(path.rsplit('/', 1)[0])
     var.downloading.pop(track.full_id, None)
     var.vk_tracks.pop(track.full_id, None)
 

@@ -3,6 +3,7 @@ import json
 import asyncio
 import random
 import shutil
+from io import BytesIO
 from time import time
 from hashlib import md5
 
@@ -257,35 +258,23 @@ class Track(AttrDict):
         s = ':'.join(args).encode('utf-8', 'ignore')
         return md5(s).hexdigest()
 
-    async def download(self, path: str = None):
-        if not path:
-            os.makedirs(f"downloads/vk_{self.id}/", exist_ok=True)
-            path = (f"downloads/vk_{self.id}/" +
-                    f"{self.artist} - {self.title}".replace("/", "_")[:70] +
-                    ".mp3")
+    async def download(self):
         print(
             f'[VK] Start downloading: {self.full_id} '
             f' | {self.artist} - {self.title}')
-        try:
-            await download_file(self.url, path)
-            cover = None
-            if self.album and self.album.thumb and self.album.thumb.photo_600:
-                cover = await get_file(self.album.thumb.photo_600)
-            vk_add_tags(path, self, cover)
-            print(
-                f'[VK] Finished downloading: {self.full_id} '
-                f' | {self.artist} - {self.title}')
-        except Exception as exc:
-            print_traceback(exc)
-            shutil.rmtree(path.rsplit('/', 1)[0])
-        else:
-            return path
+        stream = BytesIO(await get_file(self.url))
+        cover = None
+        if self.album and self.album.thumb and self.album.thumb.photo_600:
+            cover = await get_file(self.album.thumb.photo_600)
+        vk_add_tags(stream, self, cover)
+        print(
+            f'[VK] Finished downloading: {self.full_id} '
+            f' | {self.artist} - {self.title}')
+        return stream
 
     async def get_thumb(self):
         if self.album and self.album.thumb and self.album.thumb.photo_135:
-            os.makedirs(f"downloads/vk_{self.id}/", exist_ok=True)
-            filepath = f'downloads/vk_{self.id}/thumb.jpg'
-            return await download_file(self.album.thumb.photo_135, filepath)
+            return await get_file(self.album.thumb.photo_135)
 
 
 class Playlist:

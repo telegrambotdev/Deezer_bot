@@ -2,6 +2,7 @@ import asyncio
 import os
 import random
 import shutil
+from io import BytesIO
 from contextlib import suppress
 
 from asyncache import cached
@@ -12,7 +13,8 @@ from AttrDict import AttrDict
 from config import deezer_private_cookies, deezer_private_headers
 from logger import file_download_logger
 from utils import request_get, request_post, \
-    get_album_cover_url, print_traceback
+    get_album_cover_url, print_traceback, get_file
+from tagging import add_tags
 from var import var
 
 from . import decrypt
@@ -118,30 +120,25 @@ async def download_track(track_id, quality='MP3_320'):
             f'quality {quality} is not availible for track {track_id}')
     quality_n = qualities[quality]
     if quality_n == '9':
-        ext = 'flac'
+        quality = 'flac'
     else:
-        ext = 'mp3'
+        quality = 'mp3'
 
     print(
         f'[Deezer] Start downloading: {track.id} '
         f'| {track.artist.name} - {track.title} ')
     track_url = decrypt.get_dl_url(private_track, quality_n)
-    os.makedirs(f'downloads/{track.id}', exist_ok=True)
-    filepath = f'downloads/{track.id}/{track.filename_safe}.{ext}'
-    try:
-        stream = await utils.get_file(track_url)
-        await decrypt.decrypt_track(stream, private_track, filepath)
-        cover = await track.get_max_size_cover(album)
-        utils.add_tags(filepath, track, album, cover, lyrics)
-        print(
-            f'[Deezer] Finished downloading: {track.id} '
-            f'| {track.artist.name} - {track.title} ')
-        file_download_logger.info(f'[downloaded track {track.id}] {track}')
-    except Exception as exc:
-        print_traceback(exc)
-        shutil.rmtree(filepath.rsplit('/', 1)[0])
-    else:
-        return filepath
+    stream = await utils.get_file(track_url)
+    decrypted_file = decrypt.decrypt_track(stream, private_track)
+    cover = await track.get_max_size_cover(album)
+    lyrics = await getlyrics(track.id)
+    add_tags(decrypted_file, quality, track, album, cover, lyrics)
+    print(
+        f'[Deezer] Finished downloading: {track.id} '
+        f'| {track.artist.name} - {track.title} ')
+    file_download_logger.info(f'[downloaded track {track.id}] {track}')
+    return decrypted_file
+
 
 
 @cached(TTLCache(100, 600))
@@ -151,8 +148,8 @@ async def getprivateinfo(track_id):
 
 
 async def getlyrics(track_id):
-    return (await private_api_call(
-        track_id))['LYRICS']['LYRICS_TEXT']
+    data = await getprivateinfo(track_id)
+    return data.get('LYRICS') and data['LYRICS'].get('LYRICS_TEXT')
 
 
 @cached(TTLCache(100, 600))
@@ -212,11 +209,9 @@ class Track(AttrDict):
         return res
 
     async def get_thumb(self):
-        os.makedirs(f'downloads/{self.id}', exist_ok=True)
-        filepath = f'downloads/{self.id}/thumb.jpg'
         track = await gettrack(self.id)
         thumb_url = await utils.get_album_cover_url(track.album.id, '120x120')
-        return await utils.download_file(thumb_url, filepath)
+        return await get_file(thumb_url)
 
     def __repr__(self):
         with suppress(AttributeError):

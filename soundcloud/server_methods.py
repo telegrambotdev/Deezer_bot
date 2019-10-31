@@ -2,6 +2,7 @@ import os
 import shutil
 import traceback
 import asyncio
+from io import BytesIO
 
 from aiogram.types import InputFile
 
@@ -14,27 +15,24 @@ import db_utils
 @calling_queue(4)
 async def send_track(chat_id, track):
     try:
-        path = await track.download()
+        stream = await track.download()
         thumb = await track.get_thumb()
+        filename = f"{track.artist} - {track.title}.mp3".replace('/', '_')
     except ValueError:
-        shutil.rmtree(path.rsplit('/', 1)[0])
         await bot.send_message(
             chat_id,
             "🚫This track is not available "
             f"({track.artist} - {track.title})")
         raise
 
-    if os.path.getsize(path) >> 20 < 49:
-        msg = await bot.send_audio(
-            chat_id=chat_id, audio=InputFile(path), thumb=thumb,
-            performer=track.artist, title=track.title)
-        file_id = msg.audio.file_id
-    else:
-        file_id = await post_large_track(
-            path, track, provider='soundcloud', thumb=thumb)
+    msg = await bot.send_audio(
+        chat_id=-1001246220493,
+        audio=InputFile(stream, filename=filename),
+        thumb=InputFile(BytesIO(thumb), filename='thumb.jpg'),
+        performer=track.artist, title=track.title)
+    file_id = msg.audio.file_id
     await db_utils.add_sc_track(track.id, file_id)
-    shutil.rmtree(path.rsplit('/', 1)[0])
-    await bot.send_audio(-1001246220493, file_id)
+    await bot.send_audio(chat_id, file_id)
 
 
 async def send_tracks(chat_id, tracks):

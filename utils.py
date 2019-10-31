@@ -14,9 +14,7 @@ from contextlib import suppress
 
 import aiofiles
 import aiohttp
-from mutagen.flac import FLAC, Picture
 from aiogram import exceptions, types
-from eyed3.id3 import Tag
 from yarl import URL
 
 from var import var
@@ -153,89 +151,6 @@ async def get_file(url):
 async def get_album_cover_url(album_id, res='1000x1000'):
     r = await request_get(f"https://api.deezer.com/album/{album_id}/image")
     return str(r.url).replace("120x120", res)
-
-
-def add_tags(path, track, album, image, lyrics):
-    try:
-        genre = album["genres"]["data"][0]["name"]
-    except (KeyError, IndexError):
-        genre = ""
-
-    tags = {
-        'artist': track["artist"]["name"],
-        'album': track["album"]["title"],
-        'album_artist': album["artist"]["name"],
-        'original_release_date': track["album"]["release_date"],
-        'recording_date': int(track["album"]["release_date"].split("-")[0]),
-        'title': track["title"],
-        'track_num': track["track_position"],
-        'disc_num': track["disk_number"],
-        'non_std_genre': genre,
-        'bpm': track["bpm"]
-    }
-    if path.endswith('mp3'):
-        add_mp3_tags(path, tags, image, lyrics, image_mimetype='image/jpg')
-    elif path.endswith('flac'):
-        add_flac_tags(path, tags, image, lyrics, image_mimetype='image/jpg')
-
-
-def sc_add_tags(path, track, image, lyrics=None):
-    try:
-        album_title = track["publisher_metadata"]["album_title"]
-    except KeyError:
-        album_title = ""
-
-    tags = {
-        'title': track.title,
-        'artist': track.artist,
-        'album': album_title,
-        'album_artist': track.artist if album_title else "",
-        'album_title': album_title,
-        'original_release_date': (
-            track.created_at.split("T")[0].split(" ")[0].replace("/", "-")),
-        'non_std_genre': track.get("genre", ""),
-    }
-    add_mp3_tags(path, tags, image, lyrics)
-
-
-def vk_add_tags(path, track, image=None):
-    tags = {
-        'title': track.title,
-        'artist': track.artist,
-    }
-    if track.album:
-        tags.update({'album': track.album.title})
-    add_mp3_tags(path, tags, image, image_mimetype='image/jpg')
-
-
-def add_mp3_tags(path, tags, image, lyrics=None, image_mimetype='image/png'):
-    tag = Tag()
-    tag.parse(path)
-    for key, val in tags.items():
-        try:
-            setattr(tag, key, val)
-        except Exception as e:
-            print(e)
-    if lyrics:
-        tag.lyrics.set(lyrics)
-    if image:
-        tag.images.set(type_=3, img_data=image, mime_type=image_mimetype)
-    tag.save(encoding='utf-8')
-
-
-def add_flac_tags(path, tags, image, lyrics=None, image_mimetype='image/jpg'):
-    tag = FLAC(path)
-    pic = Picture()
-    pic.data = image
-    pic.type = 3
-    pic.mime = image_mimetype
-    tag.add_picture(pic)
-    for key, val in tags.items():
-        try:
-            tag[key] = str(val)
-        except Exception as e:
-            print(e)
-    tag.save()
 
 
 errcount = {"count": 0}

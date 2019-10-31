@@ -2,6 +2,7 @@ import os
 from time import time
 import shutil
 import asyncio
+from io import BytesIO
 
 from aiogram.types import InputFile
 
@@ -31,10 +32,10 @@ async def send_track(chat_id, track, Redownload=False):
 
     try:
         if quality == 'mp3':
-            path = await track.download('MP3_320')
+            track_file = await track.download('MP3_320')
         elif quality == 'flac':
-            path = await track.download('FLAC')
-        asyncio.create_task(delete_later(path))
+            track_file = await track.download('FLAC')
+        filename = f"{track.artist.name} - {track.title}.{quality}".replace('/', '_')
     except ValueError as e:
         print(e)
         await bot.send_message(
@@ -46,18 +47,16 @@ async def send_track(chat_id, track, Redownload=False):
     await bot.send_chat_action(chat_id, 'upload_audio')
 
     thumb = await track.get_thumb()
-    if os.path.getsize(path) >> 20 < 49:
-        msg = await bot.send_audio(
-            chat_id=-1001246220493, audio=InputFile(path),
-            thumb=InputFile(thumb), performer=track.artist.name,
-            title=track.title, duration=track.duration)
-        file_id = msg.audio.file_id
-        await db_utils.add_track(track.id, file_id, quality)
-    else:
-        file_id = await post_large_track(path, track, quality, thumb=thumb)
+    msg = await bot.send_audio(
+        chat_id=-1001246220493,
+        audio=InputFile(track_file, filename=filename),
+        thumb=InputFile(BytesIO(thumb, filename='thumb.jpg')),
+        performer=track.artist.name,
+        title=track.title, duration=track.duration)
+    file_id = msg.audio.file_id
+    await db_utils.add_track(track.id, file_id, quality)
 
     await bot.send_audio(chat_id, file_id)
-    shutil.rmtree(path.rsplit('/', 1)[0])
     var.downloading.pop(track.id)
     sent_message_logger.info(
         f'[send track {track.id} to {chat_id}] {track}')

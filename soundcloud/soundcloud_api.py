@@ -1,6 +1,7 @@
 import re
 import os
 import shutil
+from io import BytesIO
 
 from asyncache import cached
 from cachetools import TTLCache
@@ -37,31 +38,18 @@ class SoundCloudTrack(AttrDict):
             params={'client_id': soundcloud_client})
         return r.url
 
-    async def download(self, filepath=None):
-        try:
-            if not filepath:
-                os.makedirs(f'downloads/{self.id}', exist_ok=True)
-                filepath = \
-                    f'downloads/{self.id}/ ' + \
-                    f'{self.user.username} - {self.title}' \
-                    .replace('/', '_').strip()[:97] + '.mp3'
-            else:
-                os.makedirs(filepath.rsplit('/', 1)[0], exist_ok=True)
-
-            print(
-                f'[Soundcloud] Start downloading: {self.id}'
-                f' | {self.artist} - {self.title}')
-            await download_file(await self.download_url(), filepath)
-            cover = await get_file(self.artwork_url) if self.artwork_url else None
-            sc_add_tags(filepath, self, cover)
-            print(
-                f'[Soundcloud] Finished downloading: {self.id}'
-                f' | {self.artist} - {self.title}')
-        except Exception as exc:
-            print_traceback(exc)
-            shutil.rmtree(filepath.rsplit('/', 1)[0])
-        else:
-            return filepath
+    async def download(self):
+        print(
+            f'[Soundcloud] Start downloading: {self.id}'
+            f' | {self.artist} - {self.title}')
+        stream = await get_file(await self.download_url())
+        cover = await get_file(self.artwork_url) if self.artwork_url else None
+        fileobj = BytesIO(stream)
+        sc_add_tags(fileobj, self, cover)
+        print(
+            f'[Soundcloud] Finished downloading: {self.id}'
+            f' | {self.artist} - {self.title}')
+        return fileobj
 
     async def get_thumb(self):
         if self.thumb_url:
