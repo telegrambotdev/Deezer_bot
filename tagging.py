@@ -98,6 +98,7 @@ def add_mp3_tags(fileobj, tags, cover=None,
     if cover:
         handle['APIC'] = APIC(data=cover, mime=image_mimetype)
     handle.save(fileobj)
+    fileobj.seek(0)
 
 
 def add_flac_tags(fileobj, tags, image, lyrics=None, image_mimetype='image/jpg'):
@@ -113,3 +114,5 @@ def add_flac_tags(fileobj, tags, image, lyrics=None, image_mimetype='image/jpg')
         except Exception as e:
             print_traceback(e)
     handle.save(fileobj)
+    fileobj.seek(0)
+

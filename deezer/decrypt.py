@@ -41,6 +41,7 @@ def decrypt_track(track_buffer, info):
 
         decrypted_stream.write(chunk)
         progress += chunk_size
+    decrypted_stream.seek(0)
     return decrypted_stream
 
 
