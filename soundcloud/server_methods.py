@@ -17,6 +17,8 @@ async def send_track(chat_id, track):
     try:
         stream = await track.download()
         thumb = await track.get_thumb()
+        if thumb:
+            thumb = BytesIO(thumb)
         filename = f"{track.artist} - {track.title}.mp3".replace('/', '_')
     except ValueError:
         await bot.send_message(
@@ -28,7 +30,7 @@ async def send_track(chat_id, track):
     msg = await bot.send_audio(
         chat_id=-1001246220493,
         audio=InputFile(stream, filename=filename),
-        thumb=InputFile(BytesIO(thumb), filename='thumb.jpg'),
+        thumb=InputFile(thumb, filename='thumb.jpg'),
         performer=track.artist, title=track.title)
     file_id = msg.audio.file_id
     await db_utils.add_sc_track(track.id, file_id)
