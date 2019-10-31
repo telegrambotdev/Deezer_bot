@@ -92,7 +92,7 @@ def add_mp3_tags(fileobj, tags, cover=None,
     if 'isrc' in tags:
         handle['TSRC'] = TSRC(text=tags['isrc'])
     if 'explicit' in tags:
-        handle['TXXX'].append(TXXX(text=tags['explicit']))
+        handle['TXXX'] = TXXX(text=tags['explicit'])
     if lyrics:
         handle['USLT'] = USLT(text=lyrics)
     if cover:
