@@ -47,7 +47,7 @@ async def finish_download(track, inline_message_id, user):
         performer=track.artist.name,
         title=track.title, duration=track.duration)
     file_id = msg.audio.file_id
-    db_utils.add_track(track.id, file_id)
+    await db_utils.add_track(track.id, file_id)
     file_id = await db_utils.get_track(track.id)
 
     try:
