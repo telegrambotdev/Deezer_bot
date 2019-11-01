@@ -120,9 +120,9 @@ async def download_track(track_id, quality='MP3_320'):
             f'quality {quality} is not availible for track {track_id}')
     quality_n = qualities[quality]
     if quality_n == '9':
-        quality = 'flac'
+        file_format = 'flac'
     else:
-        quality = 'mp3'
+        file_format = 'mp3'
 
     print(
         f'[Deezer] Start downloading: {track.id} '
@@ -132,7 +132,7 @@ async def download_track(track_id, quality='MP3_320'):
     decrypted_file = decrypt.decrypt_track(stream, private_track)
     cover = await track.get_max_size_cover(album)
     lyrics = await getlyrics(track.id)
-    add_tags(decrypted_file, quality, track, album, cover, lyrics)
+    add_tags(decrypted_file, file_format, track, album, cover, lyrics)
     print(
         f'[Deezer] Finished downloading: {track.id} '
         f'| {track.artist.name} - {track.title} ')
