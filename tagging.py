@@ -24,10 +24,11 @@ def add_tags(fileobj, track_format, track, album, cover, lyrics=None):
         'title': track.title,
         'artist': track.artist.name,
         'album': track.album.title,
-        'album_artist': album.artist.name,
-        'track_n': track_n,
+        'albumartist': album.artist.name,
+        'tracknumber': track_n,
         'genre': genre or '',
         'year': track.release_date.split('-')[0],
+        'date': track.release_date,
         'bpm': str(track.bpm) or '',
         'isrc': track.isrc or '',
         'explicit': str(int(track.explicit_lyrics)) or ''
